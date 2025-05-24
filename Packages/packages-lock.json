@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "f213ff497e4ff462a77319cf677cf20cc0860ca9"
     },
+    "com.mackysoft.navigathena": {
+      "version": "https://github.com/mackysoft/Navigathena.git?path=Assets/MackySoft/MackySoft.Navigathena",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0034a5d4ab27fac4ae8eea52b7c57a8d47c8a585"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.7",
       "depth": 0,
