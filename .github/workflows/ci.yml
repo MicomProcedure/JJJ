@@ -17,6 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Generate Solution
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -25,6 +26,7 @@ jobs:
         run: |
           unity-editor -nographics -logFile /dev/stdout -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
           unity-editor -nographics -logFile /dev/stdout -customBuildName JJJ -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit
+
       - name: Setup .NET
         run: |
           wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
@@ -32,7 +34,7 @@ jobs:
           ./dotnet-install.sh --channel 8.0 --install-dir $HOME/.dotnet
           echo "$HOME/.dotnet" >> $GITHUB_PATH
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
       - name: Run Lint
         run: |
-          dotnet tool restore
           dotnet format JJJ.sln style --verify-no-changes --verbosity diagnostic --include ./Assets/JJJ/
