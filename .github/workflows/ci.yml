@@ -1,22 +1,70 @@
 name: Lint
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      lint_format:
+        description: 'Run with format'
+        required: false
+        default: true
+        type: boolean
+      pr_number:
+        description: 'Pull Request Number'
+        required: true
+        type: number
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - develop
+      - main
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
 
 jobs:
   lint:
     name: Quality Check
     runs-on: ubuntu-latest
     container: unityci/editor:ubuntu-6000.1.7f1-linux-il2cpp-3
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+      checks: write
+    env:
+      LINT_FORMAT: true
+      TARGET_PATH: ./Assets/JJJ/
+      PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Check Unity Meta Files
+        uses: DeNA/unity-meta-check@v4
+        with:
+          enable_pr_comment: true
+          pr_comment_lang: ja
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ runner.os }}-${{ hashFiles('Packages/manifest.json', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ runner.os }}-
+            Library-
 
       - name: Generate Solution
         env:
@@ -24,17 +72,109 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         run: |
-          unity-editor -nographics -logFile /dev/stdout -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL"
-          unity-editor -nographics -logFile /dev/stdout -customBuildName JJJ -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit
-
+          unity-editor -nographics -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL" -batchmode -logFile /dev/stdout > /dev/null
+          unity-editor -nographics -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit -batchmode -logFile /dev/stdout > /dev/null
+          
       - name: Setup .NET
         run: |
-          wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+          wget https://dot.net/v1/dotnet-install.sh -qO dotnet-install.sh
           chmod +x dotnet-install.sh
           ./dotnet-install.sh --channel 8.0 --install-dir $HOME/.dotnet
           echo "$HOME/.dotnet" >> $GITHUB_PATH
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Run Lint
+        id: lint
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          DOTNET_NOLOGO: 1
         run: |
-          dotnet format JJJ.sln style --verify-no-changes --verbosity diagnostic --include ./Assets/JJJ/
+          LINT_FORMAT="${LINT_FORMAT:-true}"
+          SLN_FILE=$(find . -name "*.sln" | head -n 1)
+          if [ -z "$SLN_FILE" ] || [ ! -f "$SLN_FILE" ]; then
+            echo "No solution file found. Exiting."
+            exit 1
+          fi
+          if [ -z "$TARGET_PATH" ] || [ ! -d "$TARGET_PATH"]; then
+            echo "No target path specified. Exiting."
+            exit 1
+          fi
+          if [ "$LINT_FORMAT" = "false" ]; then
+            echo "Checking style without format."
+            dotnet format "$SLN_FILE" style --verify-no-changes --verbosity quiet --include "$TARGET_PATH" > format.log 2>&1 || true
+            cat format.log | sed -E "s|^$(pwd)/||; \
+              s/\\(([0-9]+),([0-9]+)\\):/:\\1:\\2:/; \
+              s/\\[.*\\]//; \
+              s/: warning /: W /; \
+              s/: error /: E /" \
+            > formatted.log
+            if [ -s formatted.log ]; then
+              echo "Linting issues found:"
+              cat formatted.log
+              echo "lint=true" >> $GITHUB_OUTPUT
+            else
+              echo "No linting issues found."
+              echo "lint=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Checking style with format."
+            dotnet format "$SLN_FILE" style --verbosity quiet --include "$TARGET_PATH" > format.log 2>&1 || true
+            git diff --shortstat "$TARGET_PATH"
+            echo "lint=false" >> $GITHUB_OUTPUT
+          fi
+          
+
+      - name: Setup Reviewdog
+        if: steps.lint.outputs.lint == 'true' && env.LINT_FORMAT == 'false'
+        uses: reviewdog/action-setup@e04ffabe3898a0af8d0fb1af00c188831c4b5893
+        with:
+          reviewdog_version: latest
+
+      - name: Review with reviewdog
+        if: steps.lint.outputs.lint == 'true' && env.LINT_FORMAT == 'false'
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat formatted.log | reviewdog -efm="%f:%l:%c: %t %m" -reporter=github-pr-review -fail-level=error -name=dotnet-format -level=warning 
+      
+      - name: Format Check and Commit
+        run: |
+          if [ "${LINT_FORMAT}" = "false" ]; then
+            echo "Check only, skipping commit."
+            exit 0
+          fi
+          set +e
+          git diff --exit-code "$TARGET_PATH"
+          if [ $? -ne 0 ]; then
+            echo "Linting issues found, committing changes."
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add "$TARGET_PATH"
+            git commit -m "format: fix linting issues"
+            git push
+          else
+            echo "No linting issues found, no changes to commit."
+          fi
+
+      - name: Run Unity Tests
+        id: unity-tests
+        run: |
+          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform editmode -testResults ./test-results/TestResults_editmode.xml > /dev/null
+          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform playmode -testResults ./test-results/TestResults_playmode.xml > /dev/null
+          echo "Unity tests completed."
+          if [ -s ./test-results/TestResults_editmode.xml ] || [ -s ./test-results/TestResults_playmode.xml ]; then
+            echo "Unity tests found issues."
+            echo "unity_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Unity test issues found."
+            echo "unity_tests=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Unity Tests Result
+        if: (!cancelled() && steps.unity-tests.outputs.unity_tests == 'true')
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            test-results/**/*.xml
+          check_name: "Unity Tests"
+          action_fail: true
