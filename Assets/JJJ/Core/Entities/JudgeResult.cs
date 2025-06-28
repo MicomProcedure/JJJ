@@ -29,7 +29,7 @@ namespace JJJ.Core.Entities
     /// <summary>
     /// じゃんけんの結果が反則かどうか
     /// </summary>
-    public bool IsValid => Type != JudgeResultType.Violation || Type != JudgeResultType.DoubleViolation;
+    public bool IsValid => Type != JudgeResultType.Violation && Type != JudgeResultType.DoubleViolation;
 
     /// <summary>
     /// 反則時の理由
