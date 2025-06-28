@@ -12,7 +12,8 @@ namespace JJJ.Core.Interfaces
     /// </summary>
     /// <param name="playerHand">プレイヤーの手</param>
     /// <param name="opponentHand">対戦相手の手</param>
+    /// <param name="turnContext">ターン情報のコンテキスト</param>
     /// <returns>じゃんけんの結果</returns>
-    public JudgeResult Judge(Hand playerHand, Hand opponentHand);
+    public JudgeResult Judge(Hand playerHand, Hand opponentHand, TurnContext turnContext);
   }
 }
