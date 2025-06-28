@@ -26,7 +26,7 @@ namespace JJJ.Core.Entities
     /// </summary>
     public int BetaRemainingTurns { get; private set; }
     /// <summary>
-    /// βによって封印された手の種類
+    /// βによって封印されている手の種類
     /// </summary>
     /// <remarks>
     /// βの残りターン数が0のときは null になる
@@ -89,7 +89,7 @@ namespace JJJ.Core.Entities
         throw new ArgumentOutOfRangeException(nameof(turns), "Beta remaining turns must be greater than 0.");
       }
       BetaRemainingTurns = turns;
-      SealedHandType = SealedHandType;
+      SealedHandType = sealedHandType;
       return this;
     }
   }
