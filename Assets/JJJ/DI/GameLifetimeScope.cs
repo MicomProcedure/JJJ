@@ -1,3 +1,4 @@
+using JJJ.Core.Interfaces;
 using VContainer;
 using VContainer.Unity;
 
@@ -14,7 +15,11 @@ namespace JJJ.DI
     protected override void Configure(IContainerBuilder builder)
     {
       // ここに依存関係のバインディングを追加
-      
+      builder.Register<IJudgeService, JudgeService>(Lifetime.Singleton);
+      builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
+      {
+        entryPoints.Add<Test>();
+      });
     }
   }
 }
