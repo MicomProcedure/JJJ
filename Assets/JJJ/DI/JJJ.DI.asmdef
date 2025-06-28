@@ -2,7 +2,8 @@
     "name": "JJJ.DI",
     "rootNamespace": "",
     "references": [
-        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc"
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:96593ce9b5faf964fbecdaba0185df9d"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
