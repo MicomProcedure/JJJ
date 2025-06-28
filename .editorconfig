@@ -105,3 +105,5 @@ csharp_style_unused_value_expression_statement_preference = discard_variable
 dotnet_diagnostic.IDE0058.severity = none
 csharp_style_unused_value_assignment_preference = discard_variable
 dotnet_diagnostic.IDE0059.severity = none
+dotnet_style_namespace_match_folder = false
+dotnet_diagnostic.IDE0130.severity = none
