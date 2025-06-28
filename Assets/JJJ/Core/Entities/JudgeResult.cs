@@ -45,7 +45,7 @@ namespace JJJ.Core.Entities
     /// <param name="type">じゃんけんの結果の種類</param>
     /// <param name="playerHand">プレイヤーの手</param>
     /// <param name="opponentHand">相手の手</param>
-    /// <param name="reason">じゃんけんの結果の理由</param>
+    /// <param name="violationType">じゃんけんの結果の理由</param>
     public JudgeResult(JudgeResultType type, Hand playerHand, Hand opponentHand, ViolationType violationType = ViolationType.None)
     {
       Type = type;
