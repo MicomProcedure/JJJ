@@ -14,9 +14,9 @@ namespace JJJ.Infrastructure
       {
         return (playerHandValidation.IsValid, opponentHandValidation.IsValid) switch
         {
-          (false, false) => new(JudgeResultType.DoubleViolation, playerHand, opponentHand, playerHandValidation.Violation, opponentHandValidation.Violation),
-          (false, true) => new(JudgeResultType.Violation, playerHand, opponentHand, playerHandValidation.Violation, opponentHandValidation.Violation),
-          (true, false) => new(JudgeResultType.Win, playerHand, opponentHand, playerHandValidation.Violation, opponentHandValidation.Violation),
+          (false, false) => new(JudgeResultType.DoubleViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
+          (false, true) => new(JudgeResultType.Violation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
+          (true, false) => new(JudgeResultType.Win, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
           _ => throw new System.Exception("Invalid hand detected.")
         };
       }
