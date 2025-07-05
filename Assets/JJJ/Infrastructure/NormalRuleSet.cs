@@ -21,26 +21,7 @@ namespace JJJ.Infrastructure
         };
       }
 
-      if (playerHand.Type == opponentHand.Type) return new(JudgeResultType.Draw, playerHand, opponentHand);
-
-      return (playerHand.Type, opponentHand.Type) switch
-      {
-        (HandType.Rock, HandType.Scissors) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Rock, HandType.Three) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Scissors, HandType.Paper) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Scissors, HandType.Three) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Paper, HandType.Rock) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Paper, HandType.Three) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.One, HandType.Scissors) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.One, HandType.Two) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Two, HandType.Rock) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Two, HandType.Paper) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Three, HandType.One) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Three, HandType.Two) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Three, HandType.Four) => new(JudgeResultType.Win, playerHand, opponentHand),
-        (HandType.Four, HandType.One) => new(JudgeResultType.Win, playerHand, opponentHand),
-        _ => new(JudgeResultType.Lose, playerHand, opponentHand)
-      };
+      return RuleSetHelper.DetermineResult(playerHand, opponentHand);
     }
 
     public HandValidationResult ValidateHand(Hand hand, TurnContext turnContext)
