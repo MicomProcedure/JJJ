@@ -32,12 +32,22 @@ namespace JJJ.Core.Entities
     public bool IsValid => Type != JudgeResultType.Violation && Type != JudgeResultType.DoubleViolation;
 
     /// <summary>
-    /// 反則時の理由
+    /// プレイヤーの反則時の理由
     /// </summary>
     /// <remarks>
-    /// 反則がない場合は ViolationType.None になる
+    /// <para>左側の手をプレイヤーの手、右側の手を対戦相手の手とする</para>
+    /// <para>反則がない場合は ViolationType.None になる</para>
     /// </remarks>
-    public ViolationType ViolationType { get; private set; } = ViolationType.None;
+    public ViolationType PlayerViolationType { get; private set; } = ViolationType.None;
+
+    /// <summary>
+    /// 相手の反則時の理由
+    /// </summary>
+    /// <remarks>
+    /// <para>左側の手をプレイヤーの手、右側の手を対戦相手の手とする</para>
+    /// <para>反則がない場合は ViolationType.None になる</para>
+    /// </remarks>
+    public ViolationType OpponentViolationType { get; private set; } = ViolationType.None;
 
     /// <summary>
     /// JudgeResult クラスのコンストラクタ
@@ -45,13 +55,14 @@ namespace JJJ.Core.Entities
     /// <param name="type">じゃんけんの結果の種類</param>
     /// <param name="playerHand">プレイヤーの手</param>
     /// <param name="opponentHand">相手の手</param>
-    /// <param name="violationType">じゃんけんの結果の理由</param>
-    public JudgeResult(JudgeResultType type, Hand playerHand, Hand opponentHand, ViolationType violationType = ViolationType.None)
+    /// <param name="playerViolationType">じゃんけんの結果の理由</param>
+    public JudgeResult(JudgeResultType type, Hand playerHand, Hand opponentHand, ViolationType playerViolationType = ViolationType.None, ViolationType opponentViolationType = ViolationType.None)
     {
       Type = type;
-      ViolationType = violationType;
       PlayerHand = playerHand;
       OpponentHand = opponentHand;
+      PlayerViolationType = playerViolationType;
+      OpponentViolationType = opponentViolationType;
     }
   }
 }
