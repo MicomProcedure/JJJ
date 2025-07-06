@@ -16,14 +16,20 @@ namespace JJJ.Core.Entities
     public string Name { get; private set; }
 
     /// <summary>
+    /// 後出しかどうか
+    /// </summary>
+    public bool IsTimeout { get; private set; }
+
+    /// <summary>
     /// Handクラスのコンストラクタ
     /// </summary>
     /// <param name="type">手の種類</param>
     /// <param name="name">手の名前</param>
-    public Hand(HandType type, string name)
+    public Hand(HandType type, string name, bool isTimeout = false)
     {
       Type = type;
       Name = name;
+      IsTimeout = isTimeout;
     }
 
 
