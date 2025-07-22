@@ -1,11 +1,9 @@
 #if UNITY_EDITOR || UNITY_INCLUDE_TESTS
+using JJJ.Infrastructure;
+using JJJ.Core.Entities;
+using NUnit.Framework;
 namespace JJJ.Tests.Infrastructure
 {
-  using JJJ.Infrastructure;
-  using JJJ.Core.Entities;
-  using NUnit.Framework;
-  using System.Collections.Generic;
-
   /// <summary>
   /// EasyRuleSetクラスのテスト
   /// 簡単ルールでのじゃんけん判定とタイムアウト処理をテスト
@@ -13,6 +11,14 @@ namespace JJJ.Tests.Infrastructure
   public class EasyRuleSetTest
   {
     private readonly EasyRuleSet _easyRuleSet = new();
+    private TurnContext _turnContext;
+
+    [SetUp]
+    public void SetUp()
+    {
+      // TurnContextの初期化
+      _turnContext = new TurnContext();
+    }
 
     /// <summary>
     /// 通常のじゃんけんテスト（タイムアウトなし）
@@ -21,15 +27,11 @@ namespace JJJ.Tests.Infrastructure
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetBasicRockPaperScissorsTestCases))]
     public void Judge_BasicRockPaperScissors_ReturnsExpectedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResultType)
     {
-      // Arrange
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString());
-      var turnContext = new TurnContext();
 
-      // Act
-      var result = _easyRuleSet.Judge(player, opponent, turnContext);
+      var result = _easyRuleSet.Judge(player, opponent, _turnContext);
 
-      // Assert
       Assert.That(result.Type, Is.EqualTo(expectedResultType),
                   $"Result differs from expected. Player: {playerHand} vs Opponent: {opponentHand}");
     }
@@ -38,38 +40,48 @@ namespace JJJ.Tests.Infrastructure
     /// プレイヤータイムアウトテスト
     /// プレイヤーがタイムアウトした場合に反則と判定されることを確認
     /// </summary>
-    [TestCaseSource(nameof(GetTimeoutTestCases))]
-    public void Judge_WhenPlayerTimesOut_ReturnsViolation(HandType playerHand, HandType opponentHand)
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetBasicRockPaperScissorsTestCases))]
+    public void Judge_WhenPlayerTimesOut_ReturnsViolation(HandType playerHand, HandType opponentHand, JudgeResultType _)
     {
-      // Arrange
       var player = new Hand(playerHand, playerHand.ToString(), isTimeout: true);
       var opponent = new Hand(opponentHand, opponentHand.ToString());
-      var turnContext = new TurnContext();
 
-      // Act
-      var result = _easyRuleSet.Judge(player, opponent, turnContext);
+      var result = _easyRuleSet.Judge(player, opponent, _turnContext);
 
-      // Assert
       Assert.That(result.Type, Is.EqualTo(JudgeResultType.Violation),
                   $"Player timeout should result in violation. Player: {playerHand}(timeout) vs Opponent: {opponentHand}");
     }
 
     /// <summary>
-    /// タイムアウトテスト用のテストケースを生成
-    /// 基本じゃんけんの手同士の全組み合わせを提供
+    /// 対戦相手タイムアウトテスト
+    /// 対戦相手がタイムアウトした場合にプレイヤーの勝利と判定されることを確認
     /// </summary>
-    private static IEnumerable<TestCaseData> GetTimeoutTestCases()
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetBasicRockPaperScissorsTestCases))]
+    public void Judge_WhenOpponentTimesOut_ReturnsPlayerWin(HandType playerHand, HandType opponentHand, JudgeResultType _)
     {
-      var handTypes = TestDataHelper.BasicHandTypes;
+      var player = new Hand(playerHand, playerHand.ToString());
+      var opponent = new Hand(opponentHand, opponentHand.ToString(), isTimeout: true);
 
-      foreach (var playerHand in handTypes)
-      {
-        foreach (var opponentHand in handTypes)
-        {
-          yield return new TestCaseData(playerHand, opponentHand)
-            .SetName($"{playerHand}_vs_{opponentHand}");
-        }
-      }
+      var result = _easyRuleSet.Judge(player, opponent, _turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win),
+                  $"Opponent timeout should result in player win. Player: {playerHand} vs Opponent: {opponentHand}(timeout)");
+    }
+
+    /// <summary>
+    /// 双方タイムアウトテスト
+    /// プレイヤーと対戦相手の両方がタイムアウトした場合に両者反則と判定されることを確認
+    /// </summary>
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetBasicRockPaperScissorsTestCases))]
+    public void Judge_WhenBothPlayersTimeout_ReturnsBothViolation(HandType playerHand, HandType opponentHand, JudgeResultType _)
+    {
+      var player = new Hand(playerHand, playerHand.ToString(), isTimeout: true);
+      var opponent = new Hand(opponentHand, opponentHand.ToString(), isTimeout: true);
+
+      var result = _easyRuleSet.Judge(player, opponent, _turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.DoubleViolation),
+                  $"Both players timeout should result in both violation. Player: {playerHand}(timeout) vs Opponent: {opponentHand}(timeout)");
     }
   }
 }
