@@ -1,10 +1,9 @@
 #if UNITY_EDITOR || UNITY_INCLUDE_TESTS
+using JJJ.Infrastructure;
+using JJJ.Core.Entities;
+using NUnit.Framework;
 namespace JJJ.Tests.Infrastructure
 {
-  using JJJ.Infrastructure;
-  using JJJ.Core.Entities;
-  using NUnit.Framework;
-
   /// <summary>
   /// NormalRuleSetクラスのテスト
   /// 通常ルールでのじゃんけん判定とタイムアウト処理をテスト

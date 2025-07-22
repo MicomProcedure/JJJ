@@ -1,10 +1,9 @@
 #if UNITY_EDITOR || UNITY_INCLUDE_TESTS
+using JJJ.Infrastructure;
+using JJJ.Core.Entities;
+using NUnit.Framework;
 namespace JJJ.Tests.Infrastructure
 {
-  using JJJ.Infrastructure;
-  using JJJ.Core.Entities;
-  using NUnit.Framework;
-
   /// <summary>
   /// HardRuleSetクラスのテスト
   /// ハードルールでのじゃんけん判定、特殊手（Alpha/Beta）、バリデーション処理をテスト
