@@ -159,8 +159,8 @@ jobs:
       - name: Run Unity Tests
         id: unity-tests
         run: |
-          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform editmode -testResults ./test-results/TestResults_editmode.xml > /dev/null
-          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform playmode -testResults ./test-results/TestResults_playmode.xml > /dev/null
+          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform editmode -testResults ./test-results/TestResults_editmode.xml
+          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform playmode -testResults ./test-results/TestResults_playmode.xml
           echo "Unity tests completed."
           if [ -s ./test-results/TestResults_editmode.xml ] || [ -s ./test-results/TestResults_playmode.xml ]; then
             echo "Unity tests found issues."
