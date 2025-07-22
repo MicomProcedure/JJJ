@@ -25,8 +25,9 @@ namespace JJJ.Tests.Infrastructure
       var opponent = new Hand(opponentHand, opponentHand.ToString());
 
       var result = _easyRuleSet.Judge(player, opponent, _turnContext);
-      Assert.That(result.Type == expectedResultType,
-                    $"Expected {expectedResultType}, but got {result.Type} for player hand {playerHand} and opponent hand {opponentHand}.");
+
+      Assert.That(result.Type, Is.EqualTo(expectedResultType),
+                  $"Player: {playerHand} vs Opponent: {opponentHand}");
     }
 
     [TestCase(HandType.Rock, HandType.Scissors, JudgeResultType.Violation)]
@@ -41,8 +42,9 @@ namespace JJJ.Tests.Infrastructure
       var opponent = new Hand(opponentHand, opponentHand.ToString());
 
       var result = _easyRuleSet.Judge(player, opponent, _turnContext);
-      Assert.That(result.Type == expectedResultType,
-                    $"Expected {expectedResultType}, but got {result.Type} for player hand {playerHand} and opponent hand {opponentHand}.");
+
+      Assert.That(result.Type, Is.EqualTo(expectedResultType),
+                  $"Player: {playerHand} vs Opponent: {opponentHand}");
     }
   }
 }
