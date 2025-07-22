@@ -4,7 +4,6 @@ namespace JJJ.Tests.Infrastructure
   using JJJ.Infrastructure;
   using JJJ.Core.Entities;
   using NUnit.Framework;
-  using System.Collections.Generic;
 
   /// <summary>
   /// HardRuleSetクラスのテスト
@@ -16,59 +15,52 @@ namespace JJJ.Tests.Infrastructure
 
     /// <summary>
     /// Alpha/Beta特殊手による引き分けテスト
-    /// Alpha/Betaが絡む場合は常に引き分けになることを確認
+    /// 特殊効果の発動時間外において、Alpha/Betaが絡む場合は常に引き分けになることを確認
     /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetAlphaBetaDrawTestCases))]
     public void Judge_WithAlphaBeta_ReturnsAlwaysDraw(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
-      // Arrange
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString());
       var turnContext = new TurnContext(turnCount: 1);
 
-      // Act
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
-      // Assert
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Alpha/Beta should always result in draw: {playerHand} vs {opponentHand}");
+                  $"Alpha/Beta should always result in draw: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
     /// <summary>
     /// 偶数ターンでの特別な三角形同士の特殊相性テスト
     /// 偶数ターンで特別な三角形（チョキ・1・3）同士の場合、通常とは逆の結果になることを確認
     /// </summary>
-    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetEvenTurnSpecialTriangleTestCases))]
-    public void Judge_EvenTurnSpecialTriangle_ReturnsReversedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
+    public void Judge_EvenTurnSpecialTriangle_ReturnsReversedResult(HandType playerHand, HandType opponentHand, bool isWinExpected)
     {
-      // Arrange
+      var expectedResult = isWinExpected ? JudgeResultType.Lose : JudgeResultType.Win;
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString());
       var turnContext = new TurnContext(turnCount: 2); // Even turn
 
-      // Act
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
-      // Assert
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Even turn special triangle logic: {playerHand} vs {opponentHand}");
+                  $"Even turn special triangle logic: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
     // 奇数ターンでは通常ルールが適用されることをテスト
-    [TestCaseSource(nameof(GetOddTurnNormalRuleTestCases))]
-    public void Judge_OddTurn_UsesNormalRules(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
+    public void Judge_OddTurn_UsesNormalRules(HandType playerHand, HandType opponentHand, bool isWinExpected)
     {
-      // Arrange
+      var expectedResult = isWinExpected ? JudgeResultType.Win : JudgeResultType.Lose;
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString());
       var turnContext = new TurnContext(turnCount: 1); // Odd turn
 
-      // Act
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
-      // Assert
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Odd turn should use normal rules: {playerHand} vs {opponentHand}");
+                  $"Odd turn should use normal rules: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
     // Alphaのバリデーションテスト
@@ -80,8 +72,10 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.False);
-      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.AlphaRepeat));
+      Assert.That(result.IsValid, Is.False, 
+                  "Alpha hand should not be valid when Alpha is active.");
+      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.AlphaRepeat), 
+                  "Alpha hand should result in AlphaRepeat violation.");
     }
 
     // Betaのバリデーションテスト
@@ -93,8 +87,10 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.False);
-      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.BetaRepeat));
+      Assert.That(result.IsValid, Is.False,
+                  "Beta hand should not be valid when Beta is active.");
+      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.BetaRepeat),
+                  "Beta hand should result in BetaRepeat violation.");
     }
 
     // 封印された手のバリデーションテスト
@@ -106,8 +102,10 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.False);
-      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.SealedHandUsed));
+      Assert.That(result.IsValid, Is.False, 
+                  "Sealed hand should not be valid when the hand is sealed.");
+      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.SealedHandUsed),
+                  "Sealed hand should result in SealedHandUsed violation.");
     }
 
     // タイムアウトのバリデーションテスト
@@ -119,8 +117,10 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.False);
-      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.Timeout));
+      Assert.That(result.IsValid, Is.False,
+                  "Timeout hand should not be valid.");
+      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.Timeout),
+                  "Timeout hand should result in Timeout violation.");
     }
 
     // 正常な手のバリデーションテスト
@@ -132,8 +132,10 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.True);
-      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.None));
+      Assert.That(result.IsValid, Is.True,
+                  "Valid hand should be accepted.");
+      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.None),
+                  "Valid hand should not result in any violation.");
     }
 
     // Alphaバリデーション違反による敗北テスト
@@ -146,8 +148,10 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Violation));
-      Assert.That(result.PlayerViolationType, Is.EqualTo(ViolationType.AlphaRepeat));
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Violation),
+                  $"Alpha violation should result in violation. Player: {player.Type} vs Opponent: {opponent.Type}, expected {JudgeResultType.Violation}, got {result.Type}");
+      Assert.That(result.PlayerViolationType, Is.EqualTo(ViolationType.AlphaRepeat),
+                  "Alpha violation should set AlphaRepeat as player violation type.");
     }
 
     // 双方バリデーション違反による双方違反テスト
@@ -160,13 +164,16 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.DoubleViolation));
-      Assert.That(result.PlayerViolationType, Is.EqualTo(ViolationType.AlphaRepeat));
-      Assert.That(result.OpponentViolationType, Is.EqualTo(ViolationType.BetaRepeat));
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.DoubleViolation),
+                  $"Both players violating rules should result in double violation. Player: {player.Type} vs Opponent: {opponent.Type}, expected {JudgeResultType.DoubleViolation}, got {result.Type}");
+      Assert.That(result.PlayerViolationType, Is.EqualTo(ViolationType.AlphaRepeat),
+                  "Player should have AlphaRepeat violation type.");
+      Assert.That(result.OpponentViolationType, Is.EqualTo(ViolationType.BetaRepeat),
+                  "Opponent should have BetaRepeat violation type.");
     }
 
     // 通常のじゃんけんルール（RuleSetHelperに委譲）
-    [TestCaseSource(nameof(GetNormalJudgeTestCases))]
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_NormalRules_ReturnsExpectedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
       var player = new Hand(playerHand, playerHand.ToString());
@@ -177,41 +184,6 @@ namespace JJJ.Tests.Infrastructure
 
       Assert.That(result.Type, Is.EqualTo(expectedResult),
                   $"Normal rules: {playerHand} vs {opponentHand}");
-    }
-
-    // ローカルテストデータ生成メソッド
-    private static IEnumerable<TestCaseData> GetOddTurnNormalRuleTestCases()
-    {
-      var testCases = new[]
-      {
-        (HandType.One, HandType.Three, JudgeResultType.Lose),
-        (HandType.Three, HandType.One, JudgeResultType.Win)
-      };
-
-      foreach (var (player, opponent, expected) in testCases)
-      {
-        yield return new TestCaseData(player, opponent, expected)
-          .SetName($"OddTurn_{player}_vs_{opponent}_{expected}");
-      }
-    }
-
-    private static IEnumerable<TestCaseData> GetNormalJudgeTestCases()
-    {
-      var regularHandTypes = new[]
-      {
-        HandType.Rock, HandType.Scissors, HandType.Paper,
-        HandType.One, HandType.Two, HandType.Four // Three除く（特別な三角形のため）
-      };
-
-      foreach (var playerHand in regularHandTypes)
-      {
-        foreach (var opponentHand in regularHandTypes)
-        {
-          var expectedResult = TestDataHelper.DetermineExpectedResult(playerHand, opponentHand);
-          yield return new TestCaseData(playerHand, opponentHand, expectedResult)
-            .SetName($"{playerHand}_vs_{opponentHand}_ExpectedResult_{expectedResult}");
-        }
-      }
     }
   }
 }
