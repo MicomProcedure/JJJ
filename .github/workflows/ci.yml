@@ -95,7 +95,7 @@ jobs:
             echo "No solution file found. Exiting."
             exit 1
           fi
-          if [ -z "$TARGET_PATH" ] || [ ! -d "$TARGET_PATH"]; then
+          if [ -z "$TARGET_PATH" ] || [ ! -d "$TARGET_PATH" ]; then
             echo "No target path specified. Exiting."
             exit 1
           fi
