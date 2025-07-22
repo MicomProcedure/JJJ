@@ -1,12 +1,11 @@
 #if UNITY_EDITOR || UNITY_INCLUDE_TESTS
+using JJJ.Infrastructure;
+using JJJ.Core.Entities;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 namespace JJJ.Tests.Infrastructure
 {
-  using JJJ.Infrastructure;
-  using JJJ.Core.Entities;
-  using NUnit.Framework;
-  using System.Collections.Generic;
-  using System.Linq;
-
   /// <summary>
   /// テストデータ生成のヘルパークラス
   /// 各テストクラス間での重複コードを削減
@@ -49,11 +48,9 @@ namespace JJJ.Tests.Infrastructure
     }
 
     /// <summary>
-    /// 通常ルールでの勝利パターンを生成
+    /// 勝利パターンの手の組み合わせを定義
     /// </summary>
-    public static IEnumerable<TestCaseData> GetWinPatternTestCases()
-    {
-      var winPatterns = new[]
+    public static readonly IEnumerable<(HandType player, HandType opponent)> WinPatterns = new[] 
       {
         (HandType.Rock, HandType.Scissors), (HandType.Rock, HandType.Three),
         (HandType.Scissors, HandType.Paper), (HandType.Scissors, HandType.Three),
@@ -63,8 +60,27 @@ namespace JJJ.Tests.Infrastructure
         (HandType.Three, HandType.One), (HandType.Three, HandType.Two),
         (HandType.Three, HandType.Four), (HandType.Four, HandType.One)
       };
+    
+    /// <summary>
+    /// 敗北パターンの手の組み合わせを定義
+    /// </summary>
+    public static readonly IEnumerable<(HandType player, HandType opponent)> LosePatterns =
+      WinPatterns.Select(p => (p.opponent, p.player));
+      
+    /// <summary>
+    /// 引き分けパターンの手の組み合わせを定義
+    /// 全ての手の組み合わせから勝利パターンと敗北パターンを除外したもの
+    /// </summary>
+    public static readonly IEnumerable<(HandType player, HandType opponent)> DrawPatterns =
+      GetAllHandCombinations(RegularHandTypes)
+        .Where(combo => !WinPatterns.Contains(combo) && !LosePatterns.Contains(combo));
 
-      foreach (var (player, opponent) in winPatterns)
+    /// <summary>
+    /// 通常ルールでの勝利パターンを生成
+    /// </summary>
+    public static IEnumerable<TestCaseData> GetWinPatternTestCases()
+    {
+      foreach (var (player, opponent) in WinPatterns)
       {
         yield return new TestCaseData(player, opponent, JudgeResultType.Win)
           .SetName($"{player}_vs_{opponent}_Win");
@@ -76,12 +92,10 @@ namespace JJJ.Tests.Infrastructure
     /// </summary>
     public static IEnumerable<TestCaseData> GetDrawPatternTestCases()
     {
-      var handTypes = RegularHandTypes;
-
-      foreach (var handType in handTypes)
+      foreach (var (player, opponent) in DrawPatterns)
       {
-        yield return new TestCaseData(handType, handType, JudgeResultType.Draw)
-          .SetName($"{handType}_vs_{handType}_Draw");
+        yield return new TestCaseData(player, opponent, JudgeResultType.Draw)
+          .SetName($"{player}_vs_{opponent}_Draw");
       }
     }
 
@@ -90,12 +104,7 @@ namespace JJJ.Tests.Infrastructure
     /// </summary>
     public static IEnumerable<TestCaseData> GetLosePatternTestCases()
     {
-      var losePatterns = new[]
-      {
-        (HandType.Scissors, HandType.One), (HandType.Rock, HandType.Two), (HandType.Paper, HandType.Scissors)
-      };
-
-      foreach (var (player, opponent) in losePatterns)
+      foreach (var (player, opponent) in LosePatterns)
       {
         yield return new TestCaseData(player, opponent, JudgeResultType.Lose)
           .SetName($"{player}_vs_{opponent}_Lose");
@@ -104,6 +113,7 @@ namespace JJJ.Tests.Infrastructure
 
     /// <summary>
     /// 通常ルールでの全ての判定パターンを生成
+    /// Alpha, Betaを除く
     /// </summary>
     public static IEnumerable<TestCaseData> GetNormalJudgeTestCases()
     {
@@ -118,11 +128,12 @@ namespace JJJ.Tests.Infrastructure
     /// <summary>
     /// タイムアウトテストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetTimeoutTestCases(HandType[] handTypes = null, string prefix = "Timeout")
+    public static IEnumerable<TestCaseData> GetTimeoutTestCases(HandType[] handTypes = null)
     {
       return GetAllHandCombinations(handTypes ?? RegularHandTypes)
-        .Select(combo => new TestCaseData(combo.player, combo.opponent)
-          .SetName($"{prefix}_{combo.player}_vs_{combo.opponent}"));
+        .Select(combo =>
+          new TestCaseData(combo.player, combo.opponent).SetName($"Timeout_{combo.player}_vs_{combo.opponent}")
+        );
     }
 
     /// <summary>
