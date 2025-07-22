@@ -7,20 +7,8 @@ namespace JJJ.Tests.Infrastructure
 
   public class RuleSetHelperTest
   {
-    [TestCase(HandType.Rock, HandType.Scissors, JudgeResultType.Win)]
-    [TestCase(HandType.Rock, HandType.Three, JudgeResultType.Win)]
-    [TestCase(HandType.Scissors, HandType.Paper, JudgeResultType.Win)]
-    [TestCase(HandType.Scissors, HandType.Three, JudgeResultType.Win)]
-    [TestCase(HandType.Paper, HandType.Rock, JudgeResultType.Win)]
-    [TestCase(HandType.Paper, HandType.Three, JudgeResultType.Win)]
-    [TestCase(HandType.One, HandType.Scissors, JudgeResultType.Win)]
-    [TestCase(HandType.One, HandType.Two, JudgeResultType.Win)]
-    [TestCase(HandType.Two, HandType.Rock, JudgeResultType.Win)]
-    [TestCase(HandType.Two, HandType.Paper, JudgeResultType.Win)]
-    [TestCase(HandType.Three, HandType.One, JudgeResultType.Win)]
-    [TestCase(HandType.Three, HandType.Two, JudgeResultType.Win)]
-    [TestCase(HandType.Three, HandType.Four, JudgeResultType.Win)]
-    [TestCase(HandType.Four, HandType.One, JudgeResultType.Win)]
+    // 勝利パターンのテスト
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetWinPatternTestCases))]
     public void DetermineResult_WinPatterns_ReturnsWin(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
       var player = new Hand(playerHand, playerHand.ToString());
@@ -32,26 +20,21 @@ namespace JJJ.Tests.Infrastructure
                   $"Player: {playerHand} vs Opponent: {opponentHand}");
     }
 
-    [TestCase(HandType.Rock, HandType.Rock)]
-    [TestCase(HandType.Scissors, HandType.Scissors)]
-    [TestCase(HandType.Paper, HandType.Paper)]
-    [TestCase(HandType.One, HandType.One)]
-    [TestCase(HandType.Two, HandType.Two)]
-    [TestCase(HandType.Three, HandType.Three)]
-    [TestCase(HandType.Four, HandType.Four)]
-    public void DetermineResult_SameHands_ReturnsDraw(HandType handType, HandType opponentHandType)
+    // 引き分けパターンのテスト
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetDrawPatternTestCases))]
+    public void DetermineResult_SameHands_ReturnsDraw(HandType handType, JudgeResultType expectedResult)
     {
       var player = new Hand(handType, handType.ToString());
-      var opponent = new Hand(opponentHandType, opponentHandType.ToString());
+      var opponent = new Hand(handType, handType.ToString());
 
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw));
+      Assert.That(result.Type, Is.EqualTo(expectedResult),
+                  $"Same hands should result in draw. {handType} vs {handType}");
     }
 
-    [TestCase(HandType.Scissors, HandType.One, JudgeResultType.Lose)]
-    [TestCase(HandType.Rock, HandType.Two, JudgeResultType.Lose)]
-    [TestCase(HandType.Paper, HandType.Scissors, JudgeResultType.Lose)]
+    // 敗北パターンのテスト
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetLosePatternTestCases))]
     public void DetermineResult_LosePatterns_ReturnsLose(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
       var player = new Hand(playerHand, playerHand.ToString());
@@ -63,13 +46,8 @@ namespace JJJ.Tests.Infrastructure
                   $"Player: {playerHand} vs Opponent: {opponentHand}");
     }
 
-    [TestCase(HandType.Scissors, true)]
-    [TestCase(HandType.One, true)]
-    [TestCase(HandType.Three, true)]
-    [TestCase(HandType.Rock, false)]
-    [TestCase(HandType.Paper, false)]
-    [TestCase(HandType.Two, false)]
-    [TestCase(HandType.Four, false)]
+    // 特別な三角形の判定テスト
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
     public void IsSpecialTriangle_ValidatesCorrectly(HandType handType, bool expectedResult)
     {
       var hand = new Hand(handType, handType.ToString());
