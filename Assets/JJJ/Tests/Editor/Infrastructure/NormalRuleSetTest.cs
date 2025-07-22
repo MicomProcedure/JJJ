@@ -5,122 +5,111 @@ namespace JJJ.Tests.Infrastructure
   using JJJ.Core.Entities;
   using NUnit.Framework;
   using System.Collections.Generic;
-  using System.Linq;
 
+  /// <summary>
+  /// NormalRuleSetクラスのテスト
+  /// 通常ルールでのじゃんけん判定とタイムアウト処理をテスト
+  /// </summary>
   public class NormalRuleSetTest
   {
     private readonly NormalRuleSet _normalRuleSet = new();
-    private readonly TurnContext _turnContext = new();
 
-    // 通常の判定テスト（タイムアウトなし）
-    [TestCaseSource(nameof(GetNormalJudgeTestCases))]
-    public void NormalRuleSet_Judge_WithoutTimeout(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
+    /// <summary>
+    /// 通常の判定テスト（タイムアウトなし）
+    /// 各手の組み合わせでの勝敗判定が正しく行われることを確認
+    /// </summary>
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
+    public void Judge_NormalCombinations_ReturnsExpectedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
+      // Arrange
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var turnContext = new TurnContext();
 
-      var result = _normalRuleSet.Judge(player, opponent, _turnContext);
+      // Act
+      var result = _normalRuleSet.Judge(player, opponent, turnContext);
 
+      // Assert
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Player: {playerHand} vs Opponent: {opponentHand}");
+                  $"Result differs from expected. Player: {playerHand} vs Opponent: {opponentHand}");
     }
 
-    // プレイヤータイムアウトテスト
-    [TestCaseSource(nameof(GetPlayerTimeoutTestCases))]
-    public void NormalRuleSet_Judge_WithPlayerTimeout(HandType playerHand, HandType opponentHand)
+    /// <summary>
+    /// プレイヤータイムアウトテスト
+    /// プレイヤーがタイムアウトした場合に反則と判定されることを確認
+    /// </summary>
+    [TestCaseSource(nameof(GetTimeoutTestCases))]
+    public void Judge_WhenPlayerTimesOut_ReturnsViolation(HandType playerHand, HandType opponentHand)
     {
+      // Arrange
       var player = new Hand(playerHand, playerHand.ToString(), isTimeout: true);
       var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var turnContext = new TurnContext();
 
-      var result = _normalRuleSet.Judge(player, opponent, _turnContext);
+      // Act
+      var result = _normalRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Violation));
+      // Assert
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Violation),
+                  $"Player timeout should result in violation. Player: {playerHand}(timeout) vs Opponent: {opponentHand}");
     }
 
-    // 相手タイムアウトテスト
-    [TestCaseSource(nameof(GetOpponentTimeoutTestCases))]
-    public void NormalRuleSet_Judge_WithOpponentTimeout(HandType playerHand, HandType opponentHand)
+    /// <summary>
+    /// 相手タイムアウトテスト
+    /// 相手がタイムアウトした場合にプレイヤーが勝利と判定されることを確認
+    /// </summary>
+    [TestCaseSource(nameof(GetTimeoutTestCases))]
+    public void Judge_WhenOpponentTimesOut_ReturnsWin(HandType playerHand, HandType opponentHand)
     {
+      // Arrange
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString(), isTimeout: true);
+      var turnContext = new TurnContext();
 
-      var result = _normalRuleSet.Judge(player, opponent, _turnContext);
+      // Act
+      var result = _normalRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win));
+      // Assert
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win),
+                  $"Opponent timeout should result in player win. Player: {playerHand} vs Opponent: {opponentHand}(timeout)");
     }
 
-    // 双方タイムアウトテスト
-    [TestCaseSource(nameof(GetDoubleTimeoutTestCases))]
-    public void NormalRuleSet_Judge_WithDoubleTimeout(HandType playerHand, HandType opponentHand)
+    /// <summary>
+    /// 双方タイムアウトテスト
+    /// 両者がタイムアウトした場合に両者反則と判定されることを確認
+    /// </summary>
+    [TestCaseSource(nameof(GetTimeoutTestCases))]
+    public void Judge_WhenBothTimeout_ReturnsDoubleViolation(HandType playerHand, HandType opponentHand)
     {
+      // Arrange
       var player = new Hand(playerHand, playerHand.ToString(), isTimeout: true);
       var opponent = new Hand(opponentHand, opponentHand.ToString(), isTimeout: true);
+      var turnContext = new TurnContext();
 
-      var result = _normalRuleSet.Judge(player, opponent, _turnContext);
+      // Act
+      var result = _normalRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.DoubleViolation));
+      // Assert
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.DoubleViolation),
+                  $"Both timeout should result in double violation. Player: {playerHand}(timeout) vs Opponent: {opponentHand}(timeout)");
     }
 
-    // テストデータ生成メソッド
-    private static IEnumerable<TestCaseData> GetNormalJudgeTestCases()
+    /// <summary>
+    /// タイムアウトテスト用のテストケースを生成
+    /// 通常の手同士の全組み合わせを提供
+    /// </summary>
+    private static IEnumerable<TestCaseData> GetTimeoutTestCases()
     {
-      var allHandTypes = GetAllHandTypes();
+      var handTypes = TestDataHelper.RegularHandTypes;
 
-      foreach (var playerHand in allHandTypes)
+      foreach (var playerHand in handTypes)
       {
-        foreach (var opponentHand in allHandTypes)
+        foreach (var opponentHand in handTypes)
         {
-          var expectedResult = DetermineExpectedResult(playerHand, opponentHand);
-          yield return new TestCaseData(playerHand, opponentHand, expectedResult)
-            .SetName($"{playerHand}_vs_{opponentHand}_ExpectedResult_{expectedResult}");
+          yield return new TestCaseData(playerHand, opponentHand)
+            .SetName($"{playerHand}_vs_{opponentHand}");
         }
       }
-    }
-
-    private static IEnumerable<TestCaseData> GetPlayerTimeoutTestCases()
-    {
-      return GetAllHandCombinations()
-        .Select(combo => new TestCaseData(combo.player, combo.opponent)
-          .SetName($"PlayerTimeout_{combo.player}_vs_{combo.opponent}"));
-    }
-
-    private static IEnumerable<TestCaseData> GetOpponentTimeoutTestCases()
-    {
-      return GetAllHandCombinations()
-        .Select(combo => new TestCaseData(combo.player, combo.opponent)
-          .SetName($"OpponentTimeout_{combo.player}_vs_{combo.opponent}"));
-    }
-
-    private static IEnumerable<TestCaseData> GetDoubleTimeoutTestCases()
-    {
-      return GetAllHandCombinations()
-        .Select(combo => new TestCaseData(combo.player, combo.opponent)
-          .SetName($"DoubleTimeout_{combo.player}_vs_{combo.opponent}"));
-    }
-
-    // ヘルパーメソッド
-    private static HandType[] GetAllHandTypes()
-    {
-      return new[]
-      {
-        HandType.Rock, HandType.Scissors, HandType.Paper,
-        HandType.One, HandType.Two, HandType.Three, HandType.Four
-      };
-    }
-
-    private static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations()
-    {
-      var allHandTypes = GetAllHandTypes();
-      return allHandTypes.SelectMany(p => allHandTypes.Select(o => (p, o)));
-    }
-
-    private static JudgeResultType DetermineExpectedResult(HandType playerHand, HandType opponentHand)
-    {
-      // [recommend] RuleSetHelperTestで基本ロジックをテストしているため、ここでは依存して重複を避ける
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
-
-      return RuleSetHelper.DetermineResult(player, opponent).Type;
     }
   }
 }
