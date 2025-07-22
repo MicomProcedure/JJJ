@@ -80,7 +80,7 @@ namespace JJJ.Tests.Infrastructure
 
       foreach (var handType in handTypes)
       {
-        yield return new TestCaseData(handType, JudgeResultType.Draw)
+        yield return new TestCaseData(handType, handType, JudgeResultType.Draw)
           .SetName($"{handType}_vs_{handType}_Draw");
       }
     }
