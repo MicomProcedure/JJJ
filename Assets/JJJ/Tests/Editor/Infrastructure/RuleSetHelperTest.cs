@@ -25,12 +25,12 @@ namespace JJJ.Tests.Infrastructure
     public void DetermineResult_SameHands_ReturnsDraw(HandType handType, HandType opponentHandType, JudgeResultType expectedResult)
     {
       var player = new Hand(handType, handType.ToString());
-      var opponent = new Hand(handType, handType.ToString());
+      var opponent = new Hand(opponentHandType, opponentHandType.ToString());
 
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Same hands should result in draw. {handType} vs {handType}, expected {expectedResult}, got {result.Type}");
+                  $"Same hands should result in draw. {handType} vs {opponentHandType}, expected {expectedResult}, got {result.Type}");
     }
 
     // 敗北パターンのテスト
