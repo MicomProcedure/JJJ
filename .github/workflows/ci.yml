@@ -17,6 +17,9 @@ on:
     branches:
       - develop
       - main
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
 
 permissions: {}
 
