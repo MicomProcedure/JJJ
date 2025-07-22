@@ -12,44 +12,61 @@ namespace JJJ.Tests.Infrastructure
   /// </summary>
   public static class TestDataHelper
   {
-    // 基本的な手の種類
+    /// <summary>
+    /// 基本的な手の種類
+    /// グー・チョキ・パーの3種類
+    /// </summary>
     public static readonly HandType[] BasicHandTypes = 
     {
       HandType.Rock, HandType.Scissors, HandType.Paper
     };
 
-    // 数字の手の種類
+    /// <summary>
+    /// 数字の手の種類
+    /// 1・2・3・4の4種類
+    /// </summary>
     public static readonly HandType[] NumberHandTypes = 
     {
       HandType.One, HandType.Two, HandType.Three, HandType.Four
     };
 
-    // 特殊な手の種類
+    /// <summary>
+    /// 特殊な手の種類
+    /// Alpha/Betaの2種類
+    /// </summary>
     public static readonly HandType[] SpecialHandTypes = 
     {
       HandType.Alpha, HandType.Beta
     };
 
-    // 勝敗がターンの偶奇で変わる特殊な手の種類
+    /// <summary>
+    /// 勝敗がターンの偶奇で変わる特殊な手の種類
+    /// 特別な三角形（チョキ・1・3）の3種類
+    /// </summary>
     public static readonly HandType[] SpecialTriangleHandTypes = 
     {
       HandType.Scissors, HandType.One, HandType.Three
     };
 
-    // 全ての手の種類
+    /// <summary>
+    /// 全ての手の種類
+    /// 基本的な手、数字の手、特殊な手を全て含む
+    /// </summary>
     public static readonly HandType[] AllHandTypes =
       BasicHandTypes.Concat(NumberHandTypes).Concat(SpecialHandTypes).ToArray();
 
-    // 通常のじゃんけんで使用する手の種類（Alpha/Beta除く）
+    /// <summary>
+    /// Normalのじゃんけんで使用する手の種類（Alpha/Beta除く）
+    /// </summary>
     public static readonly HandType[] RegularHandTypes = 
       BasicHandTypes.Concat(NumberHandTypes).ToArray();
 
     /// <summary>
     /// 全ての手の組み合わせを生成
     /// </summary>
-    public static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations(HandType[] handTypes = null)
+    public static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations(HandType[] handTypes = default)
     {
-      handTypes ??= AllHandTypes;
+      handTypes = handTypes ?? AllHandTypes;
       return handTypes.SelectMany(p => handTypes.Select(o => (p, o)));
     }
 
