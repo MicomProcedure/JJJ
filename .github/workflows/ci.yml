@@ -84,11 +84,10 @@ jobs:
           retry_command() {
             local max_attempts="${RETRY_COUNT:-5}"
             local attempt=1
-            local cmd="$1"
             
             while [ $attempt -le $max_attempts ]; do
-              echo "Attempt $attempt/$max_attempts: $cmd"
-              if eval "$cmd"; then
+              echo "Attempt $attempt/$max_attempts: $*"
+              if "$@"; then
                 echo "Command succeeded on attempt $attempt"
                 return 0
               else
