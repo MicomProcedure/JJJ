@@ -22,7 +22,7 @@ namespace JJJ.Tests.Infrastructure
 
     // 引き分けパターンのテスト
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetDrawPatternTestCases))]
-    public void DetermineResult_SameHands_ReturnsDraw(HandType handType, JudgeResultType expectedResult)
+    public void DetermineResult_SameHands_ReturnsDraw(HandType handType, HandType opponentHandType, JudgeResultType expectedResult)
     {
       var player = new Hand(handType, handType.ToString());
       var opponent = new Hand(handType, handType.ToString());
