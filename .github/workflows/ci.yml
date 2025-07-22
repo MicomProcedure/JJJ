@@ -97,6 +97,7 @@ jobs:
                   return 1
                 fi
                 sleep $((attempt * 5))
+                attempt=$((attempt + 1))
               fi
             done
           }
