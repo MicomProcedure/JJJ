@@ -17,7 +17,7 @@ namespace JJJ.Tests.Infrastructure
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Player: {playerHand} vs Opponent: {opponentHand}");
+                  $"Player: {playerHand} vs Opponent: {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
     // 引き分けパターンのテスト
@@ -30,7 +30,7 @@ namespace JJJ.Tests.Infrastructure
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Same hands should result in draw. {handType} vs {handType}");
+                  $"Same hands should result in draw. {handType} vs {handType}, expected {expectedResult}, got {result.Type}");
     }
 
     // 敗北パターンのテスト
@@ -43,18 +43,19 @@ namespace JJJ.Tests.Infrastructure
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
       Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Player: {playerHand} vs Opponent: {opponentHand}");
+                  $"Player: {playerHand} vs Opponent: {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
     // 特別な三角形の判定テスト
-    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetIsSpecialTriangleTestCases))]
     public void IsSpecialTriangle_ValidatesCorrectly(HandType handType, bool expectedResult)
     {
       var hand = new Hand(handType, handType.ToString());
 
       bool result = RuleSetHelper.IsSpecialTriangle(hand);
 
-      Assert.That(result, Is.EqualTo(expectedResult));
+      Assert.That(result, Is.EqualTo(expectedResult),
+              $"Hand {handType} should {(expectedResult ? "" : "not ")}be a special triangle.");
     }
   }
 }
