@@ -30,8 +30,14 @@ namespace JJJ.Tests.Infrastructure
       HandType.Alpha, HandType.Beta
     };
 
+    // 勝敗がターンの偶奇で変わる特殊な手の種類
+    public static readonly HandType[] SpecialTriangleHandTypes = 
+    {
+      HandType.Scissors, HandType.One, HandType.Three
+    };
+
     // 全ての手の種類
-    public static readonly HandType[] AllHandTypes = 
+    public static readonly HandType[] AllHandTypes =
       BasicHandTypes.Concat(NumberHandTypes).Concat(SpecialHandTypes).ToArray();
 
     // 通常のじゃんけんで使用する手の種類（Alpha/Beta除く）
@@ -74,6 +80,14 @@ namespace JJJ.Tests.Infrastructure
     public static readonly IEnumerable<(HandType player, HandType opponent)> DrawPatterns =
       GetAllHandCombinations(RegularHandTypes)
         .Where(combo => !WinPatterns.Contains(combo) && !LosePatterns.Contains(combo));
+
+    /// <summary>
+    /// 勝敗がターンの偶奇で変わる特殊な三角形の手の組み合わせを定義
+    /// </summary>
+    public static readonly IEnumerable<(HandType player, HandType opponent)> SpecialTrianglePatterns =
+      GetAllHandCombinations()
+        .Where(combo => SpecialTriangleHandTypes.Contains(combo.player) && SpecialTriangleHandTypes.Contains(combo.opponent))
+        .Where(combo => combo.player != combo.opponent); // 同じ手は除外
 
     /// <summary>
     /// 通常ルールでの勝利パターンを生成
@@ -149,13 +163,14 @@ namespace JJJ.Tests.Infrastructure
     /// <summary>
     /// 特別な三角形テストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetSpecialTriangleTestCases()
+    public static IEnumerable<TestCaseData> GetIsSpecialTriangleTestCases()
     {
-      var testCases = new[]
-      {
-        (HandType.Scissors, true), (HandType.One, true), (HandType.Three, true),
-        (HandType.Rock, false), (HandType.Paper, false), (HandType.Two, false), (HandType.Four, false)
-      };
+      var testCases = AllHandTypes.Where(ht => SpecialTriangleHandTypes.Contains(ht))
+        .Select(ht => (ht, true))
+        .Concat(
+          AllHandTypes.Where(ht => !SpecialTriangleHandTypes.Contains(ht))
+            .Select(ht => (ht, false))
+        );
 
       foreach (var (handType, expected) in testCases)
       {
@@ -166,15 +181,13 @@ namespace JJJ.Tests.Infrastructure
 
     /// <summary>
     /// Alpha/Betaの引き分けテストケースを生成
+    /// Alpha/Betaが絡む場合は常に引き分けになることを確認
     /// </summary>
     public static IEnumerable<TestCaseData> GetAlphaBetaDrawTestCases()
     {
-      var testCases = new[]
-      {
-        (HandType.Alpha, HandType.Rock), (HandType.Rock, HandType.Alpha),
-        (HandType.Beta, HandType.Scissors), (HandType.Paper, HandType.Beta),
-        (HandType.Alpha, HandType.Beta)
-      };
+      var testCases = GetAllHandCombinations()
+        .Where(combo => SpecialHandTypes.Contains(combo.player) || SpecialHandTypes.Contains(combo.opponent))
+        .Where(combo => combo.player != combo.opponent); // 同じ手は除外
 
       foreach (var (player, opponent) in testCases)
       {
@@ -186,17 +199,11 @@ namespace JJJ.Tests.Infrastructure
     /// <summary>
     /// 偶数ターン特殊三角形テストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetEvenTurnSpecialTriangleTestCases()
+    public static IEnumerable<TestCaseData> GetSpecialTriangleTestCases()
     {
-      var testCases = new[]
-      {
-        (HandType.One, HandType.Three, JudgeResultType.Win),
-        (HandType.Three, HandType.Scissors, JudgeResultType.Win),
-        (HandType.Scissors, HandType.One, JudgeResultType.Win),
-        (HandType.Three, HandType.One, JudgeResultType.Lose),
-        (HandType.Scissors, HandType.Three, JudgeResultType.Lose),
-        (HandType.One, HandType.Scissors, JudgeResultType.Lose)
-      };
+      var testCases = GetAllHandCombinations(SpecialTriangleHandTypes)
+        .Where(combo => combo.player != combo.opponent)
+        .Select(combo => (combo.player, combo.opponent, WinPatterns.Contains(combo)));
 
       foreach (var (player, opponent, expected) in testCases)
       {
