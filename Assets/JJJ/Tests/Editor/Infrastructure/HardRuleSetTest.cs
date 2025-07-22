@@ -159,7 +159,9 @@ namespace JJJ.Tests.Infrastructure
     {
       var player = new Hand(HandType.Alpha, "Alpha");
       var opponent = new Hand(HandType.Beta, "Beta");
-      var turnContext = new TurnContext().ActivateAlpha(2).ActivateBeta(1, HandType.Rock);
+      var turnContext = new TurnContext()
+        .ActivateAlpha(2)                 // Alphaを2ターン有効化
+        .ActivateBeta(1, HandType.Rock);  // BetaをRockに対して1ターン有効化
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
