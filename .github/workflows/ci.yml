@@ -102,8 +102,8 @@ jobs:
             done
           }
 
-          retry_command "unity-editor -nographics -quit -username \"$UNITY_EMAIL\" -password \"$UNITY_PASSWORD\" -serial \"$UNITY_SERIAL\" -batchmode -logFile /dev/stdout"
-          retry_command "unity-editor -nographics -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit -batchmode -logFile /dev/stdout"
+          retry_command unity-editor -nographics -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL" -batchmode -logFile /dev/stdout
+          retry_command unity-editor -nographics -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit -batchmode -logFile /dev/stdout
 
       - name: Setup .NET
         run: |
