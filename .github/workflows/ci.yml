@@ -12,11 +12,19 @@ on:
         description: 'Pull Request Number'
         required: true
         type: number
+      retry_count:
+        description: "Number of retries for Unity commands"
+        required: false
+        default: 5
+        type: number
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
       - develop
       - main
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
 
 permissions: {}
 
@@ -40,9 +48,10 @@ jobs:
       issues: read
       checks: write
     env:
-      LINT_FORMAT: true
+      LINT_FORMAT: ${{ inputs.lint_format || true }}
       TARGET_PATH: ./Assets/JJJ/
       PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
+      RETRY_COUNT: ${{ inputs.retry_count || 5 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,9 +81,30 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         run: |
-          unity-editor -nographics -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL" -batchmode -logFile /dev/stdout > /dev/null
-          unity-editor -nographics -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit -batchmode -logFile /dev/stdout > /dev/null
-          
+          retry_command() {
+            local max_attempts="${RETRY_COUNT:-5}"
+            local attempt=1
+            
+            while [ $attempt -le $max_attempts ]; do
+              echo "Attempt $attempt/$max_attempts: $*"
+              if "$@"; then
+                echo "Command succeeded on attempt $attempt"
+                return 0
+              else
+                echo "Command failed on attempt $attempt"
+                if [ $attempt -eq $max_attempts ]; then
+                  echo "Command failed after $max_attempts attempts"
+                  return 1
+                fi
+                sleep $((attempt * 5))
+                attempt=$((attempt + 1))
+              fi
+            done
+          }
+
+          retry_command unity-editor -nographics -quit -username "$UNITY_EMAIL" -password "$UNITY_PASSWORD" -serial "$UNITY_SERIAL" -batchmode -logFile /dev/stdout
+          retry_command unity-editor -nographics -projectPath . -executeMethod Packages.Rider.Editor.RiderScriptEditor.SyncSolution -quit -batchmode -logFile /dev/stdout
+
       - name: Setup .NET
         run: |
           wget https://dot.net/v1/dotnet-install.sh -qO dotnet-install.sh
@@ -95,7 +125,7 @@ jobs:
             echo "No solution file found. Exiting."
             exit 1
           fi
-          if [ -z "$TARGET_PATH" ] || [ ! -d "$TARGET_PATH"]; then
+          if [ -z "$TARGET_PATH" ] || [ ! -d "$TARGET_PATH" ]; then
             echo "No target path specified. Exiting."
             exit 1
           fi
@@ -159,8 +189,8 @@ jobs:
       - name: Run Unity Tests
         id: unity-tests
         run: |
-          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform editmode -testResults ./test-results/TestResults_editmode.xml > /dev/null
-          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform playmode -testResults ./test-results/TestResults_playmode.xml > /dev/null
+          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform editmode -testResults ./test-results/TestResults_editmode.xml
+          unity-editor -nographics -logFile /dev/stdout -projectPath . -runTests -testPlatform playmode -testResults ./test-results/TestResults_playmode.xml
           echo "Unity tests completed."
           if [ -s ./test-results/TestResults_editmode.xml ] || [ -s ./test-results/TestResults_playmode.xml ]; then
             echo "Unity tests found issues."
