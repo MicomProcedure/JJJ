@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e521726f5902dc441a40b24b772282dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _remainJudgeTimeText: {fileID: 0}
+  _remainJudgeTimeText: {fileID: 8593081109531251458}
   _initialTime: 0
 --- !u!1 &601296776457993731
 GameObject:
