@@ -4,14 +4,9 @@ namespace JJJ.View
 {
   public class CurrentScorePresenter : MonoBehaviour
   {
-    [SerializeField] private TMPro.TextMeshProUGUI _currentScoreText;
+    [SerializeField] private readonly TMPro.TextMeshProUGUI _currentScoreText;
 
-    [SerializeField] private int _initialScore = 0;
-
-    private void Start()
-    {
-      SetCurrentScore(_initialScore);
-    }
+    [SerializeField] private readonly int _initialScore = 0;
 
     public void SetCurrentScore(int currentScore)
     {

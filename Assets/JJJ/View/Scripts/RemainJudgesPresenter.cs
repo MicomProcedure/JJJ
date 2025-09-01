@@ -4,14 +4,9 @@ namespace JJJ.View
 {
   public class RemainJudgeTimePresenter : MonoBehaviour
   {
-    [SerializeField] private TMPro.TextMeshProUGUI _remainJudgeTimeText;
+    [SerializeField] private readonly TMPro.TextMeshProUGUI _remainJudgeTimeText;
 
-    [SerializeField] private int _initialTime = 0;
-
-    private void Start()
-    {
-      SetRemainJudgeTime(_initialTime);
-    }
+    [SerializeField] private readonly int _initialTime = 0;
 
     public void SetRemainJudgeTime(int remainTime)
     {
