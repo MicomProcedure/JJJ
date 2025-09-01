@@ -6,8 +6,6 @@ namespace JJJ.View
   {
     [SerializeField] private readonly TMPro.TextMeshProUGUI _currentJudgesText;
 
-    [SerializeField] private readonly int _initialJudges = 0;
-
     public void SetCurrentJudges(int currentJudges)
     {
       _currentJudgesText.text = currentJudges.ToString();
