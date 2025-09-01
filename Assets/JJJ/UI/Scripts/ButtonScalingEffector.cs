@@ -4,23 +4,22 @@ using UnityEngine;
 
 namespace JJJ.UI
 {
-  [AddComponentMenu("JJJ/UI/CustomButton", 30)]
-  public class CustomButton : Button
+  [RequireComponent(typeof(Button))]
+  public class ButtonScalingEffector : MonoBehaviour
   {
     private Tweener _tweener = null;
     private Vector3 _originalScale;
 
-    protected override void Awake()
+    private void Awake()
     {
-      base.Awake();
       _originalScale = transform.localScale;
     }
 
-    private new void Start()
+    private void Start()
     {
-      base.Start();
+      if (!TryGetComponent<Button>(out var button)) return;
 
-      onClick.AddListener(() =>
+      button.onClick.AddListener(() =>
       {
         if (_tweener != null && _tweener.IsActive() && _tweener.IsPlaying())
         {
