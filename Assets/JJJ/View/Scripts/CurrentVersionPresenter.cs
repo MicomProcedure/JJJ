@@ -4,12 +4,7 @@ namespace JJJ.View
 {
   public class CurrentVersionPresenter : MonoBehaviour
   {
-    [SerializeField] private TMPro.TextMeshProUGUI _currentVersionText;
-
-    private void Start()
-    {
-      SetCurrentVersion("ver." + Application.version);
-    }
+    [SerializeField] private readonly TMPro.TextMeshProUGUI _currentVersionText;
 
     public void SetCurrentVersion(string currentVersion)
     {

@@ -4,14 +4,9 @@ namespace JJJ.View
 {
   public class CurrentJudgesPresenter : MonoBehaviour
   {
-    [SerializeField] private TMPro.TextMeshProUGUI _currentJudgesText;
+    [SerializeField] private readonly TMPro.TextMeshProUGUI _currentJudgesText;
 
-    [SerializeField] private int _initialJudges = 0;
-
-    private void Start()
-    {
-      SetCurrentJudges(_initialJudges);
-    }
+    [SerializeField] private readonly int _initialJudges = 0;
 
     public void SetCurrentJudges(int currentJudges)
     {
