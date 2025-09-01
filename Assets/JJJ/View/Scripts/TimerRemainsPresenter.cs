@@ -8,9 +8,6 @@ namespace JJJ.View
     [SerializeField] private readonly Image _progressCircle;
 
     [SerializeField] private readonly Image _timerHand;
-
-    [SerializeField] private readonly float _initialTime = 10f;
-
     [SerializeField] private readonly TMPro.TextMeshProUGUI _remainTimeText;
 
     public void SetTimerRemains(float remainTime, float totalTime)
