@@ -5,10 +5,20 @@ namespace JJJ.View
 {
   public class TimerRemainsPresenter : MonoBehaviour
   {
-    [SerializeField] private readonly Image _progressCircle;
+    [SerializeField] private Image _progressCircle;
 
-    [SerializeField] private readonly Image _timerHand;
-    [SerializeField] private readonly TMPro.TextMeshProUGUI _remainTimeText;
+    [SerializeField] private Image _timerHand;
+
+    [SerializeField] private float _initialTime = 10f;
+
+    [SerializeField] private TMPro.TextMeshProUGUI _remainTimeText;
+
+
+    private void Start()
+    {
+      SetTimerRemains(_initialTime, _initialTime);
+      _remainTimeText.text = Mathf.CeilToInt(_initialTime).ToString();
+    }
 
     public void SetTimerRemains(float remainTime, float totalTime)
     {
