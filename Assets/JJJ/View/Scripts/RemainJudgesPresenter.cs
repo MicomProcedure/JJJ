@@ -1,18 +1,21 @@
 using UnityEngine;
 
-public class RemainJudgeTimePresenter : MonoBehaviour
+namespace JJJ.View
 {
-  [SerializeField] private TMPro.TextMeshProUGUI _remainJudgeTimeText;
-
-  [SerializeField] private int _initialTime = 0;
-
-  private void Start()
+  public class RemainJudgeTimePresenter : MonoBehaviour
   {
-    SetRemainJudgeTime(_initialTime);
-  }
+    [SerializeField] private TMPro.TextMeshProUGUI _remainJudgeTimeText;
 
-  public void SetRemainJudgeTime(int remainTime)
-  {
-    _remainJudgeTimeText.text = remainTime.ToString();
+    [SerializeField] private int _initialTime = 0;
+
+    private void Start()
+    {
+      SetRemainJudgeTime(_initialTime);
+    }
+
+    public void SetRemainJudgeTime(int remainTime)
+    {
+      _remainJudgeTimeText.text = remainTime.ToString();
+    }
   }
 }

@@ -1,18 +1,21 @@
 using UnityEngine;
 
-public class CurrentJudgesPresenter : MonoBehaviour
+namespace JJJ.View
 {
-  [SerializeField] private TMPro.TextMeshProUGUI _currentJudgesText;
-
-  [SerializeField] private int _initialJudges = 0;
-
-  private void Start()
+  public class CurrentJudgesPresenter : MonoBehaviour
   {
-    SetCurrentJudges(_initialJudges);
-  }
+    [SerializeField] private TMPro.TextMeshProUGUI _currentJudgesText;
 
-  public void SetCurrentJudges(int currentJudges)
-  {
-    _currentJudgesText.text = currentJudges.ToString();
+    [SerializeField] private int _initialJudges = 0;
+
+    private void Start()
+    {
+      SetCurrentJudges(_initialJudges);
+    }
+
+    public void SetCurrentJudges(int currentJudges)
+    {
+      _currentJudgesText.text = currentJudges.ToString();
+    }
   }
 }

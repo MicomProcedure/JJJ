@@ -1,17 +1,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Image))]
-public class ButtonAlphaHitAdjuster : MonoBehaviour
+namespace JJJ.UI
 {
-  private void Awake()
+  [RequireComponent(typeof(Image))]
+  public class ButtonAlphaHitAdjuster : MonoBehaviour
   {
-    if (!TryGetComponent<Image>(out var img))
+    private void Awake()
     {
-      Debug.LogWarning("ButtonAlphaHitAdjuster: No Image component found on " + gameObject.name);
-      return;
-    }
+      if (!TryGetComponent<Image>(out var img))
+      {
+        Debug.LogWarning("ButtonAlphaHitAdjuster: No Image component found on " + gameObject.name);
+        return;
+      }
 
-    img.alphaHitTestMinimumThreshold = 0.1f;
+      img.alphaHitTestMinimumThreshold = 0.1f;
+    }
   }
 }

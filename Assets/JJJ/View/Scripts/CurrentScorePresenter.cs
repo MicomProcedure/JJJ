@@ -1,18 +1,21 @@
 using UnityEngine;
 
-public class CurrentScorePresenter : MonoBehaviour
+namespace JJJ.View
 {
-  [SerializeField] private TMPro.TextMeshProUGUI _currentScoreText;
-
-  [SerializeField] private int _initialScore = 0;
-
-  private void Start()
+  public class CurrentScorePresenter : MonoBehaviour
   {
-    SetCurrentScore(_initialScore);
-  }
+    [SerializeField] private TMPro.TextMeshProUGUI _currentScoreText;
 
-  public void SetCurrentScore(int currentScore)
-  {
-    _currentScoreText.text = currentScore.ToString();
+    [SerializeField] private int _initialScore = 0;
+
+    private void Start()
+    {
+      SetCurrentScore(_initialScore);
+    }
+
+    public void SetCurrentScore(int currentScore)
+    {
+      _currentScoreText.text = currentScore.ToString();
+    }
   }
 }

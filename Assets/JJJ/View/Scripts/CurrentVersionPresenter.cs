@@ -1,16 +1,19 @@
 using UnityEngine;
 
-public class CurrentVersionPresenter : MonoBehaviour
+namespace JJJ.View
 {
-  [SerializeField] private TMPro.TextMeshProUGUI _currentVersionText;
-
-  private void Start()
+  public class CurrentVersionPresenter : MonoBehaviour
   {
-    SetCurrentVersion("ver." + Application.version);
-  }
+    [SerializeField] private TMPro.TextMeshProUGUI _currentVersionText;
 
-  public void SetCurrentVersion(string currentVersion)
-  {
-    _currentVersionText.text = currentVersion;
+    private void Start()
+    {
+      SetCurrentVersion("ver." + Application.version);
+    }
+
+    public void SetCurrentVersion(string currentVersion)
+    {
+      _currentVersionText.text = currentVersion;
+    }
   }
 }
