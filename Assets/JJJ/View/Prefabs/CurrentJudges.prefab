@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4899f465d01635d48b212f2bfaa5b6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentJudgesText: {fileID: 0}
+  _currentJudgesText: {fileID: 171804173138715510}
   _initialJudges: 0
 --- !u!1 &2133548533830520817
 GameObject:
