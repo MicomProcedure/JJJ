@@ -5,7 +5,7 @@ namespace JJJ.Infrastructure
 {
   internal static class RuleSetHelper
   {
-    private static readonly HashSet<(HandType, HandType)> WinPatterns = new()
+    internal static readonly HashSet<(HandType, HandType)> WinPatterns = new()
     {
       (HandType.Rock, HandType.Scissors),
       (HandType.Rock, HandType.Three),
