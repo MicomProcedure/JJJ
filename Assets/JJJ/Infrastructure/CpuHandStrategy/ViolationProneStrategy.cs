@@ -44,42 +44,37 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     {
       // 乱数を生成
       var rand = new Random();
-      double randomValue = rand.NextDouble();
+
+      // 有効な手のリストを取得
+      var availableHandTypes = HandUtil.GetValidHandTypesFromContext(turnContext).ToList();
 
       // 後出しするかどうかを判定
-      if (randomValue < TimeoutProbability)
+      if (rand.NextDouble() < TimeoutProbability)
       {
-        // 後出しする場合、ランダムに手を選択
-        int index = rand.Next(HandUtil.RegularHandTypes.Count());
-        var selectedHandType = HandUtil.RegularHandTypes.ElementAt(index);
+        // 後出しする場合、有効な手の中からランダムに手を選択
+        int index = rand.Next(availableHandTypes.Count);
+        var selectedHandType = availableHandTypes[index];
         return new Hand(selectedHandType, HandUtil.GetHandName(selectedHandType), isTimeout: true);
       }
-
-      // 再抽選
-      randomValue = rand.NextDouble();
 
       // αの効果が発動中の場合
       if (turnContext.AlphaRemainingTurns > 0)
       {
-        if (randomValue < AlphaViolationProbability)
+        if (rand.NextDouble() < AlphaViolationProbability)
         {
           // αを出す場合
           return Hand.Alpha;
         }
       }
 
-      // 再抽選
-      randomValue = rand.NextDouble();
-
       // βの効果が発動中の場合
       if (turnContext.BetaRemainingTurns > 0)
       {
-        if (randomValue < BetaViolationProbability)
+        if (rand.NextDouble() < BetaViolationProbability)
         {
           // βまたは封印された手を出す場合
           var sealedHandType = turnContext.SealedHandType;
-          randomValue = rand.NextDouble();
-          if (randomValue < 0.5 || !sealedHandType.HasValue)
+          if (rand.NextDouble() < 0.5 || !sealedHandType.HasValue)
           {
             // βを出す場合
             return Hand.Beta;
@@ -93,7 +88,6 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       }
 
       // 通常の手をランダムに選択
-      var availableHandTypes = HandUtil.GetValidHandTypesFromContext(turnContext).ToList();
       int randomIndex = rand.Next(availableHandTypes.Count);
       var chosenHandType = availableHandTypes[randomIndex];
       return new Hand(chosenHandType, HandUtil.GetHandName(chosenHandType));
