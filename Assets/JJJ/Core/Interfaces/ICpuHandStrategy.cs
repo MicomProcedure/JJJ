@@ -8,6 +8,14 @@ namespace JJJ.Core.Interfaces
   public interface ICpuHandStrategy
   {
     /// <summary>
+    /// 戦略の初期化
+    /// </summary>
+    /// <remarks>
+    /// 1セッションが始まる前の1回だけ呼ばれる
+    /// </remarks>
+    public void Initialize();
+
+    /// <summary>
     /// CPUの次の手を決定する
     /// </summary>
     /// <param name="turnContext">現在のターンのコンテキスト</param>
