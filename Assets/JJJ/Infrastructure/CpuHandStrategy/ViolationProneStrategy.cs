@@ -28,6 +28,14 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     private static readonly double BetaViolationProbability = 0.2;
 
     /// <summary>
+    /// 戦略の初期化
+    /// </summary>
+    public void Initialize()
+    {
+      // 初期化処理は不要
+    }
+
+    /// <summary>
     /// CPUの次の手を決定する
     /// </summary>
     /// <param name="turnContext">現在のターンのコンテキスト</param>
