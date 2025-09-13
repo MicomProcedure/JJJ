@@ -1,4 +1,5 @@
 using UnityEngine;
+using JJJ.Core.Entities;
 
 namespace JJJ.View
 {
@@ -6,14 +7,35 @@ namespace JJJ.View
     {
         [SerializeField] private Animator _animator;
 
-        private void Start()
+        private bool _isHandReset = true;
+
+        /// <summary>
+        ///  指定した手のアニメーションを再生する
+        /// </summary>
+        /// <remarks>
+        /// 最初の場合は、自動的に初回用の振り下ろすアニメーションが再生される
+        /// </remarks>
+        public void PlayHand(HandType handType)
         {
-            PlayHand();
+            if (_isHandReset)
+            {
+                _animator.SetTrigger($"Play{handType}");
+            }
         }
 
-        public void PlayHand()
+        /// <summary>
+        ///  ある手を出した状態からリセットして、次の手を出せる状態にする
+        /// </summary>
+        /// <remarks>
+        /// これをいったん実行しないと、次の手を出せない
+        /// </remarks>
+        public void ResetHand()
         {
-            _animator.SetTrigger($"PlayFour");
+            if (!_isHandReset)
+            {
+                _animator.SetTrigger("DoReset");
+                _isHandReset = true;
+            }
         }
     }
 }
