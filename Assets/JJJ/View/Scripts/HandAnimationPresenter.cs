@@ -20,6 +20,7 @@ namespace JJJ.View
             if (_isHandReset)
             {
                 _animator.SetTrigger($"Play{handType}");
+                _isHandReset = false;
             }
         }
 
@@ -36,6 +37,15 @@ namespace JJJ.View
                 _animator.SetTrigger("DoReset");
                 _isHandReset = true;
             }
+        }
+
+        /// <summary>
+        /// セッションの終わり(勝敗がついたとき)にこれを実行して手を初期位置に戻す
+        /// </summary>
+        public void ReturnInit()
+        {
+            _animator.SetTrigger("ReturnInit");
+            _isHandReset = true;
         }
     }
 }
