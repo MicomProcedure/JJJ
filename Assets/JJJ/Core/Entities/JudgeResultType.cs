@@ -9,21 +9,25 @@ namespace JJJ.Core.Entities
   public enum JudgeResultType
   {
     /// <summary>
-    /// 勝ち
+    /// 相性による勝ち
     /// </summary>
     Win,
     /// <summary>
-    /// 負け
+    /// 相性による負け
     /// </summary>
     Lose,
     /// <summary>
-    /// 引き分け
+    /// 同じ手を出すことによる引き分け、または効果による引き分け
     /// </summary>
     Draw,
     /// <summary>
-    /// 反則
+    /// 左側のプレイヤーが反則
     /// </summary>
     Violation,
+    /// <summary>
+    /// 右側のプレイヤーが反則
+    /// </summary>
+    OpponentViolation,
     /// <summary>
     /// 両プレイヤーが反則
     /// </summary>
