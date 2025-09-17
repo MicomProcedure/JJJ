@@ -28,7 +28,7 @@ namespace JJJ.Infrastructure
         {
           (false, false) => new(JudgeResultType.DoubleViolation, playerHand, opponentHand, ViolationType.Timeout, ViolationType.Timeout),
           (false, true) => new(JudgeResultType.Violation, playerHand, opponentHand, ViolationType.Timeout, ViolationType.None),
-          (true, false) => new(JudgeResultType.Win, playerHand, opponentHand, ViolationType.None, ViolationType.Timeout),
+          (true, false) => new(JudgeResultType.OpponentViolation, playerHand, opponentHand, ViolationType.None, ViolationType.Timeout),
           // 理論上ありえないが、型の安全性のために追加
           _ => throw new System.Exception("Invalid hand detected.")
         };

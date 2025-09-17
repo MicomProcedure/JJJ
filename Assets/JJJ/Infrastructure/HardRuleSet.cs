@@ -30,7 +30,7 @@ namespace JJJ.Infrastructure
         {
           (false, false) => new(JudgeResultType.DoubleViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
           (false, true) => new(JudgeResultType.Violation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
-          (true, false) => new(JudgeResultType.Win, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
+          (true, false) => new(JudgeResultType.OpponentViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
           // 理論上ありえないが、型の安全性のために追加
           _ => throw new System.Exception("Invalid hand detected.")
         };
