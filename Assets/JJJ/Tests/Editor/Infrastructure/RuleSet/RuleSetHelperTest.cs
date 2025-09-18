@@ -2,7 +2,8 @@
 using JJJ.Infrastructure;
 using JJJ.Core.Entities;
 using NUnit.Framework;
-namespace JJJ.Tests.Infrastructure
+
+namespace JJJ.Tests.Infrastructure.RuleSet
 {
   public class RuleSetHelperTest
   {
