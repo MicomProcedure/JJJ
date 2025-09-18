@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using R3;
@@ -8,7 +7,7 @@ using VContainer.Unity;
 
 namespace JJJ.UseCase
 {
-  public class JudgeService : IDisposable, IStartable
+  public class JudgeService : IJudgeService, IDisposable, IStartable
   {
     private IRuleSet ruleSet;
     private IEnumerable<ICpuHandStrategy> strategies;
@@ -19,24 +18,26 @@ namespace JJJ.UseCase
 
     private CompositeDisposable currentTurnDisposables;
 
-    private enum PlayerClaim
-    {
-      PlayerWin,
-      OpponentWin,
-      Timeout
-    }
-
     private ICpuHandStrategy currentPlayerStrategy;
     private ICpuHandStrategy currentOpponentStrategy;
+    private readonly IStrategySelector strategySelector;
+    private readonly ITurnExecutor turnExecutor;
 
-    public JudgeService(IRuleSet ruleSet, IEnumerable<ICpuHandStrategy> strategies, ITimerService timerService,
-                        Observable<Unit> playerWinObservable, Observable<Unit> opponentWinObservable)
+    public JudgeService(IRuleSet ruleSet,
+                        IEnumerable<ICpuHandStrategy> strategies,
+                        ITimerService timerService,
+                        Observable<Unit> playerWinObservable,
+                        Observable<Unit> opponentWinObservable,
+                        IStrategySelector strategySelector,
+                        ITurnExecutor turnExecutor)
     {
       this.ruleSet = ruleSet;
       this.strategies = strategies;
       this.timerService = timerService;
       this.playerWinObservable = playerWinObservable;
       this.opponentWinObservable = opponentWinObservable;
+      this.strategySelector = strategySelector;
+      this.turnExecutor = turnExecutor;
     }
 
     /// <summary>
@@ -55,12 +56,8 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartSession()
     {
-      // ランダムに戦略を選択
-      var rand = new Random();
-      int index = rand.Next(strategies.Count());
-      currentPlayerStrategy = strategies.ElementAt(index);
-      index = rand.Next(strategies.Count());
-      currentOpponentStrategy = strategies.ElementAt(index);
+      // 戦略を選択
+      (currentPlayerStrategy, currentOpponentStrategy) = strategySelector.SelectPair(strategies);
       currentPlayerStrategy.Initialize();
       currentOpponentStrategy.Initialize();
 
@@ -79,50 +76,27 @@ namespace JJJ.UseCase
 
       currentTurnContext.NextTurn();
 
-      // CPUの手を決定
-      var playerHand = currentPlayerStrategy.GetNextCpuHand(currentTurnContext);
-      var opponentHand = currentOpponentStrategy.GetNextCpuHand(currentTurnContext);
-      var truthResult = ruleSet.Judge(playerHand, opponentHand, currentTurnContext);
-      // TODO: Viewへ手の情報を通知 (playerHand, opponentHand)
-
-      // プレイヤーのジャッジと時間切れをraceさせる
-      var claimSubject = new Subject<PlayerClaim>();
-      var subscription = claimSubject.Take(1).Subscribe(claim =>
-      {
-        bool isPlayerJudgementCorrect = claim switch
+      // 1ターン実行
+      turnExecutor
+        .ExecuteTurn(ruleSet, currentPlayerStrategy, currentOpponentStrategy, currentTurnContext,
+                      JudgeLimit, playerWinObservable, opponentWinObservable, timerService)
+        .Subscribe(outcome =>
         {
-          PlayerClaim.PlayerWin => truthResult.Type == JudgeResultType.Win,
-          PlayerClaim.OpponentWin => truthResult.Type == JudgeResultType.Lose,
-          PlayerClaim.Timeout => false,
-          _ => false
-        };
-
-        // TODO: スコア計算や結果通知 (truthResult, claim, isPlayerJudgementCorrect)
-
-        if (truthResult.Type == JudgeResultType.Draw)
-        {
-          // TODO: 後でアニメーションが終わったら進めるように変更
-          Observable.TimerFrame(0)
-            .Subscribe(_ => StartTurn())
-            .AddTo(currentTurnDisposables);
-        }
-        else
-        {
-          // TODO: 後でアニメーションが終わったら進めるように変更
-          Observable.TimerFrame(0)
-            .Subscribe(_ => StartSession())
-            .AddTo(currentTurnDisposables);
-        }
-      });
-      var subPlayer = playerWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.PlayerWin));
-      var subOpponent = opponentWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.OpponentWin));
-      var subTimeout = timerService.After(JudgeLimit).Subscribe(_ => claimSubject.OnNext(PlayerClaim.Timeout));
-
-      currentTurnDisposables.Add(subscription);
-      currentTurnDisposables.Add(subPlayer);
-      currentTurnDisposables.Add(subOpponent);
-      currentTurnDisposables.Add(subTimeout);
-      currentTurnDisposables.Add(claimSubject);
+          // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
+          if (outcome.TruthResult.Type == JudgeResultType.Draw)
+          {
+            Observable.TimerFrame(0)
+              .Subscribe(_ => StartTurn())
+              .AddTo(currentTurnDisposables);
+          }
+          else
+          {
+            Observable.TimerFrame(0)
+              .Subscribe(_ => StartSession())
+              .AddTo(currentTurnDisposables);
+          }
+        })
+        .AddTo(currentTurnDisposables);
     }
 
     public void Dispose()
