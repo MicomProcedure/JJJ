@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
-namespace JJJ.Tests.Infrastructure
+namespace JJJ.Tests.Infrastructure.RuleSet
 {
   /// <summary>
   /// テストデータ生成のヘルパークラス
