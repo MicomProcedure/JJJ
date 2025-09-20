@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
@@ -18,12 +19,18 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     private double ViolationProbability = 0.1;
 
     /// <summary>
+    /// ゲームモード
+    /// </summary>
+    private readonly GameMode _gameMode;
+
+    /// <summary>
     /// 乱数生成サービス
     /// </summary>
     private readonly IRandomService _randomService;
 
-    public CyclicStrategy(IRandomService randomService)
+    public CyclicStrategy(GameMode gameMode, IRandomService randomService)
     {
+      _gameMode = gameMode;
       _randomService = randomService;
     }
 
@@ -37,15 +44,15 @@ namespace JJJ.Infrastructure.CpuHandStrategy
 
     public Hand GetNextCpuHand(TurnContext turnContext)
     {
-      var validHandTypes = HandUtil.GetValidHandTypesFromContext(turnContext);
+      var validHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext);
 
-      //  反則するかどうかを判定
+      // 反則するかどうかを判定
       if (_randomService.NextDouble() < ViolationProbability)
       {
         // 無効な手のListを取得
         var allHandTypes = HandUtil.AllHandTypes.ToList();
         var invalidHandTypes = allHandTypes.Except(validHandTypes).ToList();
-        // 無効な手と後出しをランダムに選択
+        // 無効な手を出すか後出しするかをランダムに選択
         int chosenType = _randomService.Next(0, invalidHandTypes.Count + 1);
         if (chosenType < invalidHandTypes.Count)
         {
@@ -68,6 +75,11 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       // 反則しない場合は循環的に手を選択
       // セッションで最初の手ならランダムに選択し、そうでなければ次の手を選択
       currentSelectedIndex = currentSelectedIndex < 0 ? _randomService.Next(0, validHandTypes.Count()) : (currentSelectedIndex + 1) % validHandTypes.Count();
+      if (currentSelectedIndex < 0 || currentSelectedIndex >= validHandTypes.Count())
+      {
+        UnityEngine.Debug.LogError($"CyclicStrategy: currentSelectedIndex out of range. currentSelectedIndex={currentSelectedIndex}, validHandTypes.Count()={validHandTypes.Count()}\nFailback to 0.");
+        currentSelectedIndex = 0;
+      }
       var chosenHandType = validHandTypes.ElementAt(currentSelectedIndex);
       return new Hand(chosenHandType, HandUtil.GetHandName(chosenHandType));
     }
