@@ -26,11 +26,16 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     private static readonly double BetaViolationProbability = 0.2;
 
     /// <summary>
+    /// ゲームモード
+    /// </summary>
+    private readonly GameMode _gameMode;
+
+    /// <summary>
     /// 乱数生成サービス
     /// </summary>
     private readonly IRandomService _randomService;
 
-    public ViolationProneStrategy(IRandomService randomService)
+    public ViolationProneStrategy(GameMode gameMode, IRandomService randomService)
     {
       _randomService = randomService;
     }
@@ -51,7 +56,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     public Hand GetNextCpuHand(TurnContext turnContext)
     {
       // 有効な手のリストを取得
-      var availableHandTypes = HandUtil.GetValidHandTypesFromContext(turnContext).ToList();
+      var availableHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
 
       // 後出しするかどうかを判定
       if (_randomService.NextDouble() < TimeoutProbability)

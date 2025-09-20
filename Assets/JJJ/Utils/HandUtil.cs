@@ -128,24 +128,38 @@ namespace JJJ.Utils
     /// </summary>
     /// <param name="context">ターンのコンテキスト</param>
     /// <returns>使用可能な手の種類の列挙</returns>
-    public static IEnumerable<HandType> GetValidHandTypesFromContext(TurnContext context)
+    public static IEnumerable<HandType> GetValidHandTypesFromContext(
+        GameMode gameMode,
+        TurnContext context
+      )
     {
-      var availableHandTypes = AllHandTypes.ToList();
-
-      if (context.AlphaRemainingTurns > 0) // αが発動中
+      if (gameMode == GameMode.Easy)
       {
-        availableHandTypes.Remove(HandType.Alpha);
+        return BasicHandTypes.AsEnumerable();
       }
-      if (context.BetaRemainingTurns > 0) // βが発動中
+      else if (gameMode == GameMode.Normal)
       {
-        availableHandTypes.Remove(HandType.Beta);
-        if (context.SealedHandType.HasValue)
+        return RegularHandTypes.AsEnumerable();
+      }
+      else
+      {
+        var availableHandTypes = AllHandTypes.ToList();
+
+        if (context.AlphaRemainingTurns > 0) // αが発動中
         {
-          availableHandTypes.Remove(context.SealedHandType.Value);
+          availableHandTypes.Remove(HandType.Alpha);
         }
-      }
+        if (context.BetaRemainingTurns > 0) // βが発動中
+        {
+          availableHandTypes.Remove(HandType.Beta);
+          if (context.SealedHandType.HasValue)
+          {
+            availableHandTypes.Remove(context.SealedHandType.Value);
+          }
+        }
 
-      return availableHandTypes.AsEnumerable();
+        return availableHandTypes.AsEnumerable();
+      }
     }
 
   }
