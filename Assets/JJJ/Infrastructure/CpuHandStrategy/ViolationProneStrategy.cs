@@ -58,41 +58,50 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       // 有効な手のリストを取得
       var availableHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
 
+      double randomValue = _randomService.NextDouble();
+
       // 後出しするかどうかを判定
-      if (_randomService.NextDouble() < TimeoutProbability)
+      if (randomValue < TimeoutProbability)
       {
         // 後出しする場合、有効な手の中からランダムに手を選択
         int index = _randomService.Next(availableHandTypes.Count);
         var selectedHandType = availableHandTypes[index];
         return new Hand(selectedHandType, HandUtil.GetHandName(selectedHandType), isTimeout: true);
       }
-
-      // αの効果が発動中の場合
-      if (turnContext.AlphaRemainingTurns > 0)
+      else if (randomValue < TimeoutProbability + AlphaViolationProbability)
       {
-        if (_randomService.NextDouble() < AlphaViolationProbability)
+
+        // αの効果が発動中の場合
+        if (turnContext.AlphaRemainingTurns > 0)
         {
-          // αを出す場合
-          return Hand.Alpha;
+          if (_randomService.NextDouble() < AlphaViolationProbability)
+          {
+            // αを出す場合
+            return Hand.Alpha;
+          }
         }
       }
-
-      // βの効果が発動中の場合
-      if (turnContext.BetaRemainingTurns > 0)
+      else if (randomValue < TimeoutProbability + AlphaViolationProbability + BetaViolationProbability)
       {
-        if (_randomService.NextDouble() < BetaViolationProbability)
+
+
+        // βの効果が発動中の場合
+        if (turnContext.BetaRemainingTurns > 0)
         {
-          // βまたは封印された手を出す場合
-          var sealedHandType = turnContext.SealedHandType;
-          if (_randomService.NextDouble() < 0.5 || !sealedHandType.HasValue)
+          if (_randomService.NextDouble() < BetaViolationProbability)
           {
-            // βを出す場合
-            return Hand.Beta;
-          }
-          else
-          {
-            // 封印された手を出す場合
-            return new Hand(sealedHandType.Value, HandUtil.GetHandName(sealedHandType.Value));
+            // βまたは封印された手を出す場合
+            var sealedHandType = turnContext.SealedHandType;
+            if (_randomService.NextDouble() < 0.5 || !sealedHandType.HasValue)
+            {
+              // βを出す場合
+              return Hand.Beta;
+            }
+            else
+            {
+              // 封印された手を出す場合
+              return new Hand(sealedHandType.Value, HandUtil.GetHandName(sealedHandType.Value));
+            }
           }
         }
       }
