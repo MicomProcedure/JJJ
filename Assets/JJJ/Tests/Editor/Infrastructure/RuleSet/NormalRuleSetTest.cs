@@ -2,7 +2,8 @@
 using JJJ.Infrastructure;
 using JJJ.Core.Entities;
 using NUnit.Framework;
-namespace JJJ.Tests.Infrastructure
+
+namespace JJJ.Tests.Infrastructure.RuleSet
 {
   /// <summary>
   /// NormalRuleSetクラスのテスト
@@ -64,8 +65,8 @@ namespace JJJ.Tests.Infrastructure
 
       var result = _normalRuleSet.Judge(player, opponent, _turnContext);
 
-      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win),
-                  $"Opponent timeout should result in player win. Player: {playerHand} vs Opponent: {opponentHand}(timeout)");
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.OpponentViolation),
+                  $"Opponent timeout should result in opponent violation. Player: {playerHand} vs Opponent: {opponentHand}(timeout)");
     }
 
     /// <summary>

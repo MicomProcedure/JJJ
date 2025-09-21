@@ -1,4 +1,3 @@
-using JJJ.Core.Entities;
 
 namespace JJJ.Core.Interfaces
 {
@@ -8,12 +7,13 @@ namespace JJJ.Core.Interfaces
   public interface IJudgeService
   {
     /// <summary>
-    /// じゃんけんの結果を判定する
+    /// 新しいセッションを開始する
     /// </summary>
-    /// <param name="playerHand">プレイヤーの手</param>
-    /// <param name="opponentHand">対戦相手の手</param>
-    /// <param name="turnContext">ターン情報のコンテキスト</param>
-    /// <returns>じゃんけんの結果</returns>
-    public JudgeResult Judge(Hand playerHand, Hand opponentHand, TurnContext turnContext);
+    public void StartSession();
+
+    /// <summary>
+    /// 新しいターンを開始する
+    /// </summary>
+    public void StartTurn();
   }
 }
