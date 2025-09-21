@@ -38,6 +38,21 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
 
     private readonly GameMode _gameMode = GameMode.Hard;
 
+    private static double TimeoutProbability;
+    private static double AlphaViolationProbability;
+    private static double BetaViolationProbability;
+
+    [SetUp]
+    public void Setup()
+    {
+      // ViolationProneStrategyの静的フィールドをリフレクションで取得
+      var type = typeof(ViolationProneStrategy);
+      TimeoutProbability = (double)type.GetField("TimeoutProbability", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null);
+      AlphaViolationProbability = (double)type.GetField("AlphaViolationProbability", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null);
+      BetaViolationProbability = (double)type.GetField("BetaViolationProbability", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null);
+    }
+
+
     // 後出しをする場合のテスト
     [Test]
     public void GetNextCpuHand_WhenTimeoutOccurs_ReturnsTimeoutHand()
@@ -61,9 +76,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     [Test]
     public void GetNextCpuHand_WhenAlphaViolationOccurs_ReturnsAlpha()
     {
-      // 後出し確率を発生させないため、最初の乱数を1.0に設定
-      // alphaの効果が発動中にalphaを出す確率を発生させるため、次の乱数を0.0に設定
-      var mockRandomService = new MockRandomService(new[] { 1.0, 0 });
+      // 後出し確率を発生させずにalphaの反則を出すため、
+      // 最初の乱数をTimeoutProbability + AlphaViolationProbability / 2.0に設定
+      var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability / 2.0, 0 });
       var strategy = new ViolationProneStrategy(_gameMode, mockRandomService);
       var turnContext = new TurnContext(alphaRemainingTurns: 1);
 
@@ -76,10 +91,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     [Test]
     public void GetNextCpuHand_WhenBetaViolationOccursAndBetaChosen_ReturnsBeta()
     {
-      // 後出し確率を発生させないため、最初の乱数を1.0に設定
-      // betaの効果が発動中にbetaまたは封印された手を出す確率を発生させるため、次の乱数を0.0に設定
+      // 後出し確率とalphaの反則を発生させずにbetaの反則を出すため、
+      // 最初の乱数をTimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0に設定
       // betaまたは封印された手を出す場合にbetaを出す確率を発生させるため、次の乱数を0.0に設定
-      var mockRandomService = new MockRandomService(new[] { 1.0, 0, 0 });
+      var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0, 0 });
       var strategy = new ViolationProneStrategy(_gameMode, mockRandomService);
       var turnContext = new TurnContext(betaRemainingTurns: 1, sealedHandType: HandType.Rock);
 
@@ -92,10 +107,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     [Test]
     public void GetNextCpuHand_WhenBetaViolationOccursAndSealedHandChosen_ReturnsSealedHand()
     {
-      // 後出し確率を発生させないため、最初の乱数を1.0に設定
-      // betaの効果が発動中にbetaまたは封印された手を出す確率を発生させるため、次の乱数を0.0に設定
+      // 後出し確率とalphaの反則を発生させずにbetaの反則を出すため、
+      // 最初の乱数をTimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0に設定
       // betaまたは封印された手を出す場合に封印された手を出す確率を発生させるため、次の乱数を1.0に設定
-      var mockRandomService = new MockRandomService(new[] { 1.0, 0, 1, 1 });
+      var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0, 1 });
       var strategy = new ViolationProneStrategy(_gameMode, mockRandomService);
       var turnContext = new TurnContext(betaRemainingTurns: 1, sealedHandType: HandType.Paper);
 
@@ -108,7 +123,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     [Test]
     public void GetNextCpuHand_WhenNoViolationOccurs_ReturnsValidHand()
     {
-      // 後出し確率を発生させないため、最初の乱数を1.0に設定
+      // 反則確率を発生させないため、最初の乱数を1.0に設定
       // 有効な手の中から最初の手を選択するため、次の乱数を0.0に設定
       var mockRandomService = new MockRandomService(new[] { 1.0, 0 });
       var strategy = new ViolationProneStrategy(_gameMode, mockRandomService);
