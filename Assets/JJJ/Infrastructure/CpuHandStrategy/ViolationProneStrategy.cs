@@ -70,7 +70,6 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       }
       else if (randomValue < TimeoutProbability + AlphaViolationProbability)
       {
-
         // αの効果が発動中の場合
         if (turnContext.AlphaRemainingTurns > 0)
         {
@@ -83,25 +82,20 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       }
       else if (randomValue < TimeoutProbability + AlphaViolationProbability + BetaViolationProbability)
       {
-
-
         // βの効果が発動中の場合
         if (turnContext.BetaRemainingTurns > 0)
         {
-          if (_randomService.NextDouble() < BetaViolationProbability)
+          // βまたは封印された手を出す場合
+          var sealedHandType = turnContext.SealedHandType;
+          if (_randomService.NextDouble() < 0.5 || !sealedHandType.HasValue)
           {
-            // βまたは封印された手を出す場合
-            var sealedHandType = turnContext.SealedHandType;
-            if (_randomService.NextDouble() < 0.5 || !sealedHandType.HasValue)
-            {
-              // βを出す場合
-              return Hand.Beta;
-            }
-            else
-            {
-              // 封印された手を出す場合
-              return new Hand(sealedHandType.Value, HandUtil.GetHandName(sealedHandType.Value));
-            }
+            // βを出す場合
+            return Hand.Beta;
+          }
+          else
+          {
+            // 封印された手を出す場合
+            return new Hand(sealedHandType.Value, HandUtil.GetHandName(sealedHandType.Value));
           }
         }
       }
