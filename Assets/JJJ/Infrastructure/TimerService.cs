@@ -23,7 +23,6 @@ namespace JJJ.Infrastructure
     /// <returns>指定した時間後に1回だけ通知を発行するObservable</returns>
     public Observable<Unit> After(TimeSpan dueTime, CancellationToken ct = default)
       => Observable.Timer(dueTime)
-        .AsUnitObservable()
         .TakeUntil(ct);
 
     /// <summary>
@@ -42,11 +41,35 @@ namespace JJJ.Infrastructure
     /// <param name="tick">通知を発行する周期</param>
     /// <param name="ct">キャンセルトークン</param>
     /// <returns>指定した期間をカウントダウンするObservable</returns>
+    /// <remarks>
+    /// 通知の値は残り時間を表すTimeSpanで、durationから0まで減少する
+    /// 最初の通知は即座に発行され、最後の通知は0を表すTimeSpanとなる
+    /// </remarks>
     public Observable<TimeSpan> Countdown(TimeSpan duration, TimeSpan tick, CancellationToken ct = default)
     {
-      int steps = Math.Max(1, (int)Math.Ceiling(duration.TotalMilliseconds / Math.Max(1, tick.TotalMilliseconds)));
-      return Observable.Range(0, steps + 1)
-        .Select(i => duration - TimeSpan.FromMilliseconds(i * duration.TotalMilliseconds))
+      if (duration <= TimeSpan.Zero)
+      {
+        UnityEngine.Debug.LogError("duration must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
+        duration = TimeSpan.FromSeconds(1);
+      }
+      if (tick <= TimeSpan.Zero)
+      {
+        UnityEngine.Debug.LogError("tick must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
+        tick = TimeSpan.FromSeconds(1);
+      }
+
+      int steps = (int)Math.Ceiling(duration.Ticks / (double)tick.Ticks);
+
+      return Observable
+        .Timer(TimeSpan.Zero, tick)
+        .Index()
+        .Select(i =>
+        {
+          long elapsedTicks = Math.Min(duration.Ticks, (i + 1) * tick.Ticks);
+          long remainingTicks = duration.Ticks - elapsedTicks;
+          return TimeSpan.FromTicks(remainingTicks);
+        })
+        .Take(steps + 1)
         .TakeUntil(ct);
     }
   }
