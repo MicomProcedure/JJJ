@@ -20,8 +20,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetAlphaBetaDrawTestCases))]
     public void Judge_WithAlphaBeta_ReturnsAlwaysDraw(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
       var turnContext = new TurnContext(turnCount: 1);
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
@@ -38,8 +38,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     public void Judge_EvenTurnSpecialTriangle_ReturnsReversedResult(HandType playerHand, HandType opponentHand, bool isWinExpected)
     {
       var expectedResult = isWinExpected ? JudgeResultType.Lose : JudgeResultType.Win;
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
       var turnContext = new TurnContext(turnCount: 2); // Even turn
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
@@ -55,8 +55,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     public void Judge_OddTurn_UsesNormalRules(HandType playerHand, HandType opponentHand, bool isWinExpected)
     {
       var expectedResult = isWinExpected ? JudgeResultType.Win : JudgeResultType.Lose;
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
       var turnContext = new TurnContext(turnCount: 1); // Odd turn
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
@@ -71,7 +71,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void ValidateHand_AlphaRepeat_ReturnsViolation()
     {
-      var hand = new Hand(HandType.Alpha, "Alpha");
+      var hand = new Hand(HandType.Alpha);
       var turnContext = new TurnContext().ActivateAlpha(2); // Alpha有効中
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
@@ -88,7 +88,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void ValidateHand_BetaRepeat_ReturnsViolation()
     {
-      var hand = new Hand(HandType.Beta, "Beta");
+      var hand = new Hand(HandType.Beta);
       var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock); // Beta有効中
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
@@ -105,7 +105,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void ValidateHand_SealedHand_ReturnsViolation()
     {
-      var hand = new Hand(HandType.Rock, "Rock");
+      var hand = new Hand(HandType.Rock);
       var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock); // Rockが封印
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
@@ -122,7 +122,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void ValidateHand_Timeout_ReturnsViolation()
     {
-      var hand = new Hand(HandType.Rock, "Rock", isTimeout: true);
+      var hand = new Hand(HandType.Rock, isTimeout: true);
       var turnContext = new TurnContext();
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
@@ -139,7 +139,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void ValidateHand_ValidHand_ReturnsValid()
     {
-      var hand = new Hand(HandType.Rock, "Rock");
+      var hand = new Hand(HandType.Rock);
       var turnContext = new TurnContext();
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
@@ -156,8 +156,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void Judge_AlphaViolation_ReturnsViolation()
     {
-      var player = new Hand(HandType.Alpha, "Alpha");
-      var opponent = new Hand(HandType.Rock, "Rock");
+      var player = new Hand(HandType.Alpha);
+      var opponent = new Hand(HandType.Rock);
       var turnContext = new TurnContext().ActivateAlpha(2);
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
@@ -174,8 +174,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [Test]
     public void Judge_DoubleViolation_ReturnsDoubleViolation()
     {
-      var player = new Hand(HandType.Alpha, "Alpha");
-      var opponent = new Hand(HandType.Beta, "Beta");
+      var player = new Hand(HandType.Alpha);
+      var opponent = new Hand(HandType.Beta);
       var turnContext = new TurnContext()
         .ActivateAlpha(2)                 // Alphaを2ターン有効化
         .ActivateBeta(1, HandType.Rock);  // BetaをRockに対して1ターン有効化
@@ -196,8 +196,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_NormalRules_ReturnsExpectedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
       var turnContext = new TurnContext(turnCount: 1); // Odd turn for normal rules
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);

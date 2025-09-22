@@ -81,8 +81,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// </summary>
     internal static JudgeResultType DetermineExpectedResult(HandType playerHand, HandType opponentHand)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
       return RuleSetHelper.DetermineResult(player, opponent).Type;
     }
 

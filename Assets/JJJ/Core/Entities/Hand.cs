@@ -11,11 +11,6 @@ namespace JJJ.Core.Entities
     public HandType Type { get; private set; }
 
     /// <summary>
-    /// 手の名前
-    /// </summary>
-    public string Name { get; private set; }
-
-    /// <summary>
     /// 後出しかどうか
     /// </summary>
     public bool IsTimeout { get; private set; }
@@ -24,24 +19,22 @@ namespace JJJ.Core.Entities
     /// Handクラスのコンストラクタ
     /// </summary>
     /// <param name="type">手の種類</param>
-    /// <param name="name">手の名前</param>
-    public Hand(HandType type, string name, bool isTimeout = false)
+    public Hand(HandType type, bool isTimeout = false)
     {
       Type = type;
-      Name = name;
       IsTimeout = isTimeout;
     }
 
 
     // 手を定義する静的プロパティ
-    public static readonly Hand Rock = new Hand(HandType.Rock, "グー");
-    public static readonly Hand Paper = new Hand(HandType.Paper, "パー");
-    public static readonly Hand Scissors = new Hand(HandType.Scissors, "チョキ");
-    public static readonly Hand Alpha = new Hand(HandType.Alpha, "α");
-    public static readonly Hand Beta = new Hand(HandType.Beta, "β");
-    public static readonly Hand One = new Hand(HandType.One, "1");
-    public static readonly Hand Two = new Hand(HandType.Two, "2");
-    public static readonly Hand Three = new Hand(HandType.Three, "3");
-    public static readonly Hand Four = new Hand(HandType.Four, "4");
+    public static readonly Hand Rock = new Hand(HandType.Rock);
+    public static readonly Hand Paper = new Hand(HandType.Paper);
+    public static readonly Hand Scissors = new Hand(HandType.Scissors);
+    public static readonly Hand Alpha = new Hand(HandType.Alpha);
+    public static readonly Hand Beta = new Hand(HandType.Beta);
+    public static readonly Hand One = new Hand(HandType.One);
+    public static readonly Hand Two = new Hand(HandType.Two);
+    public static readonly Hand Three = new Hand(HandType.Three);
+    public static readonly Hand Four = new Hand(HandType.Four);
   }
 }
