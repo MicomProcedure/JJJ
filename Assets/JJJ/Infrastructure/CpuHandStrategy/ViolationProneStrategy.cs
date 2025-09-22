@@ -37,6 +37,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
 
     public ViolationProneStrategy(GameMode gameMode, IRandomService randomService)
     {
+      _gameMode = gameMode;
       _randomService = randomService;
     }
 
