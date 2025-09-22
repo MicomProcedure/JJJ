@@ -2,6 +2,7 @@ using System.Linq;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
+
 namespace JJJ.Infrastructure.CpuHandStrategy
 {
   /// <summary>

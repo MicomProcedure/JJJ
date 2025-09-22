@@ -14,6 +14,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     private readonly NormalRuleSet _normalRuleSet = new();
     private TurnContext _turnContext;
 
+    /// <summary>
+    /// 各テストの前に実行されるセットアップメソッド
+    /// </summary>
     [SetUp]
     public void SetUp()
     {

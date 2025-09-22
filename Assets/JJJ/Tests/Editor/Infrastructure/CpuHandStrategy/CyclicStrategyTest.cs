@@ -12,7 +12,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
 {
   public class CyclicStrategyTest
   {
-    // テスト用の乱数生成サービスのモック（決定論的）
+    /// <summary>
+    /// テスト用の乱数生成サービスのモック（決定論的）
+    /// </summary>
     private class MockRandomService : IRandomService
     {
       private readonly Queue<double> _predefinedValues;
@@ -39,7 +41,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
 
     private readonly GameMode _gameMode = GameMode.Hard;
 
-    // 無効な手が存在しない状況で反則する場合は、後出しを選択する
+    /// <summary>
+    /// 無効な手が存在しない状況で反則する場合は、後出しを選択する
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenViolationOccursAndNoInvalid_ChoosesTimeoutFromValid()
     {
@@ -59,7 +63,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(expectedType, hand.Type, $"Hand type should be {expectedType} but was {hand.Type}");
     }
 
-    // alphaの無効手が存在する場合（α発動中）、alphaを選択する
+    /// <summary>
+    /// alphaの無効手が存在する場合（α発動中）、alphaを選択する
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenViolationOccursAndInvalidExists_ChoosesInvalidHand()
     {
@@ -75,7 +81,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(HandType.Alpha, hand.Type, $"Hand type should be {HandType.Alpha} but was {hand.Type}");
     }
 
-    // 違反しない場合、初回はランダム、以降は循環する
+    /// <summary>
+    /// 違反しない場合、初回はランダム、以降は循環する
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenNoViolation_FirstRandomThenCyclic()
     {
@@ -97,7 +105,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(valid[1], second.Type, $"Second hand type should be {valid[1]} but was {second.Type}");
     }
 
-    // 違反しない場合、末尾の次は先頭に戻る
+    /// <summary>
+    /// 違反しない場合、末尾の次は先頭に戻る
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenNoViolation_WrapsAroundToFirst()
     {
@@ -117,7 +127,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(valid[0], second.Type, $"Second hand type should be {valid[0]} but was {second.Type}");
     }
 
-    // Initialize により内部インデックスがリセットされる
+    /// <summary>
+    /// Initialize により内部インデックスがリセットされる
+    /// </summary>
     [Test]
     public void Initialize_ResetsIndexAndRandomizesAgain()
     {
