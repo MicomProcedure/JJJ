@@ -13,12 +13,12 @@ namespace JJJ.Tests.Infrastructure.RuleSet
   /// テストデータ生成のヘルパークラス
   /// 各テストクラス間での重複コードを削減
   /// </summary>
-  public static class TestDataHelper
+  internal static class TestDataHelper
   {
     /// <summary>
     /// 通常ルールでの勝利パターンを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetWinPatternTestCases()
+    internal static IEnumerable<TestCaseData> GetWinPatternTestCases()
     {
       foreach (var (player, opponent) in HandUtil.WinPatterns)
       {
@@ -30,7 +30,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// 引き分けパターンを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetDrawPatternTestCases()
+    internal static IEnumerable<TestCaseData> GetDrawPatternTestCases()
     {
       foreach (var (player, opponent) in HandUtil.DrawPatterns)
       {
@@ -42,7 +42,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// 敗北パターンを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetLosePatternTestCases()
+    internal static IEnumerable<TestCaseData> GetLosePatternTestCases()
     {
       foreach (var (player, opponent) in HandUtil.LosePatterns)
       {
@@ -55,7 +55,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// 通常ルールでの全ての判定パターンを生成
     /// Alpha, Betaを除く
     /// </summary>
-    public static IEnumerable<TestCaseData> GetNormalJudgeTestCases()
+    internal static IEnumerable<TestCaseData> GetNormalJudgeTestCases()
     {
       foreach (var (player, opponent) in HandUtil.GetAllHandCombinations(HandUtil.RegularHandTypes))
       {
@@ -68,7 +68,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// タイムアウトテストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetTimeoutTestCases(HandType[] handTypes = null)
+    internal static IEnumerable<TestCaseData> GetTimeoutTestCases(HandType[] handTypes = null)
     {
       return HandUtil.GetAllHandCombinations(handTypes ?? HandUtil.RegularHandTypes)
         .Select(combo =>
@@ -79,7 +79,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// RuleSetHelperを使用して期待結果を決定
     /// </summary>
-    public static JudgeResultType DetermineExpectedResult(HandType playerHand, HandType opponentHand)
+    internal static JudgeResultType DetermineExpectedResult(HandType playerHand, HandType opponentHand)
     {
       var player = new Hand(playerHand, playerHand.ToString());
       var opponent = new Hand(opponentHand, opponentHand.ToString());
@@ -89,7 +89,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// 特別な三角形テストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetIsSpecialTriangleTestCases()
+    internal static IEnumerable<TestCaseData> GetIsSpecialTriangleTestCases()
     {
       var testCases = HandUtil.AllHandTypes.Where(ht => HandUtil.SpecialTriangleHandTypes.Contains(ht))
         .Select(ht => (ht, true))
@@ -109,7 +109,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// Alpha/Betaの引き分けテストケースを生成
     /// Alpha/Betaが絡む場合は常に引き分けになることを確認
     /// </summary>
-    public static IEnumerable<TestCaseData> GetAlphaBetaDrawTestCases()
+    internal static IEnumerable<TestCaseData> GetAlphaBetaDrawTestCases()
     {
       var testCases = HandUtil.GetAllHandCombinations()
         .Where(combo => HandUtil.SpecialHandTypes.Contains(combo.player) || HandUtil.SpecialHandTypes.Contains(combo.opponent))
@@ -125,7 +125,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// 偶数ターン特殊三角形テストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetSpecialTriangleTestCases()
+    internal static IEnumerable<TestCaseData> GetSpecialTriangleTestCases()
     {
       var testCases = HandUtil.GetAllHandCombinations(HandUtil.SpecialTriangleHandTypes)
         .Where(combo => combo.player != combo.opponent)
@@ -141,7 +141,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// <summary>
     /// EasyRuleSet用の基本じゃんけんテストケースを生成
     /// </summary>
-    public static IEnumerable<TestCaseData> GetBasicRockPaperScissorsTestCases()
+    internal static IEnumerable<TestCaseData> GetBasicRockPaperScissorsTestCases()
     {
       var testCases = new[]
       {
