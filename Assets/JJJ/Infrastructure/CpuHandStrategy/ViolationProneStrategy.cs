@@ -68,7 +68,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
         // 後出しする場合、有効な手の中からランダムに手を選択
         int index = _randomService.Next(availableHandTypes.Count);
         var selectedHandType = availableHandTypes[index];
-        return new Hand(selectedHandType, HandUtil.GetHandName(selectedHandType), isTimeout: true);
+        return new Hand(selectedHandType, isTimeout: true);
       }
       else if (randomValue < TimeoutProbability + AlphaViolationProbability)
       {
@@ -97,7 +97,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
           else
           {
             // 封印された手を出す場合
-            return new Hand(sealedHandType.Value, HandUtil.GetHandName(sealedHandType.Value));
+            return new Hand(sealedHandType.Value);
           }
         }
       }
@@ -105,7 +105,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       // 通常の手をランダムに選択
       int randomIndex = _randomService.Next(availableHandTypes.Count);
       var chosenHandType = availableHandTypes[randomIndex];
-      return new Hand(chosenHandType, HandUtil.GetHandName(chosenHandType));
+      return new Hand(chosenHandType);
     }
   }
 }

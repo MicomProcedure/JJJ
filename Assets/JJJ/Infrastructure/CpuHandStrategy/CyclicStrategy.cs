@@ -59,7 +59,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
         if (chosenType < invalidHandTypes.Count)
         {
           // 無効な手を選択
-          return new Hand(invalidHandTypes[chosenType], HandUtil.GetHandName(invalidHandTypes[chosenType]));
+          return new Hand(invalidHandTypes[chosenType]);
         }
         else
         {
@@ -68,7 +68,6 @@ namespace JJJ.Infrastructure.CpuHandStrategy
           int handType = _randomService.Next(0, validHandTypes.Count());
           return new Hand(
             validHandTypes.ElementAt(handType),
-            HandUtil.GetHandName(validHandTypes.ElementAt(handType)),
             isTimeout: true
           );
         }
@@ -83,7 +82,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
         _currentSelectedIndex = 0;
       }
       var chosenHandType = validHandTypes.ElementAt(_currentSelectedIndex);
-      return new Hand(chosenHandType, HandUtil.GetHandName(chosenHandType));
+      return new Hand(chosenHandType);
     }
   }
 }

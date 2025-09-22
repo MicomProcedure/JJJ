@@ -70,7 +70,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
 
       var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
       var expectedHandType = validHands[0];
-      var expectedHand = new Hand(expectedHandType, HandUtil.GetHandName(expectedHandType), isTimeout: true);
+      var expectedHand = new Hand(expectedHandType, isTimeout: true);
       var hand = strategy.GetNextCpuHand(turnContext);
 
       Assert.AreEqual(expectedHand.Type, hand.Type);
@@ -144,7 +144,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
 
       var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
       var expectedHandType = validHands[0];
-      var expectedHand = new Hand(expectedHandType, HandUtil.GetHandName(expectedHandType));
+      var expectedHand = new Hand(expectedHandType);
       var hand = strategy.GetNextCpuHand(turnContext);
 
       Assert.AreEqual(expectedHand.Type, hand.Type);
