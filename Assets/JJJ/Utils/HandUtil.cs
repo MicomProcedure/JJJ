@@ -7,29 +7,6 @@ namespace JJJ.Utils
   public static class HandUtil
   {
     /// <summary>
-    /// HandTypeから手の名前を取得する
-    /// </summary>
-    /// <param name="handType">手の種類</param>
-    /// <returns>手の名前</returns>
-    /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    public static string GetHandName(HandType handType)
-    {
-      return handType switch
-      {
-        HandType.Rock => "グー",
-        HandType.Paper => "パー",
-        HandType.Scissors => "チョキ",
-        HandType.Alpha => "α",
-        HandType.Beta => "β",
-        HandType.One => "1",
-        HandType.Two => "2",
-        HandType.Three => "3",
-        HandType.Four => "4",
-        _ => throw new System.ArgumentOutOfRangeException(nameof(handType), handType, null)
-      };
-    }
-
-    /// <summary>
     /// 基本的な手の種類
     /// グー・チョキ・パーの3種類
     /// </summary>

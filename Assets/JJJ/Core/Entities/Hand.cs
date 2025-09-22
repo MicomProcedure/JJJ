@@ -11,6 +11,23 @@ namespace JJJ.Core.Entities
     public HandType Type { get; private set; }
 
     /// <summary>
+    /// 手の名前
+    /// </summary>
+    public string Name => Type switch
+    {
+      HandType.Rock => "グー",
+      HandType.Paper => "パー",
+      HandType.Scissors => "チョキ",
+      HandType.Alpha => "α",
+      HandType.Beta => "β",
+      HandType.One => "1",
+      HandType.Two => "2",
+      HandType.Three => "3",
+      HandType.Four => "4",
+      _ => throw new System.ArgumentOutOfRangeException()
+    };
+
+    /// <summary>
     /// 後出しかどうか
     /// </summary>
     public bool IsTimeout { get; private set; }
