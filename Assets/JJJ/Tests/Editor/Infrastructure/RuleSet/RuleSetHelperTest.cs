@@ -7,7 +7,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 {
   public class RuleSetHelperTest
   {
-    // 勝利パターンのテスト
+    /// <summary>
+    /// 勝利パターンのテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetWinPatternTestCases))]
     public void DetermineResult_WinPatterns_ReturnsWin(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
@@ -20,7 +22,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Player: {playerHand} vs Opponent: {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 引き分けパターンのテスト
+    /// <summary>
+    /// 引き分けパターンのテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetDrawPatternTestCases))]
     public void DetermineResult_SameHands_ReturnsDraw(HandType handType, HandType opponentHandType, JudgeResultType expectedResult)
     {
@@ -33,7 +37,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Same hands should result in draw. {handType} vs {opponentHandType}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 敗北パターンのテスト
+    /// <summary>
+    /// 敗北パターンのテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetLosePatternTestCases))]
     public void DetermineResult_LosePatterns_ReturnsLose(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
@@ -46,7 +52,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Player: {playerHand} vs Opponent: {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 特別な三角形の判定テスト
+    /// <summary>
+    /// 特別な三角形の判定テスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetIsSpecialTriangleTestCases))]
     public void IsSpecialTriangle_ValidatesCorrectly(HandType handType, bool expectedResult)
     {

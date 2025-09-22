@@ -5,8 +5,14 @@ using JJJ.Core.Interfaces;
 
 namespace JJJ.UseCase.Strategy
 {
+  /// <summary>
+  /// ランダムに戦略を選択する実装
+  /// </summary>
   public class RandomStrategySelector : IStrategySelector
   {
+    /// <summary>
+    /// 乱数生成器
+    /// </summary>
     private readonly Random _random = new Random();
 
     public (ICpuHandStrategy player, ICpuHandStrategy opponent) SelectPair(IEnumerable<ICpuHandStrategy> candidates)

@@ -42,6 +42,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     private static double AlphaViolationProbability;
     private static double BetaViolationProbability;
 
+    /// <summary>
+    /// 各テストの前に実行されるセットアップメソッド
+    /// </summary>
     [SetUp]
     public void Setup()
     {
@@ -53,7 +56,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     }
 
 
-    // 後出しをする場合のテスト
+    /// <summary>
+    /// 後出しをする場合のテスト
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenTimeoutOccurs_ReturnsTimeoutHand()
     {
@@ -72,7 +77,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.IsTrue(hand.IsTimeout);
     }
 
-    // alphaの効果が発動中にalphaを出す場合のテスト
+    /// <summary>
+    /// alphaの効果が発動中にalphaを出す場合のテスト
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenAlphaViolationOccurs_ReturnsAlpha()
     {
@@ -87,7 +94,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(Hand.Alpha, hand);
     }
 
-    // betaの効果が発動中にbetaを出す場合のテスト
+    /// <summary>
+    /// betaの効果が発動中にbetaを出す場合のテスト
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenBetaViolationOccursAndBetaChosen_ReturnsBeta()
     {
@@ -103,7 +112,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(Hand.Beta.Type, hand.Type);
     }
 
-    // betaの効果が発動中に封印された手を出す場合のテスト
+    /// <summary>
+    /// betaの効果が発動中に封印された手を出す場合のテスト
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenBetaViolationOccursAndSealedHandChosen_ReturnsSealedHand()
     {
@@ -119,7 +130,9 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       Assert.AreEqual(Hand.Paper.Type, hand.Type);
     }
 
-    // 通常の手を出す場合のテスト
+    /// <summary>
+    /// 通常の手を出す場合のテスト
+    /// </summary>
     [Test]
     public void GetNextCpuHand_WhenNoViolationOccurs_ReturnsValidHand()
     {

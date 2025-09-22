@@ -48,7 +48,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Even turn special triangle logic: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 奇数ターンでは通常ルールが適用されることをテスト
+    /// <summary>
+    /// 奇数ターンでは通常ルールが適用されることをテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
     public void Judge_OddTurn_UsesNormalRules(HandType playerHand, HandType opponentHand, bool isWinExpected)
     {
@@ -63,7 +65,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Odd turn should use normal rules: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
-    // Alphaのバリデーションテスト
+    /// <summary>
+    /// Alphaのバリデーションテスト
+    /// </summary>
     [Test]
     public void ValidateHand_AlphaRepeat_ReturnsViolation()
     {
@@ -78,7 +82,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Alpha hand should result in AlphaRepeat violation.");
     }
 
-    // Betaのバリデーションテスト
+    /// <summary>
+    /// Betaのバリデーションテスト
+    /// </summary>
     [Test]
     public void ValidateHand_BetaRepeat_ReturnsViolation()
     {
@@ -93,7 +99,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Beta hand should result in BetaRepeat violation.");
     }
 
-    // 封印された手のバリデーションテスト
+    /// <summary>
+    /// 封印された手のバリデーションテスト
+    /// </summary>
     [Test]
     public void ValidateHand_SealedHand_ReturnsViolation()
     {
@@ -108,7 +116,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Sealed hand should result in SealedHandUsed violation.");
     }
 
-    // タイムアウトのバリデーションテスト
+    /// <summary>
+    /// タイムアウトのバリデーションテスト
+    /// </summary>
     [Test]
     public void ValidateHand_Timeout_ReturnsViolation()
     {
@@ -123,7 +133,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Timeout hand should result in Timeout violation.");
     }
 
-    // 正常な手のバリデーションテスト
+    /// <summary>
+    /// 正常な手のバリデーションテスト
+    /// </summary>
     [Test]
     public void ValidateHand_ValidHand_ReturnsValid()
     {
@@ -138,7 +150,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Valid hand should not result in any violation.");
     }
 
-    // Alphaバリデーション違反による敗北テスト
+    /// <summary>
+    /// Alphaバリデーション違反による敗北テスト
+    /// </summary>
     [Test]
     public void Judge_AlphaViolation_ReturnsViolation()
     {
@@ -154,7 +168,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Alpha violation should set AlphaRepeat as player violation type.");
     }
 
-    // 双方バリデーション違反による双方違反テスト
+    /// <summary>
+    /// 双方バリデーション違反による双方違反テスト
+    /// </summary>
     [Test]
     public void Judge_DoubleViolation_ReturnsDoubleViolation()
     {
@@ -174,7 +190,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   "Opponent should have BetaRepeat violation type.");
     }
 
-    // 通常のじゃんけんルール（RuleSetHelperに委譲）
+    /// <summary>
+    /// 通常のじゃんけんルール（RuleSetHelperに委譲）
+    /// </summary>/
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_NormalRules_ReturnsExpectedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {

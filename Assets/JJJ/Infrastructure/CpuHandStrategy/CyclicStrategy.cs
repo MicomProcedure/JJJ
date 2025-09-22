@@ -10,6 +10,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
   /// </summary>
   public class CyclicStrategy : ICpuHandStrategy
   {
+    /// <summary>
+    /// 現在選択されている手のインデックス
+    /// </summary>
     private int _currentSelectedIndex = -1;
 
     /// <summary>

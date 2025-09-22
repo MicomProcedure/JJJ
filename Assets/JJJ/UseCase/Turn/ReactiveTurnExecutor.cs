@@ -26,6 +26,7 @@ namespace JJJ.UseCase.Turn
             var opponentHand = opponentStrategy.GetNextCpuHand(context);
             var truthResult = ruleSet.Judge(playerHand, opponentHand, context);
 
+            // プレイヤーのジャッジと時間切れを表すSubject
             var claimSubject = new Subject<PlayerClaim>();
 
             // subscriptions
