@@ -14,6 +14,9 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     private readonly NormalRuleSet _normalRuleSet = new();
     private TurnContext _turnContext;
 
+    /// <summary>
+    /// 各テストの前に実行されるセットアップメソッド
+    /// </summary>
     [SetUp]
     public void SetUp()
     {
@@ -28,8 +31,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_NormalCombinations_ReturnsExpectedResult(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
 
       var result = _normalRuleSet.Judge(player, opponent, _turnContext);
 
@@ -44,8 +47,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_WhenPlayerTimesOut_ReturnsViolation(HandType playerHand, HandType opponentHand, JudgeResultType _)
     {
-      var player = new Hand(playerHand, playerHand.ToString(), isTimeout: true);
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand, isTimeout: true);
+      var opponent = new Hand(opponentHand);
 
       var result = _normalRuleSet.Judge(player, opponent, _turnContext);
 
@@ -60,8 +63,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_WhenOpponentTimesOut_ReturnsWin(HandType playerHand, HandType opponentHand, JudgeResultType _)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString(), isTimeout: true);
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand, isTimeout: true);
 
       var result = _normalRuleSet.Judge(player, opponent, _turnContext);
 
@@ -76,8 +79,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetNormalJudgeTestCases))]
     public void Judge_WhenBothTimeout_ReturnsDoubleViolation(HandType playerHand, HandType opponentHand, JudgeResultType _)
     {
-      var player = new Hand(playerHand, playerHand.ToString(), isTimeout: true);
-      var opponent = new Hand(opponentHand, opponentHand.ToString(), isTimeout: true);
+      var player = new Hand(playerHand, isTimeout: true);
+      var opponent = new Hand(opponentHand, isTimeout: true);
 
       var result = _normalRuleSet.Judge(player, opponent, _turnContext);
 

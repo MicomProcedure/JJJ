@@ -1,4 +1,3 @@
-
 namespace JJJ.Core.Interfaces
 {
   /// <summary>

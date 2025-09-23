@@ -5,9 +5,20 @@ using JJJ.Core.Interfaces;
 
 namespace JJJ.UseCase.Strategy
 {
+  /// <summary>
+  /// ランダムに戦略を選択する実装
+  /// </summary>
   public class RandomStrategySelector : IStrategySelector
   {
-    private readonly Random _random = new Random();
+    /// <summary>
+    /// 乱数生成サービス
+    /// </summary>
+    private IRandomService _randomService;
+
+    public RandomStrategySelector(IRandomService randomService)
+    {
+      _randomService = randomService;
+    }
 
     public (ICpuHandStrategy player, ICpuHandStrategy opponent) SelectPair(IEnumerable<ICpuHandStrategy> candidates)
     {
@@ -15,8 +26,8 @@ namespace JJJ.UseCase.Strategy
       var list = candidates.ToList();
       if (list.Count == 0) throw new InvalidOperationException("No strategies provided");
 
-      int p = _random.Next(list.Count);
-      int o = _random.Next(list.Count);
+      int p = _randomService.Next(list.Count);
+      int o = _randomService.Next(list.Count);
       return (list[p], list[o]);
     }
   }

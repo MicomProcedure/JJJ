@@ -9,19 +9,24 @@ namespace JJJ.UseCase
 {
   public class JudgeService : IJudgeService, IDisposable, IStartable
   {
-    private IRuleSet ruleSet;
-    private IEnumerable<ICpuHandStrategy> strategies;
-    private ITimerService timerService;
-    private readonly TimeSpan JudgeLimit = TimeSpan.FromSeconds(5);
-    private Observable<Unit> playerWinObservable;
-    private Observable<Unit> opponentWinObservable;
+    private IRuleSet _ruleSet;
+    private IEnumerable<ICpuHandStrategy> _strategies;
+    private ITimerService _timerService;
+    private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
+    private Observable<Unit> _playerWinObservable;
+    private Observable<Unit> _opponentWinObservable;
 
-    private CompositeDisposable currentTurnDisposables;
+    private CompositeDisposable _currentTurnDisposables;
 
-    private ICpuHandStrategy currentPlayerStrategy;
-    private ICpuHandStrategy currentOpponentStrategy;
-    private readonly IStrategySelector strategySelector;
-    private readonly ITurnExecutor turnExecutor;
+    private ICpuHandStrategy _currentPlayerStrategy;
+    private ICpuHandStrategy _currentOpponentStrategy;
+    private readonly IStrategySelector _strategySelector;
+    private readonly ITurnExecutor _turnExecutor;
+
+    /// <summary>
+    /// 現在のターン情報
+    /// </summary>
+    private TurnContext _currentTurnContext;
 
     public JudgeService(IRuleSet ruleSet,
                         IEnumerable<ICpuHandStrategy> strategies,
@@ -31,23 +36,18 @@ namespace JJJ.UseCase
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
-      this.ruleSet = ruleSet;
-      this.strategies = strategies;
-      this.timerService = timerService;
-      this.playerWinObservable = playerWinObservable;
-      this.opponentWinObservable = opponentWinObservable;
-      this.strategySelector = strategySelector;
-      this.turnExecutor = turnExecutor;
+      _ruleSet = ruleSet;
+      _strategies = strategies;
+      _timerService = timerService;
+      _playerWinObservable = playerWinObservable;
+      _opponentWinObservable = opponentWinObservable;
+      _strategySelector = strategySelector;
+      _turnExecutor = turnExecutor;
     }
-
-    /// <summary>
-    /// 現在のターン情報
-    /// </summary>
-    private TurnContext currentTurnContext;
 
     void IStartable.Start()
     {
-      currentTurnContext = new TurnContext();
+      _currentTurnContext = new TurnContext();
       StartSession();
     }
 
@@ -57,9 +57,9 @@ namespace JJJ.UseCase
     public void StartSession()
     {
       // 戦略を選択
-      (currentPlayerStrategy, currentOpponentStrategy) = strategySelector.SelectPair(strategies);
-      currentPlayerStrategy.Initialize();
-      currentOpponentStrategy.Initialize();
+      (_currentPlayerStrategy, _currentOpponentStrategy) = _strategySelector.SelectPair(_strategies);
+      _currentPlayerStrategy.Initialize();
+      _currentOpponentStrategy.Initialize();
 
       // 新しいターンを開始
       StartTurn();
@@ -71,15 +71,15 @@ namespace JJJ.UseCase
     public void StartTurn()
     {
       // 既存ターン用の購読を破棄
-      currentTurnDisposables?.Dispose();
-      currentTurnDisposables = new CompositeDisposable();
+      _currentTurnDisposables?.Dispose();
+      _currentTurnDisposables = new CompositeDisposable();
 
-      currentTurnContext.NextTurn();
+      _currentTurnContext.NextTurn();
 
       // 1ターン実行
-      turnExecutor
-        .ExecuteTurn(ruleSet, currentPlayerStrategy, currentOpponentStrategy, currentTurnContext,
-                      JudgeLimit, playerWinObservable, opponentWinObservable, timerService)
+      _turnExecutor
+        .ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
+                      _judgeLimit, _playerWinObservable, _opponentWinObservable, _timerService)
         .Subscribe(outcome =>
         {
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
@@ -87,21 +87,21 @@ namespace JJJ.UseCase
           {
             Observable.TimerFrame(0)
               .Subscribe(_ => StartTurn())
-              .AddTo(currentTurnDisposables);
+              .AddTo(_currentTurnDisposables);
           }
           else
           {
             Observable.TimerFrame(0)
               .Subscribe(_ => StartSession())
-              .AddTo(currentTurnDisposables);
+              .AddTo(_currentTurnDisposables);
           }
         })
-        .AddTo(currentTurnDisposables);
+        .AddTo(_currentTurnDisposables);
     }
 
     public void Dispose()
     {
-      currentTurnDisposables?.Dispose();
+      _currentTurnDisposables?.Dispose();
     }
   }
 
