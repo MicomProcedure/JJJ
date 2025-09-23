@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 namespace JJJ.UI
 {
+  /// <summary>
+  /// ボタンのAlphaHitTestMinimumThresholdを調整するコンポーネント
+  /// </summary>
   [RequireComponent(typeof(Image))]
   public class ButtonAlphaHitAdjuster : MonoBehaviour
   {

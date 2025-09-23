@@ -7,21 +7,21 @@ namespace JJJ.Infrastructure
   /// </summary>
   public class RandomService : IRandomService
   {
-    private System.Random random = new System.Random();
+    private System.Random _random = new System.Random();
 
     public int Next(int minValue, int maxValue)
     {
-      return random.Next(minValue, maxValue);
+      return _random.Next(minValue, maxValue);
     }
 
     public int Next(int maxValue)
     {
-      return random.Next(maxValue);
+      return _random.Next(maxValue);
     }
 
     public double NextDouble()
     {
-      return random.NextDouble();
+      return _random.NextDouble();
     }
   }
 }

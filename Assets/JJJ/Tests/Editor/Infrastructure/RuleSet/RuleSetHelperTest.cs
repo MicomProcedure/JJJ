@@ -7,12 +7,14 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 {
   public class RuleSetHelperTest
   {
-    // 勝利パターンのテスト
+    /// <summary>
+    /// 勝利パターンのテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetWinPatternTestCases))]
     public void DetermineResult_WinPatterns_ReturnsWin(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
 
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
@@ -20,12 +22,14 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Player: {playerHand} vs Opponent: {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 引き分けパターンのテスト
+    /// <summary>
+    /// 引き分けパターンのテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetDrawPatternTestCases))]
     public void DetermineResult_SameHands_ReturnsDraw(HandType handType, HandType opponentHandType, JudgeResultType expectedResult)
     {
-      var player = new Hand(handType, handType.ToString());
-      var opponent = new Hand(opponentHandType, opponentHandType.ToString());
+      var player = new Hand(handType);
+      var opponent = new Hand(opponentHandType);
 
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
@@ -33,12 +37,14 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Same hands should result in draw. {handType} vs {opponentHandType}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 敗北パターンのテスト
+    /// <summary>
+    /// 敗北パターンのテスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetLosePatternTestCases))]
     public void DetermineResult_LosePatterns_ReturnsLose(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
-      var player = new Hand(playerHand, playerHand.ToString());
-      var opponent = new Hand(opponentHand, opponentHand.ToString());
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
 
       var result = RuleSetHelper.DetermineResult(player, opponent);
 
@@ -46,11 +52,13 @@ namespace JJJ.Tests.Infrastructure.RuleSet
                   $"Player: {playerHand} vs Opponent: {opponentHand}, expected {expectedResult}, got {result.Type}");
     }
 
-    // 特別な三角形の判定テスト
+    /// <summary>
+    /// 特別な三角形の判定テスト
+    /// </summary>
     [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetIsSpecialTriangleTestCases))]
     public void IsSpecialTriangle_ValidatesCorrectly(HandType handType, bool expectedResult)
     {
-      var hand = new Hand(handType, handType.ToString());
+      var hand = new Hand(handType);
 
       bool result = RuleSetHelper.IsSpecialTriangle(hand);
 
