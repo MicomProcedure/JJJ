@@ -1,3 +1,4 @@
+using JJJ.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,7 @@ namespace JJJ.View
   /// <summary>
   /// 残りのタイマー時間を表示するコンポーネント
   /// </summary>
-  public class TimerRemainsPresenter : MonoBehaviour
+  public class TimerRemainsPresenter : MonoBehaviour, ITimerRemainsPresenter
   {
     /// <summary>
     /// 残り時間を円形で表示するImage
