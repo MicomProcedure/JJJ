@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using R3;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace JJJ.UseCase
@@ -57,6 +58,7 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartSession()
     {
+      Debug.Log("StartSession");
       // 戦略を選択
       (_currentPlayerStrategy, _currentOpponentStrategy) = _strategySelector.SelectPair(_strategies);
       _currentPlayerStrategy.Initialize();
@@ -71,6 +73,7 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartTurn()
     {
+      Debug.Log("StartTurn");
       // 既存ターン用の購読を破棄
       _currentTurnDisposables?.Dispose();
       _currentTurnDisposables = new CompositeDisposable();
