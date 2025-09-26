@@ -1,12 +1,13 @@
 using UnityEngine;
 using JJJ.Core.Entities;
+using JJJ.Core.Interfaces;
 
 namespace JJJ.View
 {
   /// <summary>
   /// 手のアニメーションを制御するコンポーネント
   /// </summary>
-  public class HandAnimationPresenter : MonoBehaviour
+  public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
     /// <summary>
     /// 手のアニメーションを制御するAnimator
