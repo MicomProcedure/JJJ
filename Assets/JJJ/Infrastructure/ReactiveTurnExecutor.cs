@@ -17,6 +17,7 @@ namespace JJJ.UseCase.Turn
                                                 TurnContext context,
                                                 TimeSpan limit,
                                                 ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                                                ITimerRemainsPresenter timerRemainsPresenter,
                                                 IJudgeInput judgeInput,
                                                 ITimerService timerService)
     {
@@ -52,6 +53,15 @@ namespace JJJ.UseCase.Turn
             var d2 = opponentWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.OpponentWin));
             var d3 = drawObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.Draw));
             var d4 = timerService.After(limit).Subscribe(_ => claimSubject.OnNext(PlayerClaim.Timeout));
+
+            timerService.CountdownEveryFrame(limit)
+              .Subscribe(remaining =>
+              {
+                // Debug.Log($"Time remains: {remaining.TotalSeconds} seconds");
+                // タイマーの残り時間を更新
+                // Debug.Log($"TimerRemainsPresenter: {timerRemainsPresenter}");
+                timerRemainsPresenter.SetTimerRemains((float)remaining.TotalSeconds, (float)limit.TotalSeconds);
+              });
 
             // プレイヤー側のボタンを押す、相手側のボタンを押す、タイマーが時間切れになるのうち最初に来たObservableに対して処理を行う
             var dMain = claimSubject

@@ -20,6 +20,7 @@ namespace JJJ.DI
   {
     [SerializeField] private JudgeInput _judgeInput;
     [SerializeField] private CompositeHandAnimationPresenter _compositeHandAnimationPresenter;
+    [SerializeField] private TimerRemainsPresenter _timerRemainsPresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -49,6 +50,7 @@ namespace JJJ.DI
       builder.Register<IRandomService, RandomService>(Lifetime.Scoped);
       builder.RegisterComponent(_judgeInput).AsImplementedInterfaces();
       builder.RegisterComponent(_compositeHandAnimationPresenter).AsImplementedInterfaces();
+      builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
     }
   }
 }
