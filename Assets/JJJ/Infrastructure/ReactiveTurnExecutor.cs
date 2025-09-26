@@ -37,10 +37,6 @@ namespace JJJ.UseCase.Turn
             var playerHandAnimationPresenter = compositeHandAnimationPresenter.PlayerHandAnimationPresenter;
             var opponentHandAnimationPresenter = compositeHandAnimationPresenter.OpponentHandAnimationPresenter;
 
-            // 手のアニメーションをリセット
-            playerHandAnimationPresenter.ResetHand();
-            opponentHandAnimationPresenter.ResetHand();
-
             // 手のアニメーションを再生
             playerHandAnimationPresenter.PlayHand(playerHand.Type);
             opponentHandAnimationPresenter.PlayHand(opponentHand.Type);
