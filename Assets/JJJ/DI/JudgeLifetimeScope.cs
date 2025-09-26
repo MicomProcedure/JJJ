@@ -2,6 +2,7 @@ using JJJ.Core.Interfaces;
 using JJJ.Infrastructure;
 using JJJ.Infrastructure.CpuHandStrategy;
 using JJJ.UI.Scripts;
+using JJJ.View;
 using JJJ.UseCase;
 using JJJ.UseCase.Strategy;
 using JJJ.UseCase.Turn;
@@ -17,8 +18,8 @@ namespace JJJ.DI
   /// </summary>
   public class JudgeLifetimeScope : LifetimeScope
   {
-    [SerializeField]
-    private JudgeInput _judgeInput;
+    [SerializeField] private JudgeInput _judgeInput;
+    [SerializeField] private CompositeHandAnimationPresenter _compositeHandAnimationPresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -46,8 +47,8 @@ namespace JJJ.DI
       builder.Register<IStrategySelector, RandomStrategySelector>(Lifetime.Scoped);
       builder.Register<ITurnExecutor, ReactiveTurnExecutor>(Lifetime.Scoped);
       builder.Register<IRandomService, RandomService>(Lifetime.Scoped);
-      builder.RegisterComponent(_judgeInput).As<IJudgeInput>();
-
+      builder.RegisterComponent(_judgeInput).AsImplementedInterfaces();
+      builder.RegisterComponent(_compositeHandAnimationPresenter).AsImplementedInterfaces();
     }
   }
 }
