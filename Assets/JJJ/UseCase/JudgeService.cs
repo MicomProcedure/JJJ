@@ -15,6 +15,7 @@ namespace JJJ.UseCase
     private ITimerService _timerService;
     private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
     private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
+    private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IJudgeInput _judgeInput;
 
     private CompositeDisposable _currentTurnDisposables;
@@ -34,6 +35,7 @@ namespace JJJ.UseCase
                         ITimerService timerService,
                         IJudgeInput judgeInput,
                         ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                        ITimerRemainsPresenter timerRemainsPresenter,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
@@ -41,6 +43,7 @@ namespace JJJ.UseCase
       _strategies = strategies;
       _timerService = timerService;
       _compositeHandAnimationPresenter = compositeHandAnimationPresenter;
+      _timerRemainsPresenter = timerRemainsPresenter;
       _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
@@ -82,7 +85,7 @@ namespace JJJ.UseCase
       // 1ターン実行
       _turnExecutor
         .ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
-                      _judgeLimit, _compositeHandAnimationPresenter, _judgeInput, _timerService)
+                      _judgeLimit, _compositeHandAnimationPresenter, _timerRemainsPresenter, _judgeInput, _timerService)
         .Subscribe(outcome =>
         {
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）

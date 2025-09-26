@@ -18,6 +18,7 @@ namespace JJJ.Core.Interfaces
     /// <param name="context">ターンのコンテキスト</param>
     /// <param name="limit">制限時間</param>
     /// <param name="compositeHandAnimationPresenter">手のアニメーションプレゼンターのまとめ</param>
+    /// <param name="timerRemainsPresenter">タイマーの残り時間表示プレゼンター</param>
     /// <param name="judgeInput">ジャッジ入力</param>
     /// <param name="timerService">タイマーサービス</param>
     /// <returns>ターンの結果を通知するObservable</returns>
@@ -27,6 +28,7 @@ namespace JJJ.Core.Interfaces
                                          TurnContext context,
                                          TimeSpan limit,
                                          ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                                         ITimerRemainsPresenter timerRemainsPresenter,
                                          IJudgeInput judgeInput,
                                          ITimerService timerService);
   }
