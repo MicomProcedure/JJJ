@@ -16,9 +16,8 @@ namespace JJJ.UseCase.Turn
                                                 ICpuHandStrategy opponentStrategy,
                                                 TurnContext context,
                                                 TimeSpan limit,
-                                                Observable<Unit> playerWinObservable,
-                                                Observable<Unit> opponentWinObservable,
-                                                Observable<Unit> drawObservable,
+                                                ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                                                IJudgeInput judgeInput,
                                                 ITimerService timerService)
     {
       return Observable.Create<TurnOutcome>(observer =>
@@ -27,6 +26,23 @@ namespace JJJ.UseCase.Turn
             var playerHand = playerStrategy.GetNextCpuHand(context);
             var opponentHand = opponentStrategy.GetNextCpuHand(context);
             var truthResult = ruleSet.Judge(playerHand, opponentHand, context);
+
+            // Observables
+            var playerWinObservable = judgeInput.PlayerWinObservable;
+            var opponentWinObservable = judgeInput.OpponentWinObservable;
+            var drawObservable = judgeInput.DrawObservable;
+
+            // Hand Animation Presenters
+            var playerHandAnimationPresenter = compositeHandAnimationPresenter.PlayerHandAnimationPresenter;
+            var opponentHandAnimationPresenter = compositeHandAnimationPresenter.OpponentHandAnimationPresenter;
+
+            // 手のアニメーションをリセット
+            playerHandAnimationPresenter.ResetHand();
+            opponentHandAnimationPresenter.ResetHand();
+
+            // 手のアニメーションを再生
+            playerHandAnimationPresenter.PlayHand(playerHand.Type);
+            opponentHandAnimationPresenter.PlayHand(opponentHand.Type);
 
             // プレイヤーのジャッジと時間切れを表すSubject
             var claimSubject = new Subject<PlayerClaim>();

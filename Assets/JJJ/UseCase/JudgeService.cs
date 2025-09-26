@@ -14,9 +14,8 @@ namespace JJJ.UseCase
     private IEnumerable<ICpuHandStrategy> _strategies;
     private ITimerService _timerService;
     private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
-    private Observable<Unit> _playerWinObservable;
-    private Observable<Unit> _opponentWinObservable;
-    private Observable<Unit> _drawObservable;
+    private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
+    private readonly IJudgeInput _judgeInput;
 
     private CompositeDisposable _currentTurnDisposables;
 
@@ -34,15 +33,15 @@ namespace JJJ.UseCase
                         IEnumerable<ICpuHandStrategy> strategies,
                         ITimerService timerService,
                         IJudgeInput judgeInput,
+                        ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
       _timerService = timerService;
-      _playerWinObservable = judgeInput.PlayerWinObservable;
-      _opponentWinObservable = judgeInput.OpponentWinObservable;
-      _drawObservable = judgeInput.DrawObservable;
+      _compositeHandAnimationPresenter = compositeHandAnimationPresenter;
+      _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
     }
@@ -83,7 +82,7 @@ namespace JJJ.UseCase
       // 1ターン実行
       _turnExecutor
         .ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
-                      _judgeLimit, _playerWinObservable, _opponentWinObservable, _drawObservable, _timerService)
+                      _judgeLimit, _compositeHandAnimationPresenter, _judgeInput, _timerService)
         .Subscribe(outcome =>
         {
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）

@@ -17,9 +17,8 @@ namespace JJJ.Core.Interfaces
     /// <param name="opponentStrategy">対戦相手の戦略</param>
     /// <param name="context">ターンのコンテキスト</param>
     /// <param name="limit">制限時間</param>
-    /// <param name="playerWinObservable">プレイヤーが勝利するとジャッジしたことを通知するObservable</param>
-    /// <param name="opponentWinObservable">対戦相手が勝利するとジャッジしたことを通知するObservable</param>
-    /// <param name="drawObservable">引き分けとジャッジしたことを通知するObservable</param>
+    /// <param name="compositeHandAnimationPresenter">手のアニメーションプレゼンターのまとめ</param>
+    /// <param name="judgeInput">ジャッジ入力</param>
     /// <param name="timerService">タイマーサービス</param>
     /// <returns>ターンの結果を通知するObservable</returns>
     public Observable<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
@@ -27,9 +26,8 @@ namespace JJJ.Core.Interfaces
                                          ICpuHandStrategy opponentStrategy,
                                          TurnContext context,
                                          TimeSpan limit,
-                                         Observable<Unit> playerWinObservable,
-                                         Observable<Unit> opponentWinObservable,
-                                         Observable<Unit> drawObservable,
+                                         ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                                         IJudgeInput judgeInput,
                                          ITimerService timerService);
   }
 }
