@@ -91,12 +91,14 @@ namespace JJJ.UseCase
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
           if (outcome.TruthResult.Type == JudgeResultType.Draw)
           {
+            _compositeHandAnimationPresenter.ResetHandAll();
             Observable.TimerFrame(0)
               .Subscribe(_ => StartTurn())
               .AddTo(_currentTurnDisposables);
           }
           else
           {
+            _compositeHandAnimationPresenter.ReturnInitAll();
             Observable.TimerFrame(0)
               .Subscribe(_ => StartSession())
               .AddTo(_currentTurnDisposables);
