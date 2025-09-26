@@ -2,6 +2,7 @@ using System;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using R3;
+using UnityEngine;
 
 namespace JJJ.UseCase.Turn
 {
@@ -41,6 +42,7 @@ namespace JJJ.UseCase.Turn
               .Take(1)
               .Subscribe(claim =>
               {
+                Debug.Log($"PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
                 bool correct = claim switch
                 {
                   PlayerClaim.PlayerWin => truthResult.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation,
