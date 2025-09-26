@@ -7,6 +7,7 @@ namespace JJJ.Core.Entities
   {
     PlayerWin,
     OpponentWin,
+    Draw,
     Timeout
   }
 }
