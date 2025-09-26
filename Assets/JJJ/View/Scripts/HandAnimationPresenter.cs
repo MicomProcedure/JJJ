@@ -29,6 +29,12 @@ namespace JJJ.View
     {
       if (_isHandReset)
       {
+        // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
+        if (handType == HandType.Alpha || handType == HandType.Beta)
+        {
+          Debug.LogWarning("Alpha/Beta are not implemented yet. Playing Rock instead.");
+          _animator.SetTrigger("PlayRock");
+        }
         _animator.SetTrigger($"Play{handType}");
         _isHandReset = false;
       }
