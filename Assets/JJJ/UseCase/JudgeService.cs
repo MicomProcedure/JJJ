@@ -15,6 +15,7 @@ namespace JJJ.UseCase
     private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
     private Observable<Unit> _playerWinObservable;
     private Observable<Unit> _opponentWinObservable;
+    private Observable<Unit> _drawObservable;
 
     private CompositeDisposable _currentTurnDisposables;
 
@@ -31,16 +32,16 @@ namespace JJJ.UseCase
     public JudgeService(IRuleSet ruleSet,
                         IEnumerable<ICpuHandStrategy> strategies,
                         ITimerService timerService,
-                        Observable<Unit> playerWinObservable,
-                        Observable<Unit> opponentWinObservable,
+                        IJudgeInput judgeInput,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
       _timerService = timerService;
-      _playerWinObservable = playerWinObservable;
-      _opponentWinObservable = opponentWinObservable;
+      _playerWinObservable = judgeInput.PlayerWinObservable;
+      _opponentWinObservable = judgeInput.OpponentWinObservable;
+      _drawObservable = judgeInput.DrawObservable;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
     }
@@ -79,7 +80,7 @@ namespace JJJ.UseCase
       // 1ターン実行
       _turnExecutor
         .ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
-                      _judgeLimit, _playerWinObservable, _opponentWinObservable, _timerService)
+                      _judgeLimit, _playerWinObservable, _opponentWinObservable, _drawObservable, _timerService)
         .Subscribe(outcome =>
         {
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）

@@ -19,6 +19,7 @@ namespace JJJ.Core.Interfaces
     /// <param name="limit">制限時間</param>
     /// <param name="playerWinObservable">プレイヤーが勝利するとジャッジしたことを通知するObservable</param>
     /// <param name="opponentWinObservable">対戦相手が勝利するとジャッジしたことを通知するObservable</param>
+    /// <param name="drawObservable">引き分けとジャッジしたことを通知するObservable</param>
     /// <param name="timerService">タイマーサービス</param>
     /// <returns>ターンの結果を通知するObservable</returns>
     public Observable<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
@@ -28,6 +29,7 @@ namespace JJJ.Core.Interfaces
                                          TimeSpan limit,
                                          Observable<Unit> playerWinObservable,
                                          Observable<Unit> opponentWinObservable,
+                                         Observable<Unit> drawObservable,
                                          ITimerService timerService);
   }
 }

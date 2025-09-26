@@ -17,6 +17,7 @@ namespace JJJ.UseCase.Turn
                                                 TimeSpan limit,
                                                 Observable<Unit> playerWinObservable,
                                                 Observable<Unit> opponentWinObservable,
+                                                Observable<Unit> drawObservable,
                                                 ITimerService timerService)
     {
       return Observable.Create<TurnOutcome>(observer =>
@@ -32,7 +33,8 @@ namespace JJJ.UseCase.Turn
             // subscriptions
             var d1 = playerWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.PlayerWin));
             var d2 = opponentWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.OpponentWin));
-            var d3 = timerService.After(limit).Subscribe(_ => claimSubject.OnNext(PlayerClaim.Timeout));
+            var d3 = drawObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.Draw));
+            var d4 = timerService.After(limit).Subscribe(_ => claimSubject.OnNext(PlayerClaim.Timeout));
 
             // プレイヤー側のボタンを押す、相手側のボタンを押す、タイマーが時間切れになるのうち最初に来たObservableに対して処理を行う
             var dMain = claimSubject
@@ -43,6 +45,7 @@ namespace JJJ.UseCase.Turn
                 {
                   PlayerClaim.PlayerWin => truthResult.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation,
                   PlayerClaim.OpponentWin => truthResult.Type is JudgeResultType.Lose or JudgeResultType.Violation,
+                  PlayerClaim.Draw => truthResult.Type == JudgeResultType.Draw,
                   PlayerClaim.Timeout => false,
                   _ => false
                 };
@@ -50,7 +53,7 @@ namespace JJJ.UseCase.Turn
                 observer.OnCompleted();
               });
 
-            var cd = new CompositeDisposable { d1, d2, d3, dMain, claimSubject };
+            var cd = new CompositeDisposable { d1, d2, d3, d4, dMain, claimSubject };
             return cd;
           });
     }
