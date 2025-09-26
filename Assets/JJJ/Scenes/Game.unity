@@ -137,13 +137,14 @@ GameObject:
   - component: {fileID: 114324824}
   - component: {fileID: 114324823}
   - component: {fileID: 114324827}
+  - component: {fileID: 114324828}
   m_Layer: 5
   m_Name: LeftWin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &114324822
 RectTransform:
   m_ObjectHideFlags: 0
@@ -655,7 +656,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1301,13 +1302,14 @@ GameObject:
   - component: {fileID: 847348457}
   - component: {fileID: 847348456}
   - component: {fileID: 847348455}
+  - component: {fileID: 847348459}
   m_Layer: 5
   m_Name: RightWin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &847348454
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1932,7 +1934,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
