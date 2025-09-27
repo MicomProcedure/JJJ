@@ -1,12 +1,13 @@
 using UnityEngine;
 using JJJ.Core.Entities;
+using JJJ.Core.Interfaces;
 
 namespace JJJ.View
 {
   /// <summary>
   /// 手のアニメーションを制御するコンポーネント
   /// </summary>
-  public class HandAnimationPresenter : MonoBehaviour
+  public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
     /// <summary>
     /// 手のアニメーションを制御するAnimator
@@ -28,6 +29,12 @@ namespace JJJ.View
     {
       if (_isHandReset)
       {
+        // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
+        if (handType == HandType.Alpha || handType == HandType.Beta)
+        {
+          Debug.LogWarning("Alpha/Beta are not implemented yet. Playing Rock instead.");
+          _animator.SetTrigger("PlayRock");
+        }
         _animator.SetTrigger($"Play{handType}");
         _isHandReset = false;
       }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Infrastructure;
 using JJJ.Infrastructure.CpuHandStrategy;
 using JJJ.Utils;
 using NUnit.Framework;
@@ -40,6 +41,13 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     }
 
     private readonly GameMode _gameMode = GameMode.Hard;
+    private readonly GameModeProvider _gameModeProvider = new GameModeProvider();
+
+    [SetUp]
+    public void Setup()
+    {
+      _gameModeProvider.Set(_gameMode);
+    }
 
     /// <summary>
     /// 無効な手が存在しない状況で反則する場合は、後出しを選択する
@@ -51,7 +59,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // 無効手選択は無視されるため、次の乱数を0.0に設定
       // 有効な手の中から最初の手を選択するため、次の乱数を0に設定
       var mock = new MockRandomService(new[] { 0.0, 0.0, 0.0 });
-      var strategy = new CyclicStrategy(_gameMode, mock);
+      var strategy = new CyclicStrategy(_gameModeProvider, mock);
       var ctx = new TurnContext();
 
       var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx).ToList();
@@ -72,7 +80,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // 反則確率を強制的に発生させるため、最初の乱数を0.0に設定
       // 無効手選択でαを選ばせるため、次の乱数を0.0に設定
       var mock = new MockRandomService(new[] { 0.0, 0.0 });
-      var strategy = new CyclicStrategy(_gameMode, mock);
+      var strategy = new CyclicStrategy(_gameModeProvider, mock);
       var ctx = new TurnContext(alphaRemainingTurns: 1);
 
       var hand = strategy.GetNextCpuHand(ctx);
@@ -90,7 +98,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // 反則しないので、最初の乱数を1に設定（有効手の中からランダムに選択）
       // 初回は先頭インデックス(0)を選ばせるため、次の乱数を0.0に設定
       var mock = new MockRandomService(new[] { 1, 0.0, 1 });
-      var strategy = new CyclicStrategy(_gameMode, mock);
+      var strategy = new CyclicStrategy(_gameModeProvider, mock);
       var ctx = new TurnContext();
 
       var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx).ToList();
@@ -118,7 +126,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // 反則しないので、最初の乱数を1に設定（有効手の中からランダムに選択）
       // 初回に末尾インデックスを選ばせるため、次の乱数を(count-1)/countに設定
       var mock = new MockRandomService(new[] { 1.0, pickIndex, 1 });
-      var strategy = new CyclicStrategy(_gameMode, mock);
+      var strategy = new CyclicStrategy(_gameModeProvider, mock);
 
       var first = strategy.GetNextCpuHand(ctx);
       var second = strategy.GetNextCpuHand(ctx);
@@ -143,7 +151,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // その後、2回循環させてからInitializeし、再度ランダムに戻る
       // その際、再度先頭インデックス(0)を選ばせるため、最後の乱数を0.0に設定
       var mock = new MockRandomService(new[] { 1, pickIndex2, 1, 1, 0.0 });
-      var strategy = new CyclicStrategy(_gameMode, mock);
+      var strategy = new CyclicStrategy(_gameModeProvider, mock);
 
       var first = strategy.GetNextCpuHand(ctx);  // idx=2
       var second = strategy.GetNextCpuHand(ctx); // idx=3
