@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using R3;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace JJJ.UseCase
@@ -13,8 +14,9 @@ namespace JJJ.UseCase
     private IEnumerable<ICpuHandStrategy> _strategies;
     private ITimerService _timerService;
     private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
-    private Observable<Unit> _playerWinObservable;
-    private Observable<Unit> _opponentWinObservable;
+    private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
+    private readonly ITimerRemainsPresenter _timerRemainsPresenter;
+    private readonly IJudgeInput _judgeInput;
 
     private CompositeDisposable _currentTurnDisposables;
 
@@ -31,16 +33,18 @@ namespace JJJ.UseCase
     public JudgeService(IRuleSet ruleSet,
                         IEnumerable<ICpuHandStrategy> strategies,
                         ITimerService timerService,
-                        Observable<Unit> playerWinObservable,
-                        Observable<Unit> opponentWinObservable,
+                        IJudgeInput judgeInput,
+                        ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                        ITimerRemainsPresenter timerRemainsPresenter,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
       _timerService = timerService;
-      _playerWinObservable = playerWinObservable;
-      _opponentWinObservable = opponentWinObservable;
+      _compositeHandAnimationPresenter = compositeHandAnimationPresenter;
+      _timerRemainsPresenter = timerRemainsPresenter;
+      _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
     }
@@ -56,6 +60,7 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartSession()
     {
+      Debug.Log("StartSession");
       // 戦略を選択
       (_currentPlayerStrategy, _currentOpponentStrategy) = _strategySelector.SelectPair(_strategies);
       _currentPlayerStrategy.Initialize();
@@ -70,6 +75,7 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartTurn()
     {
+      Debug.Log("StartTurn");
       // 既存ターン用の購読を破棄
       _currentTurnDisposables?.Dispose();
       _currentTurnDisposables = new CompositeDisposable();
@@ -79,18 +85,20 @@ namespace JJJ.UseCase
       // 1ターン実行
       _turnExecutor
         .ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
-                      _judgeLimit, _playerWinObservable, _opponentWinObservable, _timerService)
+                      _judgeLimit, _compositeHandAnimationPresenter, _timerRemainsPresenter, _judgeInput, _timerService)
         .Subscribe(outcome =>
         {
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
           if (outcome.TruthResult.Type == JudgeResultType.Draw)
           {
+            _compositeHandAnimationPresenter.ResetHandAll();
             Observable.TimerFrame(0)
               .Subscribe(_ => StartTurn())
               .AddTo(_currentTurnDisposables);
           }
           else
           {
+            _compositeHandAnimationPresenter.ReturnInitAll();
             Observable.TimerFrame(0)
               .Subscribe(_ => StartSession())
               .AddTo(_currentTurnDisposables);

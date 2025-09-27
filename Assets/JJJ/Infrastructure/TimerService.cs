@@ -72,5 +72,33 @@ namespace JJJ.Infrastructure
         .Take(steps + 1)
         .TakeUntil(ct);
     }
+
+    /// <summary>
+    /// 指定した期間をフレーム毎にカウントダウンする
+    /// </summary>
+    /// <param name="duration">カウントダウンする期間</param>
+    /// <param name="ct">キャンセルトークン</param>
+    /// <returns>指定した期間をフレーム毎にカウントダウンするObservable</returns>
+    /// <remarks>
+    /// 通知の値は残り時間を表すTimeSpanで、durationから0まで減少する
+    /// </remarks>
+    public Observable<TimeSpan> CountdownEveryFrame(TimeSpan duration, CancellationToken ct = default)
+    {
+      if (duration <= TimeSpan.Zero)
+      {
+        UnityEngine.Debug.LogError("duration must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
+        duration = TimeSpan.FromSeconds(1);
+      }
+
+      var now = DateTimeOffset.UtcNow;
+      var end = now + duration;
+
+      return Observable
+        .EveryUpdate()
+        .Select(_ => end - DateTimeOffset.UtcNow)
+        .Where(remaining => remaining > TimeSpan.Zero)
+        .Concat(Observable.Return(TimeSpan.Zero))
+        .TakeUntil(ct);
+    }
   }
 }

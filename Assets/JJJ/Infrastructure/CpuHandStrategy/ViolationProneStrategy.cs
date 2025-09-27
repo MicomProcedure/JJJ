@@ -36,9 +36,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     private readonly IRandomService _randomService;
 
-    public ViolationProneStrategy(GameMode gameMode, IRandomService randomService)
+    public ViolationProneStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
     {
-      _gameMode = gameMode;
+      _gameMode = gameModeProvider.Current;
       _randomService = randomService;
     }
 

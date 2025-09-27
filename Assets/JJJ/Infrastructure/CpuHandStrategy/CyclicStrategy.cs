@@ -30,9 +30,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     private readonly IRandomService _randomService;
 
-    public CyclicStrategy(GameMode gameMode, IRandomService randomService)
+    public CyclicStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
     {
-      _gameMode = gameMode;
+      _gameMode = gameModeProvider.Current;
       _randomService = randomService;
     }
 
