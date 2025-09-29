@@ -1,7 +1,9 @@
 using System;
 using System.Threading;
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
 using R3;
+using ZLogger;
 
 namespace JJJ.Infrastructure
 {
@@ -10,6 +12,8 @@ namespace JJJ.Infrastructure
   /// </summary>
   public sealed class TimerService : ITimerService
   {
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<TimerService>();
+
     /// <summary>
     /// 現在の日時を取得する
     /// </summary>
@@ -49,12 +53,12 @@ namespace JJJ.Infrastructure
     {
       if (duration <= TimeSpan.Zero)
       {
-        UnityEngine.Debug.LogError("duration must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
+        _logger.ZLogError($"duration must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
         duration = TimeSpan.FromSeconds(1);
       }
       if (tick <= TimeSpan.Zero)
       {
-        UnityEngine.Debug.LogError("tick must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
+        _logger.ZLogError($"tick must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
         tick = TimeSpan.FromSeconds(1);
       }
 
@@ -86,7 +90,7 @@ namespace JJJ.Infrastructure
     {
       if (duration <= TimeSpan.Zero)
       {
-        UnityEngine.Debug.LogError("duration must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
+        _logger.ZLogError($"duration must be greater than zero. Falling back to TimeSpan.FromSeconds(1).");
         duration = TimeSpan.FromSeconds(1);
       }
 
