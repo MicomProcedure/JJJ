@@ -18,9 +18,9 @@ namespace JJJ.DI
   /// </summary>
   public class JudgeLifetimeScope : LifetimeScope
   {
-    [SerializeField] private JudgeInput _judgeInput;
-    [SerializeField] private CompositeHandAnimationPresenter _compositeHandAnimationPresenter;
-    [SerializeField] private TimerRemainsPresenter _timerRemainsPresenter;
+    [SerializeField] private JudgeInput? _judgeInput;
+    [SerializeField] private CompositeHandAnimationPresenter? _compositeHandAnimationPresenter;
+    [SerializeField] private TimerRemainsPresenter? _timerRemainsPresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
