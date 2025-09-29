@@ -75,11 +75,8 @@ namespace JJJ.Infrastructure.CpuHandStrategy
         // αの効果が発動中の場合
         if (turnContext.AlphaRemainingTurns > 0)
         {
-          if (_randomService.NextDouble() < AlphaViolationProbability)
-          {
-            // αを出す場合
-            return Hand.Alpha;
-          }
+          // αを出す場合
+          return Hand.Alpha;
         }
       }
       else if (randomValue < TimeoutProbability + AlphaViolationProbability + BetaViolationProbability)
