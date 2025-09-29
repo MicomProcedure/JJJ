@@ -15,7 +15,7 @@ namespace JJJ.DI
     private readonly NormalRuleSet _normalRuleSet;
     private readonly HardRuleSet _hardRuleSet;
 
-    private IRuleSet _cachedRuleSet;
+    private IRuleSet? _cachedRuleSet = null;
 
     public RuleSetFactory(IGameModeProvider gameModeProvider,
                           EasyRuleSet easyRuleSet,
