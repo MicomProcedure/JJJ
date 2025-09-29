@@ -1,6 +1,8 @@
 using UnityEngine;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
+using ZLogger;
 
 namespace JJJ.View
 {
@@ -12,12 +14,22 @@ namespace JJJ.View
     /// <summary>
     /// 手のアニメーションを制御するAnimator
     /// </summary>
-    [SerializeField] private Animator _animator;
+    [SerializeField] private Animator? _animator;
 
     /// <summary>
     /// 手がリセットされているかどうか
     /// </summary>
     private bool _isHandReset = true;
+
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<HandAnimationPresenter>();
+
+    private void Start()
+    {
+      if (_animator == null)
+      {
+        _logger.ZLogError($"Animator is not assigned in HandAnimationPresenter.");
+      }
+    }
 
     /// <summary>
     /// 指定した手のアニメーションを再生する
@@ -32,10 +44,14 @@ namespace JJJ.View
         // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
         if (handType == HandType.Alpha || handType == HandType.Beta)
         {
-          Debug.LogWarning("Alpha/Beta are not implemented yet. Playing Rock instead.");
-          _animator.SetTrigger("PlayRock");
+          _logger.ZLogWarning($"Alpha/Beta are not implemented yet. Playing Rock instead.");
+          _animator?.SetTrigger("PlayRock");
         }
-        _animator.SetTrigger($"Play{handType}");
+        else
+        {
+          _logger.ZLogDebug($"Playing {handType} hand animation.");
+          _animator?.SetTrigger($"Play{handType}");
+        }
         _isHandReset = false;
       }
     }
@@ -50,7 +66,8 @@ namespace JJJ.View
     {
       if (!_isHandReset)
       {
-        _animator.SetTrigger("DoReset");
+        _logger.ZLogDebug($"Resetting hand animation.");
+        _animator?.SetTrigger("DoReset");
         _isHandReset = true;
       }
     }
@@ -60,7 +77,8 @@ namespace JJJ.View
     /// </summary>
     public void ReturnInit()
     {
-      _animator.SetTrigger("ReturnInit");
+      _logger.ZLogDebug($"Returning hand to initial position.");
+      _animator?.SetTrigger("ReturnInit");
       _isHandReset = true;
     }
   }

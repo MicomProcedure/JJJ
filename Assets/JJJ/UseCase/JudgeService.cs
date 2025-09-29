@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
 using R3;
-using UnityEngine;
 using VContainer.Unity;
+using ZLogger;
 
 namespace JJJ.UseCase
 {
@@ -18,17 +19,19 @@ namespace JJJ.UseCase
     private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IJudgeInput _judgeInput;
 
-    private CompositeDisposable _currentTurnDisposables;
+    private CompositeDisposable _currentTurnDisposables = new CompositeDisposable();
 
-    private ICpuHandStrategy _currentPlayerStrategy;
-    private ICpuHandStrategy _currentOpponentStrategy;
+    private ICpuHandStrategy? _currentPlayerStrategy = null;
+    private ICpuHandStrategy? _currentOpponentStrategy = null;
     private readonly IStrategySelector _strategySelector;
     private readonly ITurnExecutor _turnExecutor;
 
     /// <summary>
     /// 現在のターン情報
     /// </summary>
-    private TurnContext _currentTurnContext;
+    private TurnContext? _currentTurnContext = null;
+
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<JudgeService>();
 
     public JudgeService(IRuleSet ruleSet,
                         IEnumerable<ICpuHandStrategy> strategies,
@@ -51,6 +54,7 @@ namespace JJJ.UseCase
 
     void IStartable.Start()
     {
+      _logger.ZLogTrace($"JudgeService: Start");
       _currentTurnContext = new TurnContext();
       StartSession();
     }
@@ -60,7 +64,7 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartSession()
     {
-      Debug.Log("StartSession");
+      _logger.ZLogTrace($"JudgeService: StartSession");
       // 戦略を選択
       (_currentPlayerStrategy, _currentOpponentStrategy) = _strategySelector.SelectPair(_strategies);
       _currentPlayerStrategy.Initialize();
@@ -75,12 +79,16 @@ namespace JJJ.UseCase
     /// </summary>
     public void StartTurn()
     {
-      Debug.Log("StartTurn");
+      _logger.ZLogTrace($"JudgeService: StartTurn");
       // 既存ターン用の購読を破棄
       _currentTurnDisposables?.Dispose();
       _currentTurnDisposables = new CompositeDisposable();
 
-      _currentTurnContext.NextTurn();
+      if (_currentTurnContext == null)
+      {
+        _currentTurnContext = new TurnContext();
+      }
+      _currentTurnContext.NextTurn(); 
 
       // 1ターン実行
       _turnExecutor
@@ -91,6 +99,7 @@ namespace JJJ.UseCase
           // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
           if (outcome.TruthResult.Type == JudgeResultType.Draw)
           {
+            _logger.ZLogTrace($"JudgeService: Draw - Restart Turn");
             _compositeHandAnimationPresenter.ResetHandAll();
             Observable.TimerFrame(0)
               .Subscribe(_ => StartTurn())
@@ -98,6 +107,7 @@ namespace JJJ.UseCase
           }
           else
           {
+            _logger.ZLogTrace($"JudgeService: {outcome.TruthResult.Type} - Restart Session");
             _compositeHandAnimationPresenter.ReturnInitAll();
             Observable.TimerFrame(0)
               .Subscribe(_ => StartSession())

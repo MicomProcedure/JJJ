@@ -2,6 +2,7 @@ using System.Linq;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
+using ZLogger;
 
 namespace JJJ.Infrastructure.CpuHandStrategy
 {
@@ -36,6 +37,8 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     private readonly IRandomService _randomService;
 
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ViolationProneStrategy>();
+
     public ViolationProneStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
     {
       _gameMode = gameModeProvider.Current;
@@ -65,6 +68,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       // 後出しするかどうかを判定
       if (randomValue < TimeoutProbability)
       {
+        _logger.ZLogDebug($"ViolationProneStrategy: Timeout occurred.");
         // 後出しする場合、有効な手の中からランダムに手を選択
         int index = _randomService.Next(availableHandTypes.Count);
         var selectedHandType = availableHandTypes[index];
@@ -72,18 +76,18 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       }
       else if (randomValue < TimeoutProbability + AlphaViolationProbability)
       {
+        _logger.ZLogDebug($"ViolationProneStrategy: Alpha violation check.");
         // αの効果が発動中の場合
         if (turnContext.AlphaRemainingTurns > 0)
         {
-          if (_randomService.NextDouble() < AlphaViolationProbability)
-          {
-            // αを出す場合
-            return Hand.Alpha;
-          }
+          _logger.ZLogDebug($"ViolationProneStrategy: Alpha is active, violating by playing Alpha.");
+          // αを出す場合
+          return Hand.Alpha;
         }
       }
       else if (randomValue < TimeoutProbability + AlphaViolationProbability + BetaViolationProbability)
       {
+        _logger.ZLogDebug($"ViolationProneStrategy: Beta violation check.");
         // βの効果が発動中の場合
         if (turnContext.BetaRemainingTurns > 0)
         {
@@ -91,11 +95,13 @@ namespace JJJ.Infrastructure.CpuHandStrategy
           var sealedHandType = turnContext.SealedHandType;
           if (_randomService.NextDouble() < 0.5 || !sealedHandType.HasValue)
           {
+            _logger.ZLogDebug($"ViolationProneStrategy: Beta is active, violating by playing Beta.");
             // βを出す場合
             return Hand.Beta;
           }
           else
           {
+            _logger.ZLogDebug($"ViolationProneStrategy: Beta is active, violating by playing sealed hand {sealedHandType.Value}.");
             // 封印された手を出す場合
             return new Hand(sealedHandType.Value);
           }

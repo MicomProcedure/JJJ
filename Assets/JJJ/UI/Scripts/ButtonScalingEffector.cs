@@ -1,6 +1,8 @@
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine;
+using JJJ.Utils;
+using ZLogger;
 
 namespace JJJ.UI
 {
@@ -10,8 +12,9 @@ namespace JJJ.UI
   [RequireComponent(typeof(Button))]
   public class ButtonScalingEffector : MonoBehaviour
   {
-    private Tweener _tweener = null;
+    private Tweener? _tweener = null;
     private Vector3 _originalScale;
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ButtonScalingEffector>();
 
     private void Awake()
     {
@@ -20,7 +23,11 @@ namespace JJJ.UI
 
     private void Start()
     {
-      if (!TryGetComponent<Button>(out var button)) return;
+      if (!TryGetComponent<Button>(out var button))
+      {
+        _logger.ZLogError($"ButtonScalingEffector: No Button component found on {gameObject.name}");
+        return;
+      }
 
       button.onClick.AddListener(() =>
       {

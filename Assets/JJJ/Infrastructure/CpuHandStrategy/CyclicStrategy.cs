@@ -2,6 +2,8 @@ using System.Linq;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
+using Microsoft.Extensions.Logging;
+using ZLogger;
 
 namespace JJJ.Infrastructure.CpuHandStrategy
 {
@@ -30,6 +32,8 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     private readonly IRandomService _randomService;
 
+    private readonly ILogger _logger = LogManager.CreateLogger<CyclicStrategy>();
+
     public CyclicStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
     {
       _gameMode = gameModeProvider.Current;
@@ -51,8 +55,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       // 反則するかどうかを判定
       if (_randomService.NextDouble() < _violationProbability)
       {
+        _logger.ZLogDebug($"CyclicStrategy: Violation occurred.");
         // 無効な手のListを取得
-        var allHandTypes = HandUtil.AllHandTypes.ToList();
+        var allHandTypes = HandUtil.GetAvailableHandTypesFromGameMode(_gameMode);
         var invalidHandTypes = allHandTypes.Except(validHandTypes).ToList();
         // 無効な手を出すか後出しするかをランダムに選択
         int chosenType = _randomService.Next(0, invalidHandTypes.Count + 1);
@@ -78,7 +83,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       _currentSelectedIndex = _currentSelectedIndex < 0 ? _randomService.Next(0, validHandTypes.Count()) : (_currentSelectedIndex + 1) % validHandTypes.Count();
       if (_currentSelectedIndex < 0 || _currentSelectedIndex >= validHandTypes.Count())
       {
-        UnityEngine.Debug.LogError($"CyclicStrategy: currentSelectedIndex out of range. currentSelectedIndex={_currentSelectedIndex}, validHandTypes.Count()={validHandTypes.Count()}\nFailback to 0.");
+        _logger.ZLogError($"CyclicStrategy: currentSelectedIndex out of range. currentSelectedIndex={_currentSelectedIndex}, validHandTypes.Count()={validHandTypes.Count()}\nFailback to 0.");
         _currentSelectedIndex = 0;
       }
       var chosenHandType = validHandTypes.ElementAt(_currentSelectedIndex);
