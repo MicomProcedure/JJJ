@@ -1,6 +1,8 @@
 using UnityEngine;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
+using ZLogger;
 
 namespace JJJ.View
 {
@@ -19,6 +21,8 @@ namespace JJJ.View
     /// </summary>
     private bool _isHandReset = true;
 
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<HandAnimationPresenter>();
+
     /// <summary>
     /// 指定した手のアニメーションを再生する
     /// </summary>
@@ -32,10 +36,14 @@ namespace JJJ.View
         // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
         if (handType == HandType.Alpha || handType == HandType.Beta)
         {
-          Debug.LogWarning("Alpha/Beta are not implemented yet. Playing Rock instead.");
+          _logger.ZLogWarning($"Alpha/Beta are not implemented yet. Playing Rock instead.");
           _animator.SetTrigger("PlayRock");
         }
-        _animator.SetTrigger($"Play{handType}");
+        else
+        {
+          _logger.ZLogDebug($"Playing {handType} hand animation.");
+          _animator.SetTrigger($"Play{handType}");
+        }
         _isHandReset = false;
       }
     }
@@ -50,6 +58,7 @@ namespace JJJ.View
     {
       if (!_isHandReset)
       {
+        _logger.ZLogDebug($"Resetting hand animation.");
         _animator.SetTrigger("DoReset");
         _isHandReset = true;
       }
@@ -60,6 +69,7 @@ namespace JJJ.View
     /// </summary>
     public void ReturnInit()
     {
+      _logger.ZLogDebug($"Returning hand to initial position.");
       _animator.SetTrigger("ReturnInit");
       _isHandReset = true;
     }
