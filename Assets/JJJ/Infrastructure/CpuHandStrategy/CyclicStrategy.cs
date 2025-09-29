@@ -52,7 +52,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       if (_randomService.NextDouble() < _violationProbability)
       {
         // 無効な手のListを取得
-        var allHandTypes = HandUtil.AllHandTypes.ToList();
+        var allHandTypes = HandUtil.GetAvailableHandTypesFromGameMode(_gameMode);
         var invalidHandTypes = allHandTypes.Except(validHandTypes).ToList();
         // 無効な手を出すか後出しするかをランダムに選択
         int chosenType = _randomService.Next(0, invalidHandTypes.Count + 1);
