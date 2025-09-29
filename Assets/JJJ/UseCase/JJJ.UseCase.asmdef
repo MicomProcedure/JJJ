@@ -3,8 +3,9 @@
     "rootNamespace": "JJJ.UseCase",
     "references": [
         "GUID:96593ce9b5faf964fbecdaba0185df9d",
-        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
-        "GUID:9bdc01559dc8c4f1fa63abd6dbeaf3dc"
+        "GUID:9bdc01559dc8c4f1fa63abd6dbeaf3dc",
+        "GUID:e06f539e1a9121746884b50e2c5dfbd1",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

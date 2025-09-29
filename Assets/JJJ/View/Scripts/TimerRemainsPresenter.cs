@@ -1,6 +1,8 @@
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
 using UnityEngine;
 using UnityEngine.UI;
+using ZLogger;
 
 namespace JJJ.View
 {
@@ -29,6 +31,8 @@ namespace JJJ.View
     /// </summary>
     [SerializeField] private TMPro.TextMeshProUGUI _remainTimeText;
 
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<TimerRemainsPresenter>();
+
     private void Start()
     {
       SetTimerRemains(_initialTime, _initialTime);
@@ -42,6 +46,11 @@ namespace JJJ.View
     /// <param name="totalTime">合計の時間（秒）</param>
     public void SetTimerRemains(float remainTime, float totalTime)
     {
+      if (_progressCircle == null || _timerHand == null || _remainTimeText == null)
+      {
+        _logger.ZLogError($"TimerRemainsPresenter: One or more UI components are not assigned.");
+        return;
+      }
       if (totalTime <= 0f)
       {
         _progressCircle.fillAmount = 0f;

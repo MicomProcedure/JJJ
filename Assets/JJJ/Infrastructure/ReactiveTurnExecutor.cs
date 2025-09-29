@@ -1,8 +1,9 @@
 using System;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
 using R3;
-using UnityEngine;
+using ZLogger;
 
 namespace JJJ.UseCase.Turn
 {
@@ -11,6 +12,8 @@ namespace JJJ.UseCase.Turn
   /// </summary>
   public class ReactiveTurnExecutor : ITurnExecutor
   {
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ReactiveTurnExecutor>();
+
     public Observable<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
                                                 ICpuHandStrategy playerStrategy,
                                                 ICpuHandStrategy opponentStrategy,
@@ -53,9 +56,6 @@ namespace JJJ.UseCase.Turn
             timerService.CountdownEveryFrame(limit)
               .Subscribe(remaining =>
               {
-                // Debug.Log($"Time remains: {remaining.TotalSeconds} seconds");
-                // タイマーの残り時間を更新
-                // Debug.Log($"TimerRemainsPresenter: {timerRemainsPresenter}");
                 timerRemainsPresenter.SetTimerRemains((float)remaining.TotalSeconds, (float)limit.TotalSeconds);
               });
 
@@ -64,7 +64,7 @@ namespace JJJ.UseCase.Turn
               .Take(1)
               .Subscribe(claim =>
               {
-                Debug.Log($"PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
+                _logger.ZLogDebug($"PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
                 bool correct = claim switch
                 {
                   PlayerClaim.PlayerWin => truthResult.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation,
