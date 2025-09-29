@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using JJJ.Utils;
+using ZLogger;
 
 namespace JJJ.UI
 {
@@ -9,11 +11,13 @@ namespace JJJ.UI
   [RequireComponent(typeof(Image))]
   public class ButtonAlphaHitAdjuster : MonoBehaviour
   {
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ButtonAlphaHitAdjuster>();
+
     private void Awake()
     {
       if (!TryGetComponent<Image>(out var img))
       {
-        Debug.LogWarning("ButtonAlphaHitAdjuster: No Image component found on " + gameObject.name);
+        _logger.ZLogError($"ButtonAlphaHitAdjuster: No Image component found on {gameObject.name}");
         return;
       }
 
