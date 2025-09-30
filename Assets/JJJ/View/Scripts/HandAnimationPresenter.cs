@@ -11,7 +11,8 @@ namespace JJJ.View
     /// <summary>
     /// 手のアニメーションを制御するAnimator
     /// </summary>
-    [SerializeField] private Animator _animator;
+    [SerializeField] private Animator _handAnimator;
+    [SerializeField] private Animator _balanceAnimator;
 
     /// <summary>
     /// 手がリセットされているかどうか
@@ -28,7 +29,7 @@ namespace JJJ.View
     {
       if (_isHandReset)
       {
-        _animator.SetTrigger($"Play{handType}");
+        _handAnimator.SetTrigger($"Play{handType}");        
         _isHandReset = false;
       }
     }
@@ -43,7 +44,7 @@ namespace JJJ.View
     {
       if (!_isHandReset)
       {
-        _animator.SetTrigger("DoReset");
+        _handAnimator.SetTrigger("DoReset");
         _isHandReset = true;
       }
     }
@@ -53,7 +54,7 @@ namespace JJJ.View
     /// </summary>
     public void ReturnInit()
     {
-      _animator.SetTrigger("ReturnInit");
+      _handAnimator.SetTrigger("ReturnInit");
       _isHandReset = true;
     }
   }
