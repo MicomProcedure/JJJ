@@ -46,6 +46,7 @@ namespace JJJ.UseCase.Turn
 
             // プレイヤーのジャッジと時間切れを表すSubject
             var claimSubject = new Subject<PlayerClaim>();
+            var remainingTimeSubject = new Subject<TimeSpan>();
 
             // subscriptions
             var d1 = playerWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.PlayerWin));
@@ -57,13 +58,16 @@ namespace JJJ.UseCase.Turn
               .Subscribe(remaining =>
               {
                 timerRemainsPresenter.SetTimerRemains((float)remaining.TotalSeconds, (float)limit.TotalSeconds);
+                remainingTimeSubject.OnNext(remaining);
               });
 
             // プレイヤー側のボタンを押す、相手側のボタンを押す、タイマーが時間切れになるのうち最初に来たObservableに対して処理を行う
             var dMain = claimSubject
               .Take(1)
-              .Subscribe(claim =>
+              .WithLatestFrom(remainingTimeSubject, (claim, remaining) => (claim, remaining))
+              .Subscribe(result =>
               {
+                var (claim, remaining) = result;
                 _logger.ZLogDebug($"PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
                 bool correct = claim switch
                 {
@@ -71,9 +75,9 @@ namespace JJJ.UseCase.Turn
                   PlayerClaim.OpponentWin => truthResult.Type is JudgeResultType.Lose or JudgeResultType.Violation,
                   PlayerClaim.Draw => truthResult.Type == JudgeResultType.Draw,
                   PlayerClaim.Timeout => false,
-                  _ => false
+                  _ => throw new ArgumentOutOfRangeException(nameof(claim), claim, null)
                 };
-                observer.OnNext(new TurnOutcome(truthResult, claim, correct));
+                observer.OnNext(new TurnOutcome(truthResult, claim, correct, (limit - remaining).TotalSeconds));
                 observer.OnCompleted();
               });
 

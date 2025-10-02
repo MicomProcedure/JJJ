@@ -1,5 +1,3 @@
-using JJJ.Core.Entities;
-
 namespace JJJ.Core.Interfaces
 {
   /// <summary>
@@ -8,19 +6,10 @@ namespace JJJ.Core.Interfaces
   public interface IScoreCalculator
   {
     /// <summary>
-    /// プレイヤーが入力した判定結果と真実の判定結果を比較してスコアを加算する
+    /// スコアを計算する
     /// </summary>
-    /// <param name="playerJudgeResult">プレイヤーが入力した判定結果</param>
-    /// <param name="truthJudgeResult">真実の判定結果</param>
-    /// <param name="turnContext">ターンのコンテキスト</param>
-    // NOTE: 実装に合わせてplayerJudgeResultとtruthJudgeResultの型を変更する
-    public void AddScore(JudgeResultType playerJudgeResult, JudgeResult truthJudgeResult, TurnContext turnContext);
-
-    /// <summary>
-    /// 現在の合計スコアを取得する
-    /// </summary>
-    /// <returns>現在の合計スコア</returns>
-    // TODO: 型を変更する
-    public int GetTotalScore();
+    /// <param name="isJudgeCorrect">じゃんけんの判定が正しいかどうか</param>
+    /// <param name="judgeTime">じゃんけんの判定にかかった時間（秒）</param>
+    public int CalculateScore(bool isJudgeCorrect, double judgeTime);
   }
 }
