@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using UnityEngine;
 using ZLogger.Unity;
 
@@ -11,7 +12,17 @@ namespace JJJ.Utils
   {
     private static ILoggerFactory _loggerFactory;
 
-    public static ILogger<T> CreateLogger<T>() => _loggerFactory.CreateLogger<T>();
+    public static ILogger<T> CreateLogger<T>()
+    {
+      try
+      {
+        return _loggerFactory.CreateLogger<T>();
+      }
+      catch (System.ObjectDisposedException)
+      {
+        return NullLogger<T>.Instance;
+      }
+    }
     public static readonly Microsoft.Extensions.Logging.ILogger Global;
 
     static LogManager()
