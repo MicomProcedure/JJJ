@@ -2009,6 +2009,7 @@ MonoBehaviour:
   _compositeHandAnimationPresenter: {fileID: 410858580}
   _timerRemainsPresenter: {fileID: 2473065097559173299}
   _currentScorePresenter: {fileID: 9135481869503724627}
+  _currentJudgesPresenter: {fileID: 5437819995607102209}
 --- !u!4 &1536809471
 Transform:
   m_ObjectHideFlags: 0
@@ -2895,6 +2896,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2981199228957234452, guid: 20662e9bc3d5ec54888701d2a1858bb3, type: 3}
   m_PrefabInstance: {fileID: 3130897083043545738}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5437819995607102209 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6802584334652159282, guid: 20662e9bc3d5ec54888701d2a1858bb3, type: 3}
+  m_PrefabInstance: {fileID: 3130897083043545738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4899f465d01635d48b212f2bfaa5b6eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &9135481869503724626 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8806664022757520083, guid: a5a8004d4a489ac4981ab8f9ad5a7128, type: 3}

@@ -15,7 +15,7 @@ namespace JJJ.View
     /// <summary>
     /// 初期のジャッジ数
     /// </summary>
-    [SerializeField] private int _initialJudges = 0;
+    [SerializeField] private int _initialJudges = 1;
 
     private void Start()
     {

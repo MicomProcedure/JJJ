@@ -20,6 +20,7 @@ namespace JJJ.UseCase
     private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IScoreCalculator _scoreCalculator;
     private readonly CurrentScorePresenter _currentScorePresenter;
+    private readonly CurrentJudgesPresenter _currentJudgesPresenter;
     private readonly IJudgeInput _judgeInput;
 
     private CompositeDisposable _currentTurnDisposables = new CompositeDisposable();
@@ -39,6 +40,11 @@ namespace JJJ.UseCase
     /// </summary>
     private int _currentScore = 0;
 
+    /// <summary>
+    /// 現在のジャッジ回数
+    /// </summary>
+    private int _judgeCount = 1;
+
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<JudgeService>();
 
     public JudgeService(IRuleSet ruleSet,
@@ -49,6 +55,7 @@ namespace JJJ.UseCase
                         ITimerRemainsPresenter timerRemainsPresenter,
                         IScoreCalculator scoreCalculator,
                         CurrentScorePresenter currentScorePresenter,
+                        CurrentJudgesPresenter currentJudgesPresenter,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
@@ -59,6 +66,7 @@ namespace JJJ.UseCase
       _timerRemainsPresenter = timerRemainsPresenter;
       _scoreCalculator = scoreCalculator;
       _currentScorePresenter = currentScorePresenter;
+      _currentJudgesPresenter = currentJudgesPresenter;
       _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
@@ -85,6 +93,7 @@ namespace JJJ.UseCase
       _currentOpponentStrategy.Initialize();
 
       // 新しいターンを開始
+      _currentTurnContext = new TurnContext();
       StartTurn();
     }
 
@@ -119,6 +128,9 @@ namespace JJJ.UseCase
           if (_currentScore < 0) _currentScore = 0;
           _currentScorePresenter.SetCurrentScore(_currentScore);
           _currentScorePresenter.SetScoreDiff(scoreDiff);
+
+          _judgeCount++;
+          _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
 
           // 引き分けならターン継続、勝敗がついたらセッション再開
           if (outcome.TruthResult.Type == JudgeResultType.Draw)
