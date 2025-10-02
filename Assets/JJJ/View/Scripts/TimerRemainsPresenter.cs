@@ -32,6 +32,7 @@ namespace JJJ.View
     [SerializeField] private TMPro.TextMeshProUGUI _remainTimeText;
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<TimerRemainsPresenter>();
+    private bool _isApplicationQuitting = false;
 
     private void Start()
     {
@@ -48,7 +49,8 @@ namespace JJJ.View
     {
       if (_progressCircle == null || _timerHand == null || _remainTimeText == null)
       {
-        _logger.ZLogError($"TimerRemainsPresenter: One or more UI components are not assigned.");
+        if (!_isApplicationQuitting)
+          _logger.ZLogError($"TimerRemainsPresenter: One or more UI components are not assigned.");
         return;
       }
       if (totalTime <= 0f)
@@ -63,6 +65,11 @@ namespace JJJ.View
       float angle = Mathf.Clamp01(remainTime / totalTime) * 360f;
       _timerHand.transform.localEulerAngles = new Vector3(0f, 0f, -angle);
       _remainTimeText.text = Mathf.CeilToInt(remainTime).ToString();
+    }
+
+    private void OnApplicationQuit()
+    {
+      _isApplicationQuitting = true;
     }
   }
 }
