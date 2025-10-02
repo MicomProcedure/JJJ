@@ -21,6 +21,7 @@ namespace JJJ.DI
     [SerializeField] private JudgeInput? _judgeInput;
     [SerializeField] private CompositeHandAnimationPresenter? _compositeHandAnimationPresenter;
     [SerializeField] private TimerRemainsPresenter? _timerRemainsPresenter;
+    [SerializeField] private CurrentScorePresenter? _currentScorePresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -48,9 +49,11 @@ namespace JJJ.DI
       builder.Register<IStrategySelector, RandomStrategySelector>(Lifetime.Scoped);
       builder.Register<ITurnExecutor, ReactiveTurnExecutor>(Lifetime.Scoped);
       builder.Register<IRandomService, RandomService>(Lifetime.Scoped);
+      builder.Register<IScoreCalculator, ScoreCalculator>(Lifetime.Scoped);
       builder.RegisterComponent(_judgeInput).AsImplementedInterfaces();
       builder.RegisterComponent(_compositeHandAnimationPresenter).AsImplementedInterfaces();
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
+      builder.RegisterComponent(_currentScorePresenter);
     }
   }
 }
