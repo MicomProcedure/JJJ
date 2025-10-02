@@ -22,6 +22,7 @@ namespace JJJ.DI
     [SerializeField] private CompositeHandAnimationPresenter? _compositeHandAnimationPresenter;
     [SerializeField] private TimerRemainsPresenter? _timerRemainsPresenter;
     [SerializeField] private CurrentScorePresenter? _currentScorePresenter;
+    [SerializeField] private CurrentJudgesPresenter? _currentJudgesPresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -54,6 +55,7 @@ namespace JJJ.DI
       builder.RegisterComponent(_compositeHandAnimationPresenter).AsImplementedInterfaces();
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
       builder.RegisterComponent(_currentScorePresenter);
+      builder.RegisterComponent(_currentJudgesPresenter);
     }
   }
 }
