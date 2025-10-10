@@ -3,6 +3,8 @@ using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using ZLogger;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace JJJ.View
 {
@@ -21,6 +23,11 @@ namespace JJJ.View
     /// </summary>
     private bool _isHandReset = true;
 
+    private string _currentState = string.Empty;
+
+    private static readonly int InitHash = Animator.StringToHash("Init");
+    private static readonly int ResetHash = Animator.StringToHash("Reset");
+
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<HandAnimationPresenter>();
 
     private void Start()
@@ -37,23 +44,43 @@ namespace JJJ.View
     /// <remarks>
     /// 最初の場合は、自動的に初回用の振り下ろすアニメーションが再生される
     /// </remarks>
-    public void PlayHand(HandType handType)
+    public async UniTask PlayHand(HandType handType, CancellationToken cancellationToken = default)
     {
+      if (_animator == null)
+      {
+        _logger.ZLogError($"Animator is not assigned in HandAnimationPresenter.");
+        await UniTask.CompletedTask;
+        return;
+      }
       if (_isHandReset)
       {
         // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
         if (handType == HandType.Alpha || handType == HandType.Beta)
         {
           _logger.ZLogWarning($"Alpha/Beta are not implemented yet. Playing Rock instead.");
-          _animator?.SetTrigger("PlayRock");
+          _animator.SetTrigger("PlayRock");
+          _currentState = "PlayRock";
         }
         else
         {
           _logger.ZLogDebug($"Playing {handType} hand animation.");
-          _animator?.SetTrigger($"Play{handType}");
+          _animator.SetTrigger($"Play{handType}");
+          _currentState = $"Play{handType}";
         }
-        _isHandReset = false;
+        await UniTask.WaitUntil(() =>
+        {
+          if (_animator == null) return false;
+          var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+          return stateInfo.normalizedTime >= 1.0f;
+        }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
       }
+      else
+      {
+        _logger.ZLogWarning($"Hand is not reset. Cannot play hand animation.");
+      }
+      _logger.ZLogDebug($"Hand animation for {handType} completed.");
+      _isHandReset = false;
+      await UniTask.CompletedTask;
     }
 
     /// <summary>
@@ -62,24 +89,51 @@ namespace JJJ.View
     /// <remarks>
     /// これをいったん実行しないと、次の手を出せない
     /// </remarks>
-    public void ResetHand()
+    public UniTask ResetHand(CancellationToken cancellationToken = default)
     {
+      if (_animator == null)
+      {
+        _logger.ZLogError($"Animator is not assigned in HandAnimationPresenter.");
+        return UniTask.CompletedTask;
+      }
       if (!_isHandReset)
       {
         _logger.ZLogDebug($"Resetting hand animation.");
-        _animator?.SetTrigger("DoReset");
+        _animator.ResetTrigger(_currentState);
+        _animator.SetTrigger("DoReset");
         _isHandReset = true;
+        return UniTask.WaitUntil(() =>
+        {
+          var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+          return stateInfo.shortNameHash == ResetHash && stateInfo.normalizedTime >= 1.0f;
+        }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
+      }
+      else
+      {
+        _logger.ZLogWarning($"Hand is already reset. No need to reset again.");
+        return UniTask.CompletedTask;
       }
     }
 
     /// <summary>
     /// セッションの終わり(勝敗がついたとき)にこれを実行して手を初期位置に戻す
     /// </summary>
-    public void ReturnInit()
+    public UniTask ReturnInit(CancellationToken cancellationToken = default)
     {
       _logger.ZLogDebug($"Returning hand to initial position.");
-      _animator?.SetTrigger("ReturnInit");
+      if (_animator == null)
+      {
+        _logger.ZLogError($"Animator is not assigned in HandAnimationPresenter.");
+        return UniTask.CompletedTask;
+      }
+      _animator.ResetTrigger(_currentState);
+      _animator.SetTrigger("ReturnInit");
       _isHandReset = true;
+      return UniTask.WaitUntil(() =>
+      {
+        var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.shortNameHash == InitHash && stateInfo.normalizedTime >= 1.0f;
+      }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
     }
   }
 }
