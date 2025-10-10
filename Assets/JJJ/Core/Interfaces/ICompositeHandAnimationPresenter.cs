@@ -1,3 +1,6 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+
 namespace JJJ.Core.Interfaces
 {
   /// <summary>
@@ -18,11 +21,11 @@ namespace JJJ.Core.Interfaces
     /// <summary>
     /// 両者の手のアニメーションをリセットする
     /// </summary>
-    public void ResetHandAll();
+    public UniTask ResetHandAll(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 両者の手のアニメーションを初期位置に戻す
     /// </summary>
-    public void ReturnInitAll();
+    public UniTask ReturnInitAll(CancellationToken cancellationToken = default);
   }
 }
