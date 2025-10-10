@@ -11,12 +11,12 @@ namespace JJJ.Core.Interfaces
     /// <summary>
     /// プレイヤーの手のアニメーションプレゼンター
     /// </summary>
-    public IHandAnimationPresenter PlayerHandAnimationPresenter { get; }
+    public IHandAnimationPresenter? PlayerHandAnimationPresenter { get; }
 
     /// <summary>
     /// 対戦相手の手のアニメーションプレゼンター
     /// </summary>
-    public IHandAnimationPresenter OpponentHandAnimationPresenter { get; }
+    public IHandAnimationPresenter? OpponentHandAnimationPresenter { get; }
 
     /// <summary>
     /// 両者の手のアニメーションをリセットする
