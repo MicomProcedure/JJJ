@@ -53,6 +53,10 @@ namespace JJJ.UseCase.Turn
       var opponentHandAnimationPresenter = compositeHandAnimationPresenter.OpponentHandAnimationPresenter;
 
       // 手のアニメーションを再生するUniTask
+      if (playerHandAnimationPresenter == null || opponentHandAnimationPresenter == null)
+      {
+        throw new InvalidOperationException("HandAnimationPresenter is not set.");
+      }
       var playerHandPlayTask = playerHandAnimationPresenter.PlayHand(playerHand.Type);
       var opponentHandPlayTask = opponentHandAnimationPresenter.PlayHand(opponentHand.Type);
 
