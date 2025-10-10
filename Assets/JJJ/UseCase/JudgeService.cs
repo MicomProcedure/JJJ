@@ -17,12 +17,14 @@ namespace JJJ.UseCase
     private IRuleSet _ruleSet;
     private IEnumerable<ICpuHandStrategy> _strategies;
     private ITimerService _timerService;
+    private readonly TimeSpan _gameEndLimit = TimeSpan.FromSeconds(10);
     private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
     private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
     private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IScoreCalculator _scoreCalculator;
     private readonly CurrentScorePresenter _currentScorePresenter;
     private readonly CurrentJudgesPresenter _currentJudgesPresenter;
+    private readonly RemainJudgeTimePresenter _remainJudgeTimePresenter;
     private readonly IJudgeInput _judgeInput;
 
     private CompositeDisposable _currentTurnDisposables = new CompositeDisposable();
@@ -60,6 +62,7 @@ namespace JJJ.UseCase
                         IScoreCalculator scoreCalculator,
                         CurrentScorePresenter currentScorePresenter,
                         CurrentJudgesPresenter currentJudgesPresenter,
+                        RemainJudgeTimePresenter remainJudgeTimePresenter,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
@@ -71,6 +74,7 @@ namespace JJJ.UseCase
       _scoreCalculator = scoreCalculator;
       _currentScorePresenter = currentScorePresenter;
       _currentJudgesPresenter = currentJudgesPresenter;
+      _remainJudgeTimePresenter = remainJudgeTimePresenter;
       _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
@@ -85,6 +89,17 @@ namespace JJJ.UseCase
 
       var cts = new CancellationTokenSource();
       _onGameEndCancellationToken = cts.Token;
+
+      _timerService.Countdown(_gameEndLimit, TimeSpan.FromSeconds(1))
+        .Subscribe(t =>
+        {
+          _remainJudgeTimePresenter.SetRemainJudgeTime((int)t.TotalSeconds);
+        }, _ =>
+        {
+          _logger.ZLogWarning($"JudgeService: Game Ended");
+          cts.Cancel();
+          _judgeInput.SetInputEnabled(false);
+        });
 
       StartSession(_onGameEndCancellationToken).Forget();
     }
