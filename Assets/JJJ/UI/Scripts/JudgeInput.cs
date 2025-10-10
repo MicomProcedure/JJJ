@@ -18,9 +18,11 @@ namespace JJJ.UI.Scripts
     [SerializeField]
     private JudgeButton? _drawButton;
 
-    public Observable<Unit>? PlayerWinObservable => _playerWinButton?.OnClickObservable;
-    public Observable<Unit>? OpponentWinObservable => _opponentWinButton?.OnClickObservable;
-    public Observable<Unit>? DrawObservable => _drawButton?.OnClickObservable;
+#pragma warning disable IDE0031
+    public Observable<Unit>? PlayerWinObservable => _playerWinButton != null ? _playerWinButton.OnClickObservable : null;
+    public Observable<Unit>? OpponentWinObservable => _opponentWinButton != null ? _opponentWinButton.OnClickObservable : null;
+    public Observable<Unit>? DrawObservable => _drawButton != null ? _drawButton.OnClickObservable : null;
+#pragma warning restore
 
     public void SetInputEnabled(bool enabled)
     {
