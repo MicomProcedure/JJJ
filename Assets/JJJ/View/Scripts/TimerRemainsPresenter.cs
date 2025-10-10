@@ -14,12 +14,12 @@ namespace JJJ.View
     /// <summary>
     /// 残り時間を円形で表示するImage
     /// </summary>
-    [SerializeField] private Image _progressCircle;
+    [SerializeField] private Image? _progressCircle;
 
     /// <summary>
     /// タイマーの針を表示するImage
     /// </summary>
-    [SerializeField] private Image _timerHand;
+    [SerializeField] private Image? _timerHand;
 
     /// <summary>
     /// 初期のタイマー時間（秒）
@@ -29,13 +29,25 @@ namespace JJJ.View
     /// <summary>
     /// 残り時間を表示するTextMeshProUGUI
     /// </summary>
-    [SerializeField] private TMPro.TextMeshProUGUI _remainTimeText;
+    [SerializeField] private TMPro.TextMeshProUGUI? _remainTimeText;
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<TimerRemainsPresenter>();
     private bool _isApplicationQuitting = false;
 
     private void Start()
     {
+      if (_progressCircle == null)
+      {
+        throw new System.NullReferenceException(nameof(_progressCircle));
+      }
+      if (_timerHand == null)
+      {
+        throw new System.NullReferenceException(nameof(_timerHand));
+      }
+      if (_remainTimeText == null)
+      {
+        throw new System.NullReferenceException(nameof(_remainTimeText));
+      }
       SetTimerRemains(_initialTime, _initialTime);
       _remainTimeText.text = Mathf.CeilToInt(_initialTime).ToString();
     }
