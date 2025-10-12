@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
@@ -15,12 +17,14 @@ namespace JJJ.UseCase
     private IRuleSet _ruleSet;
     private IEnumerable<ICpuHandStrategy> _strategies;
     private ITimerService _timerService;
+    private readonly TimeSpan _gameEndLimit = TimeSpan.FromSeconds(10);
     private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
     private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
     private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IScoreCalculator _scoreCalculator;
     private readonly CurrentScorePresenter _currentScorePresenter;
     private readonly CurrentJudgesPresenter _currentJudgesPresenter;
+    private readonly RemainJudgeTimePresenter _remainJudgeTimePresenter;
     private readonly IJudgeInput _judgeInput;
 
     private CompositeDisposable _currentTurnDisposables = new CompositeDisposable();
@@ -45,6 +49,8 @@ namespace JJJ.UseCase
     /// </summary>
     private int _judgeCount = 1;
 
+    private CancellationToken _onGameEndCancellationToken;
+
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<JudgeService>();
 
     public JudgeService(IRuleSet ruleSet,
@@ -56,6 +62,7 @@ namespace JJJ.UseCase
                         IScoreCalculator scoreCalculator,
                         CurrentScorePresenter currentScorePresenter,
                         CurrentJudgesPresenter currentJudgesPresenter,
+                        RemainJudgeTimePresenter remainJudgeTimePresenter,
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor)
     {
@@ -67,6 +74,7 @@ namespace JJJ.UseCase
       _scoreCalculator = scoreCalculator;
       _currentScorePresenter = currentScorePresenter;
       _currentJudgesPresenter = currentJudgesPresenter;
+      _remainJudgeTimePresenter = remainJudgeTimePresenter;
       _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
@@ -78,13 +86,28 @@ namespace JJJ.UseCase
       _currentTurnContext = new TurnContext();
       _currentScore = 0;
       _currentScorePresenter.SetCurrentScore(_currentScore);
-      StartSession();
+
+      var cts = new CancellationTokenSource();
+      _onGameEndCancellationToken = cts.Token;
+
+      _timerService.Countdown(_gameEndLimit, TimeSpan.FromSeconds(1))
+        .Subscribe(t =>
+        {
+          _remainJudgeTimePresenter.SetRemainJudgeTime((int)t.TotalSeconds);
+        }, _ =>
+        {
+          _logger.ZLogWarning($"JudgeService: Game Ended");
+          cts.Cancel();
+          _judgeInput.SetInputEnabled(false);
+        });
+
+      StartSession(_onGameEndCancellationToken).Forget();
     }
 
     /// <summary>
     /// 新しいセッションを開始する
     /// </summary>
-    public void StartSession()
+    public async UniTask StartSession(CancellationToken cancellationToken = default)
     {
       _logger.ZLogTrace($"JudgeService: StartSession");
       // 戦略を選択
@@ -94,63 +117,87 @@ namespace JJJ.UseCase
 
       // 新しいターンを開始
       _currentTurnContext = new TurnContext();
-      StartTurn();
+      await StartTurn(cancellationToken);
     }
 
     /// <summary>
     /// 新しいターンを開始する
     /// </summary>
-    public void StartTurn()
+    public async UniTask StartTurn(CancellationToken cancellationToken = default)
     {
-      _logger.ZLogTrace($"JudgeService: StartTurn");
-      // 既存ターン用の購読を破棄
-      _currentTurnDisposables?.Dispose();
-      _currentTurnDisposables = new CompositeDisposable();
-
-      if (_currentTurnContext == null)
+      try
       {
-        _currentTurnContext = new TurnContext();
-      }
-      _currentTurnContext.NextTurn(); 
+        _logger.ZLogTrace($"JudgeService: StartTurn");
+        // 既存ターン用の購読を破棄
+        _currentTurnDisposables?.Dispose();
+        _currentTurnDisposables = new CompositeDisposable();
 
-      // 1ターン実行
-      _turnExecutor
-        .ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
-                      _judgeLimit, _compositeHandAnimationPresenter, _timerRemainsPresenter, _judgeInput, _timerService)
-        .Subscribe(outcome =>
+        if (_currentTurnContext == null)
         {
-          // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
-          _logger.ZLogTrace($"JudgeService: TurnOutcome - Truth: {outcome.TruthResult.Type}, Claim: {outcome.Claim}, Correct: {outcome.IsPlayerJudgementCorrect}, JudgeTime: {outcome.JudgeTime}");
+          _currentTurnContext = new TurnContext();
+        }
+        _currentTurnContext.NextTurn();
 
-          // 点数を加算
-          int scoreDiff = _scoreCalculator.CalculateScore(outcome.IsPlayerJudgementCorrect, outcome.JudgeTime);
-          _currentScore += scoreDiff;
-          if (_currentScore < 0) _currentScore = 0;
-          _currentScorePresenter.SetCurrentScore(_currentScore);
-          _currentScorePresenter.SetScoreDiff(scoreDiff);
+        if (_currentPlayerStrategy == null || _currentOpponentStrategy == null)
+        {
+          throw new InvalidOperationException("Player or Opponent strategy is not set.");
+        }
 
-          _judgeCount++;
-          _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
+        // 1ターン実行
+        var outcome = await _turnExecutor.ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
+                        _judgeLimit, _compositeHandAnimationPresenter, _timerRemainsPresenter, _judgeInput, _timerService, cancellationToken);
+        // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
+        _logger.ZLogTrace($"JudgeService: TurnOutcome - Truth: {outcome.TruthResult.Type}, Claim: {outcome.Claim}, Correct: {outcome.IsPlayerJudgementCorrect}, JudgeTime: {outcome.JudgeTime}");
 
-          // 引き分けならターン継続、勝敗がついたらセッション再開
-          if (outcome.TruthResult.Type == JudgeResultType.Draw)
+        // 点数を加算
+        int scoreDiff = _scoreCalculator.CalculateScore(outcome.IsPlayerJudgementCorrect, outcome.JudgeTime);
+        _currentScore += scoreDiff;
+        if (_currentScore < 0) _currentScore = 0;
+        _currentScorePresenter.SetCurrentScore(_currentScore);
+        _currentScorePresenter.SetScoreDiff(scoreDiff);
+
+        // ジャッジ回数を更新
+        _judgeCount++;
+        _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
+
+        // 引き分けならターン継続、勝敗がついたらセッション再開
+        if (outcome.TruthResult.Type == JudgeResultType.Draw)
+        {
+          _logger.ZLogTrace($"JudgeService: Draw - Restart Turn");
+          await _compositeHandAnimationPresenter.ResetHandAll();
+          _judgeInput.SetInputEnabled(true);
+          if (cancellationToken.IsCancellationRequested)
           {
-            _logger.ZLogTrace($"JudgeService: Draw - Restart Turn");
-            _compositeHandAnimationPresenter.ResetHandAll();
-            Observable.TimerFrame(0)
-              .Subscribe(_ => StartTurn())
-              .AddTo(_currentTurnDisposables);
+            _logger.ZLogWarning($"JudgeService: Cancellation requested. Ending session.");
+            await UniTask.CompletedTask;
           }
-          else
+          StartTurn(cancellationToken).Forget();
+        }
+        else
+        {
+          _logger.ZLogTrace($"JudgeService: {outcome.TruthResult.Type} - Restart Session");
+          await _compositeHandAnimationPresenter.ReturnInitAll();
+          _judgeInput.SetInputEnabled(true);
+          if (cancellationToken.IsCancellationRequested)
           {
-            _logger.ZLogTrace($"JudgeService: {outcome.TruthResult.Type} - Restart Session");
-            _compositeHandAnimationPresenter.ReturnInitAll();
-            Observable.TimerFrame(0)
-              .Subscribe(_ => StartSession())
-              .AddTo(_currentTurnDisposables);
+            _logger.ZLogWarning($"JudgeService: Cancellation requested. Ending session.");
+            await UniTask.CompletedTask;
           }
-        })
-        .AddTo(_currentTurnDisposables);
+          StartSession(cancellationToken).Forget();
+        }
+      }
+      catch (OperationCanceledException ex)
+      {
+        if (_onGameEndCancellationToken.IsCancellationRequested)
+        {
+          _logger.ZLogWarning($"JudgeService: Game end timeout reached. Ending session.");
+        }
+        else
+        {
+          _logger.ZLogWarning($"JudgeService: Operation canceled - {ex.Message}");
+        }
+        await UniTask.CompletedTask;
+      }
     }
 
     public void Dispose()

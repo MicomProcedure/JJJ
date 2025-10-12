@@ -997,7 +997,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -1005,6 +1004,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1001 &706049937
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1212,17 +1212,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &812952442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1571,7 +1577,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -1579,6 +1584,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!81 &1195657622
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2010,6 +2016,7 @@ MonoBehaviour:
   _timerRemainsPresenter: {fileID: 2473065097559173299}
   _currentScorePresenter: {fileID: 9135481869503724627}
   _currentJudgesPresenter: {fileID: 5437819995607102209}
+  _remainJudgeTimePresenter: {fileID: 293637844272892295}
 --- !u!4 &1536809471
 Transform:
   m_ObjectHideFlags: 0
@@ -2318,7 +2325,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -2326,6 +2332,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!81 &1867854628
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2584,6 +2591,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6774527674288409186, guid: cc419d741c99ba44e98e694a0d15f63f, type: 3}
   m_PrefabInstance: {fileID: 1223971241607518549}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &293637844272892295 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7535350967621141956, guid: cc419d741c99ba44e98e694a0d15f63f, type: 3}
+  m_PrefabInstance: {fileID: 1223971241607518549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e521726f5902dc441a40b24b772282dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1223971241607518549
 PrefabInstance:
   m_ObjectHideFlags: 0

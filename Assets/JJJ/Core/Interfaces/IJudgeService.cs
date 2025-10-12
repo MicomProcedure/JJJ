@@ -1,3 +1,6 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+
 namespace JJJ.Core.Interfaces
 {
   /// <summary>
@@ -8,11 +11,11 @@ namespace JJJ.Core.Interfaces
     /// <summary>
     /// 新しいセッションを開始する
     /// </summary>
-    public void StartSession();
+    public UniTask StartSession(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 新しいターンを開始する
     /// </summary>
-    public void StartTurn();
+    public UniTask StartTurn(CancellationToken cancellationToken = default);
   }
 }

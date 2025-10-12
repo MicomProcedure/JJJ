@@ -11,12 +11,12 @@ namespace JJJ.View
     /// <summary>
     /// 現在のスコアを表示するTextMeshProUGUI
     /// </summary>
-    [SerializeField] private TMPro.TextMeshProUGUI _currentScoreText;
+    [SerializeField] private TMPro.TextMeshProUGUI? _currentScoreText;
 
     /// <summary>
     /// スコアの増減を表示するTextMeshProUGUI
     /// </summary>
-    [SerializeField] private TMPro.TextMeshProUGUI _scoreDiffText;
+    [SerializeField] private TMPro.TextMeshProUGUI? _scoreDiffText;
 
     /// <summary>
     /// 初期のスコア
@@ -28,6 +28,14 @@ namespace JJJ.View
 
     private void Start()
     {
+      if (_currentScoreText == null)
+      {
+        throw new System.NullReferenceException(nameof(_currentScoreText));
+      }
+      if (_scoreDiffText == null)
+      {
+        throw new System.NullReferenceException(nameof(_scoreDiffText));
+      }
       SetCurrentScore(_initialScore);
       _initialPosition = _scoreDiffText.transform.localPosition;
     }
@@ -38,11 +46,19 @@ namespace JJJ.View
     /// <param name="currentScore">現在のスコア</param>
     public void SetCurrentScore(int currentScore)
     {
+      if (_currentScoreText == null)
+      {
+        throw new System.NullReferenceException(nameof(_currentScoreText));
+      }
       _currentScoreText.text = currentScore.ToString();
     }
 
     public void SetScoreDiff(int scoreDiff)
     {
+      if (_scoreDiffText == null)
+      {
+        throw new System.NullReferenceException(nameof(_scoreDiffText));
+      }
       if (scoreDiff > 0)
       {
         _scoreDiffText.text = $"+{scoreDiff}";

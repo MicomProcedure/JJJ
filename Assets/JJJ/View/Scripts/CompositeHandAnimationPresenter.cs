@@ -1,3 +1,5 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using UnityEngine;
@@ -18,18 +20,22 @@ namespace JJJ.View
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<CompositeHandAnimationPresenter>();
 
-    public void ResetHandAll()
+    public UniTask ResetHandAll(CancellationToken cancellationToken = default)
     {
       _logger.ZLogTrace($"Resetting both player and opponent hands.");
-      PlayerHandAnimationPresenter?.ResetHand();
-      OpponentHandAnimationPresenter?.ResetHand();
+      return UniTask.WhenAll(
+        PlayerHandAnimationPresenter?.ResetHand(cancellationToken) ?? UniTask.CompletedTask,
+        OpponentHandAnimationPresenter?.ResetHand(cancellationToken) ?? UniTask.CompletedTask
+      );
     }
 
-    public void ReturnInitAll()
+    public UniTask ReturnInitAll(CancellationToken cancellationToken = default)
     {
       _logger.ZLogTrace($"Returning both player and opponent hands to initial state.");
-      PlayerHandAnimationPresenter?.ReturnInit();
-      OpponentHandAnimationPresenter?.ReturnInit();
+      return UniTask.WhenAll(
+        PlayerHandAnimationPresenter?.ReturnInit(cancellationToken) ?? UniTask.CompletedTask,
+        OpponentHandAnimationPresenter?.ReturnInit(cancellationToken) ?? UniTask.CompletedTask
+      );
     }
   }
 }
