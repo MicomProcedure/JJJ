@@ -1,6 +1,7 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
-using R3;
 
 namespace JJJ.Core.Interfaces
 {
@@ -21,8 +22,9 @@ namespace JJJ.Core.Interfaces
     /// <param name="timerRemainsPresenter">タイマーの残り時間表示プレゼンター</param>
     /// <param name="judgeInput">ジャッジ入力</param>
     /// <param name="timerService">タイマーサービス</param>
+    /// <param name="cancellationToken">キャンセルトークン</param>
     /// <returns>ターンの結果を通知するObservable</returns>
-    public Observable<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
+    public UniTask<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
                                          ICpuHandStrategy playerStrategy,
                                          ICpuHandStrategy opponentStrategy,
                                          TurnContext context,
@@ -30,6 +32,8 @@ namespace JJJ.Core.Interfaces
                                          ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
                                          ITimerRemainsPresenter timerRemainsPresenter,
                                          IJudgeInput judgeInput,
-                                         ITimerService timerService);
+                                         ITimerService timerService,
+                                         CancellationToken cancellationToken = default
+                                         );
   }
 }

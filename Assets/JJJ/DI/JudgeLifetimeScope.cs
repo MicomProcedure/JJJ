@@ -23,6 +23,7 @@ namespace JJJ.DI
     [SerializeField] private TimerRemainsPresenter? _timerRemainsPresenter;
     [SerializeField] private CurrentScorePresenter? _currentScorePresenter;
     [SerializeField] private CurrentJudgesPresenter? _currentJudgesPresenter;
+    [SerializeField] private RemainJudgeTimePresenter? _remainJudgeTimePresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -56,6 +57,7 @@ namespace JJJ.DI
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
       builder.RegisterComponent(_currentScorePresenter);
       builder.RegisterComponent(_currentJudgesPresenter);
+      builder.RegisterComponent(_remainJudgeTimePresenter);
     }
   }
 }

@@ -58,7 +58,7 @@ namespace JJJ.Utils
     /// <summary>
     /// 全ての手の組み合わせを生成
     /// </summary>
-    public static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations(HandType[] handTypes = default)
+    public static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations(HandType[]? handTypes = default)
     {
       handTypes = handTypes ?? AllHandTypes;
       return handTypes.SelectMany(p => handTypes.Select(o => (p, o)));
