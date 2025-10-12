@@ -9,10 +9,19 @@ namespace JJJ.View
   public class HandAnimationPresenter : MonoBehaviour
   {
     /// <summary>
+    /// この手がプレイヤーのものかどうか
+    /// </summary>
+    [SerializeField] private bool _isPlayerHand = true;
+
+    /// <summary>
+    /// この手が右手かどうか
+    /// </summary>
+    [SerializeField] private bool _isRightHand = true;
+
+    /// <summary>
     /// 手のアニメーションを制御するAnimator
     /// </summary>
     [SerializeField] private Animator _handAnimator;
-    [SerializeField] private Animator _balanceAnimator;
 
     /// <summary>
     /// 手がリセットされているかどうか
@@ -29,7 +38,21 @@ namespace JJJ.View
     {
       if (_isHandReset)
       {
-        _handAnimator.SetTrigger($"Play{handType}");        
+        if (handType == HandType.Beta)
+        {
+          if (_isPlayerHand ^ _isRightHand)
+          {
+            _handAnimator.SetTrigger("PlayBetaR");
+          }
+          else
+          {
+            _handAnimator.SetTrigger("PlayBetaL");
+          }
+        }
+        else
+        {
+          _handAnimator.SetTrigger($"Play{handType}");
+        }
         _isHandReset = false;
       }
     }
