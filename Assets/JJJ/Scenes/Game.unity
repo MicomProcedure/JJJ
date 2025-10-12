@@ -1490,7 +1490,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _handAnimator: {fileID: 1054954209}
-  _balanceAnimator: {fileID: 0}
 --- !u!95 &1054954209
 Animator:
   serializedVersion: 7
@@ -1539,7 +1538,7 @@ Transform:
   m_GameObject: {fileID: 1170782053}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.00192, y: 0.00388, z: -0.00311}
+  m_LocalPosition: {x: 0.00037, y: 0.00394, z: -0.00348}
   m_LocalScale: {x: 0.004, y: 0.004, z: 0.004}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1735,13 +1734,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1195657620}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1196088985
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2187,12 +2186,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalScale.z
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.3
+      value: 19.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2200,7 +2203,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.5
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2434,7 +2437,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _handAnimator: {fileID: 1811517110}
-  _balanceAnimator: {fileID: 0}
 --- !u!95 &1811517110
 Animator:
   serializedVersion: 7
