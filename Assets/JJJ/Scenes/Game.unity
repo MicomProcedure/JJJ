@@ -2053,13 +2053,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
-<<<<<<< HEAD
 --- !u!4 &1413049329 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25f841d24c87a2440a4333215b9d709d, type: 3}
   m_PrefabInstance: {fileID: 1244877250}
   m_PrefabAsset: {fileID: 0}
-=======
 --- !u!1 &1456318694
 GameObject:
   m_ObjectHideFlags: 0
@@ -2250,7 +2248,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 812952444}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
->>>>>>> develop
 --- !u!1 &1540167801
 GameObject:
   m_ObjectHideFlags: 0
@@ -3612,7 +3609,6 @@ SceneRoots:
   - {fileID: 374023531}
   - {fileID: 1811517107}
   - {fileID: 1650744121}
-  - {fileID: 1867854630}
-  - {fileID: 1195657624}
+: 1195657624}
   - {fileID: 812952444}
   - {fileID: 410858581}
