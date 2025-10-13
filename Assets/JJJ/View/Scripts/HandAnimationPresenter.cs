@@ -26,11 +26,7 @@ namespace JJJ.View
     /// <summary>
     /// 手のアニメーションを制御するAnimator
     /// </summary>
-<<<<<<< HEAD
-    [SerializeField] private Animator _handAnimator;
-=======
     [SerializeField] private Animator? _animator;
->>>>>>> develop
 
     /// <summary>
     /// 手がリセットされているかどうか
@@ -66,46 +62,34 @@ namespace JJJ.View
         await UniTask.CompletedTask;
         return;
       }
+
       if (_isHandReset)
       {
-<<<<<<< HEAD
+        // ベータは左右でアニメーションが異なるので分岐する
         if (handType == HandType.Beta)
         {
           if (_isPlayerHand ^ _isRightHand)
           {
-            _handAnimator.SetTrigger("PlayBetaL");
+            _animator.SetTrigger("PlayBetaL");
           }
           else
           {
-            _handAnimator.SetTrigger("PlayBetaR");
+            _animator.SetTrigger("PlayBetaR");
           }
         }
         else
         {
-          _handAnimator.SetTrigger($"Play{handType}");
-        }
-        _isHandReset = false;
-=======
-        // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
-        if (handType == HandType.Alpha || handType == HandType.Beta)
-        {
-          _logger.ZLogWarning($"Alpha/Beta are not implemented yet. Playing Rock instead.");
-          _animator.SetTrigger("PlayRock");
-          _currentState = "PlayRock";
-        }
-        else
-        {
-          _logger.ZLogDebug($"Playing {handType} hand animation.");
           _animator.SetTrigger($"Play{handType}");
-          _currentState = $"Play{handType}";
         }
+
+        _logger.ZLogDebug($"Playing {handType} hand animation.");
+        _currentState = $"Play{handType}";
         await UniTask.WaitUntil(() =>
         {
           if (_animator == null) return false;
           var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
           return stateInfo.normalizedTime >= 1.0f;
         }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
->>>>>>> develop
       }
       else
       {
@@ -131,13 +115,9 @@ namespace JJJ.View
       }
       if (!_isHandReset)
       {
-<<<<<<< HEAD
-        _handAnimator.SetTrigger("DoReset");
-=======
         _logger.ZLogDebug($"Resetting hand animation.");
         _animator.ResetTrigger(_currentState);
         _animator.SetTrigger("DoReset");
->>>>>>> develop
         _isHandReset = true;
         return UniTask.WaitUntil(() =>
         {
@@ -157,9 +137,6 @@ namespace JJJ.View
     /// </summary>
     public UniTask ReturnInit(CancellationToken cancellationToken = default)
     {
-<<<<<<< HEAD
-      _handAnimator.SetTrigger("ReturnInit");
-=======
       _logger.ZLogDebug($"Returning hand to initial position.");
       if (_animator == null)
       {
@@ -168,7 +145,6 @@ namespace JJJ.View
       }
       _animator.ResetTrigger(_currentState);
       _animator.SetTrigger("ReturnInit");
->>>>>>> develop
       _isHandReset = true;
       return UniTask.WaitUntil(() =>
       {
