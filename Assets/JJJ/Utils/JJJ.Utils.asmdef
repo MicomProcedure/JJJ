@@ -2,7 +2,8 @@
     "name": "JJJ.Utils",
     "rootNamespace": "",
     "references": [
-        "GUID:96593ce9b5faf964fbecdaba0185df9d"
+        "GUID:96593ce9b5faf964fbecdaba0185df9d",
+        "GUID:2b78dc61ba35e42c39ba2aabce11b6c4"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

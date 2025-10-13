@@ -58,7 +58,7 @@ namespace JJJ.Utils
     /// <summary>
     /// 全ての手の組み合わせを生成
     /// </summary>
-    public static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations(HandType[] handTypes = default)
+    public static IEnumerable<(HandType player, HandType opponent)> GetAllHandCombinations(HandType[]? handTypes = default)
     {
       handTypes = handTypes ?? AllHandTypes;
       return handTypes.SelectMany(p => handTypes.Select(o => (p, o)));
@@ -99,6 +99,22 @@ namespace JJJ.Utils
       GetAllHandCombinations()
         .Where(combo => SpecialTriangleHandTypes.Contains(combo.player) && SpecialTriangleHandTypes.Contains(combo.opponent))
         .Where(combo => combo.player != combo.opponent); // 同じ手は除外
+
+    /// <summary>
+    /// ゲームモードに基づいて使用可能な手の種類を取得
+    /// </summary>
+    /// <param name="gameMode">ゲームモード</param>
+    /// <returns>使用可能な手の種類の列挙</returns>
+    public static IEnumerable<HandType> GetAvailableHandTypesFromGameMode(GameMode gameMode)
+    {
+      return gameMode switch
+      {
+        GameMode.Easy => BasicHandTypes.AsEnumerable(),
+        GameMode.Normal => RegularHandTypes.AsEnumerable(),
+        GameMode.Hard => AllHandTypes.AsEnumerable(),
+        _ => throw new System.ArgumentOutOfRangeException(nameof(gameMode), $"Unsupported game mode: {gameMode}"),
+      };
+    }
 
     /// <summary>
     /// コンテキストに基づいて使用可能な手の種類を取得
