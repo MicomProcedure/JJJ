@@ -475,7 +475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerHandAnimationPresenter: {fileID: 1811517109}
-  _opponentHandAnimationPresenter: {fileID: 464960460}
+  _opponentHandAnimationPresenter: {fileID: 1054954208}
 --- !u!4 &410858581
 Transform:
   m_ObjectHideFlags: 0
@@ -1466,7 +1466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isPlayerHand: 0
   _isRightHand: 0
-  _handAnimator: {fileID: 1054954209}
+  _animator: {fileID: 1054954209}
 --- !u!95 &1054954209
 Animator:
   serializedVersion: 7
@@ -1555,6 +1555,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1576,6 +1578,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -2511,6 +2514,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2532,6 +2537,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -2849,7 +2855,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isPlayerHand: 1
   _isRightHand: 1
-  _handAnimator: {fileID: 1811517110}
+  _animator: {fileID: 1811517110}
 --- !u!95 &1811517110
 Animator:
   serializedVersion: 7
@@ -3609,6 +3615,7 @@ SceneRoots:
   - {fileID: 374023531}
   - {fileID: 1811517107}
   - {fileID: 1650744121}
-: 1195657624}
-  - {fileID: 812952444}
   - {fileID: 410858581}
+  - {fileID: 812952444}
+  - {fileID: 1195657624}
+  - {fileID: 1867854630}
