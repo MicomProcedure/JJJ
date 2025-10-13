@@ -25,7 +25,12 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// <summary>
     /// ゲームモード
     /// </summary>
-    private readonly GameMode _gameMode;
+    private GameMode _gameMode;
+
+    /// <summary>
+    /// ゲームモードプロバイダー
+    /// </summary>
+    private readonly IGameModeProvider _gameModeProvider;
 
     /// <summary>
     /// 乱数生成サービス
@@ -36,7 +41,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
 
     public CyclicStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
     {
-      _gameMode = gameModeProvider.Current;
+      _gameModeProvider = gameModeProvider;
       _randomService = randomService;
     }
 
@@ -45,7 +50,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     public void Initialize()
     {
+      _gameMode = _gameModeProvider.Current;
       _currentSelectedIndex = -1;
+      _logger.ZLogDebug($"CyclicStrategy initialized with GameMode: {_gameMode}");
     }
 
     public Hand GetNextCpuHand(TurnContext turnContext)
