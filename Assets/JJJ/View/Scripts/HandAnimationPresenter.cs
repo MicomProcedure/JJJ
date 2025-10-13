@@ -71,19 +71,21 @@ namespace JJJ.View
           if (_isPlayerHand ^ _isRightHand)
           {
             _animator.SetTrigger("PlayBetaL");
+            _currentState = $"PlayBetaL";
           }
           else
           {
             _animator.SetTrigger("PlayBetaR");
+            _currentState = $"PlayBetaR";
           }
         }
         else
         {
           _animator.SetTrigger($"Play{handType}");
+          _currentState = $"Play{handType}";
         }
 
         _logger.ZLogDebug($"Playing {handType} hand animation.");
-        _currentState = $"Play{handType}";
         await UniTask.WaitUntil(() =>
         {
           if (_animator == null) return false;
