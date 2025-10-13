@@ -42,11 +42,11 @@ namespace JJJ.View
         {
           if (_isPlayerHand ^ _isRightHand)
           {
-            _handAnimator.SetTrigger("PlayBetaR");
+            _handAnimator.SetTrigger("PlayBetaL");
           }
           else
           {
-            _handAnimator.SetTrigger("PlayBetaL");
+            _handAnimator.SetTrigger("PlayBetaR");
           }
         }
         else
