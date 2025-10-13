@@ -1,6 +1,7 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
-using R3;
 
 namespace JJJ.Core.Interfaces
 {
@@ -17,17 +18,22 @@ namespace JJJ.Core.Interfaces
     /// <param name="opponentStrategy">対戦相手の戦略</param>
     /// <param name="context">ターンのコンテキスト</param>
     /// <param name="limit">制限時間</param>
-    /// <param name="playerWinObservable">プレイヤーが勝利するとジャッジしたことを通知するObservable</param>
-    /// <param name="opponentWinObservable">対戦相手が勝利するとジャッジしたことを通知するObservable</param>
+    /// <param name="compositeHandAnimationPresenter">手のアニメーションプレゼンターのまとめ</param>
+    /// <param name="timerRemainsPresenter">タイマーの残り時間表示プレゼンター</param>
+    /// <param name="judgeInput">ジャッジ入力</param>
     /// <param name="timerService">タイマーサービス</param>
+    /// <param name="cancellationToken">キャンセルトークン</param>
     /// <returns>ターンの結果を通知するObservable</returns>
-    public Observable<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
+    public UniTask<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
                                          ICpuHandStrategy playerStrategy,
                                          ICpuHandStrategy opponentStrategy,
                                          TurnContext context,
                                          TimeSpan limit,
-                                         Observable<Unit> playerWinObservable,
-                                         Observable<Unit> opponentWinObservable,
-                                         ITimerService timerService);
+                                         ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                                         ITimerRemainsPresenter timerRemainsPresenter,
+                                         IJudgeInput judgeInput,
+                                         ITimerService timerService,
+                                         CancellationToken cancellationToken = default
+                                         );
   }
 }

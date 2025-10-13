@@ -10,7 +10,7 @@ namespace JJJ.View
     /// <summary>
     /// 現在のバージョンを表示するTextMeshProUGUI
     /// </summary>
-    [SerializeField] private TMPro.TextMeshProUGUI _currentVersionText;
+    [SerializeField] private TMPro.TextMeshProUGUI? _currentVersionText;
 
     private void Start()
     {
@@ -23,6 +23,10 @@ namespace JJJ.View
     /// <param name="currentVersion">現在のバージョン名</param>
     public void SetCurrentVersion(string currentVersion)
     {
+      if (_currentVersionText == null)
+      {
+        throw new System.NullReferenceException(nameof(_currentVersionText));
+      }
       _currentVersionText.text = currentVersion;
     }
   }

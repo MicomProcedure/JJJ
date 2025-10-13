@@ -39,5 +39,14 @@ namespace JJJ.Core.Interfaces
     /// <returns>指定した時間からカウントダウンするObservable</returns>
     /// <remarks>通知される値は残り時間を表すTimeSpan</remarks>
     public Observable<TimeSpan> Countdown(TimeSpan duration, TimeSpan tick, CancellationToken ct = default);
+
+    /// <summary>
+    /// 指定した時間からカウントダウンするObservableを取得する
+    /// </summary>
+    /// <param name="duration">カウントダウンする時間</param>
+    /// <param name="ct">キャンセルトークン</param>
+    /// <returns>指定した時間からカウントダウンするObservable</returns>
+    /// <remarks>通知される値は残り時間を表すTimeSpan</remarks>
+    public Observable<TimeSpan> CountdownEveryFrame(TimeSpan duration, CancellationToken ct = default);
   }
 }

@@ -1,58 +1,124 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Utils;
 using R3;
+using ZLogger;
 
 namespace JJJ.UseCase.Turn
 {
   /// <summary>
   /// ターン実行のリアクティブ実装
   /// </summary>
-  public class ReactiveTurnExecutor : ITurnExecutor
+  public class ReactiveTurnExecutor : ITurnExecutor, IDisposable
   {
-    public Observable<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
+    private CompositeDisposable _disposables = new CompositeDisposable();
+    private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+    private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ReactiveTurnExecutor>();
+
+    public async UniTask<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
                                                 ICpuHandStrategy playerStrategy,
                                                 ICpuHandStrategy opponentStrategy,
                                                 TurnContext context,
                                                 TimeSpan limit,
-                                                Observable<Unit> playerWinObservable,
-                                                Observable<Unit> opponentWinObservable,
-                                                ITimerService timerService)
+                                                ICompositeHandAnimationPresenter compositeHandAnimationPresenter,
+                                                ITimerRemainsPresenter timerRemainsPresenter,
+                                                IJudgeInput judgeInput,
+                                                ITimerService timerService,
+                                                CancellationToken cancellationToken = default)
     {
-      return Observable.Create<TurnOutcome>(observer =>
-          {
-            // CPU hands & truth
-            var playerHand = playerStrategy.GetNextCpuHand(context);
-            var opponentHand = opponentStrategy.GetNextCpuHand(context);
-            var truthResult = ruleSet.Judge(playerHand, opponentHand, context);
+      _disposables?.Dispose();
+      _cancellationTokenSource.Cancel();
+      _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+      if (_disposables == null)
+      {
+        _disposables = new CompositeDisposable();
+      }
 
-            // プレイヤーのジャッジと時間切れを表すSubject
-            var claimSubject = new Subject<PlayerClaim>();
+      // CPU hands & truth
+      var playerHand = playerStrategy.GetNextCpuHand(context);
+      var opponentHand = opponentStrategy.GetNextCpuHand(context);
+      var truthResult = ruleSet.Judge(playerHand, opponentHand, context);
 
-            // subscriptions
-            var d1 = playerWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.PlayerWin));
-            var d2 = opponentWinObservable.Subscribe(_ => claimSubject.OnNext(PlayerClaim.OpponentWin));
-            var d3 = timerService.After(limit).Subscribe(_ => claimSubject.OnNext(PlayerClaim.Timeout));
+      // Observables
+      var playerWinObservable = judgeInput.PlayerWinObservable;
+      var opponentWinObservable = judgeInput.OpponentWinObservable;
+      var drawObservable = judgeInput.DrawObservable;
 
-            // プレイヤー側のボタンを押す、相手側のボタンを押す、タイマーが時間切れになるのうち最初に来たObservableに対して処理を行う
-            var dMain = claimSubject
-              .Take(1)
-              .Subscribe(claim =>
-              {
-                bool correct = claim switch
-                {
-                  PlayerClaim.PlayerWin => truthResult.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation,
-                  PlayerClaim.OpponentWin => truthResult.Type is JudgeResultType.Lose or JudgeResultType.Violation,
-                  PlayerClaim.Timeout => false,
-                  _ => false
-                };
-                observer.OnNext(new TurnOutcome(truthResult, claim, correct));
-                observer.OnCompleted();
-              });
+      // Hand Animation Presenters
+      var playerHandAnimationPresenter = compositeHandAnimationPresenter.PlayerHandAnimationPresenter;
+      var opponentHandAnimationPresenter = compositeHandAnimationPresenter.OpponentHandAnimationPresenter;
 
-            var cd = new CompositeDisposable { d1, d2, d3, dMain, claimSubject };
-            return cd;
-          });
+      // 手のアニメーションを再生するUniTask
+      if (playerHandAnimationPresenter == null || opponentHandAnimationPresenter == null)
+      {
+        throw new InvalidOperationException("HandAnimationPresenter is not set.");
+      }
+      var playerHandPlayTask = playerHandAnimationPresenter.PlayHand(playerHand.Type);
+      var opponentHandPlayTask = opponentHandAnimationPresenter.PlayHand(opponentHand.Type);
+
+      // 時間切れを表すTimeSpan
+      var remainingTime = default(TimeSpan);
+
+      // タイマー開始
+      var timerObservable = timerService.CountdownEveryFrame(limit, _cancellationTokenSource.Token)
+        .Subscribe(remaining =>
+        {
+          timerRemainsPresenter.SetTimerRemains((float)remaining.TotalSeconds, (float)limit.TotalSeconds);
+          remainingTime = remaining;
+        });
+
+      _logger.ZLogDebug($"TurnExecutor: Start Turn - Limit {limit.TotalSeconds} seconds");
+      // 一番最初に発生したイベントを待つ
+      var claim = await Observable.Merge(
+        playerWinObservable != null ? playerWinObservable.Select(_ => PlayerClaim.PlayerWin) : Observable.Empty<PlayerClaim>(),
+        opponentWinObservable != null ? opponentWinObservable.Select(_ => PlayerClaim.OpponentWin) : Observable.Empty<PlayerClaim>(),
+        drawObservable != null ? drawObservable.Select(_ => PlayerClaim.Draw) : Observable.Empty<PlayerClaim>(),
+        timerService.After(limit).Select(_ => PlayerClaim.Timeout)
+      ).FirstAsync(cancellationToken: _cancellationTokenSource.Token);
+
+      _logger.ZLogDebug($"TurnExecutor: Claim - {claim}");
+      _logger.ZLogDebug($"TurnExecutor: Remaining - {remainingTime.TotalSeconds} seconds");
+      
+      // 入力を無効化
+      judgeInput.SetInputEnabled(false);
+
+      _logger.ZLogDebug($"PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
+
+      // 勝敗の正誤を判定
+      bool correct = claim switch
+      {
+        PlayerClaim.PlayerWin => truthResult.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation,
+        PlayerClaim.OpponentWin => truthResult.Type is JudgeResultType.Lose or JudgeResultType.Violation,
+        PlayerClaim.Draw => truthResult.Type == JudgeResultType.Draw,
+        PlayerClaim.Timeout => false,
+        _ => throw new ArgumentOutOfRangeException(nameof(claim), claim, null)
+      };
+      _logger.ZLogDebug($"TurnExecutor: Judgement - {(correct ? "Correct" : "Incorrect")}");
+      // ターンの結果を生成
+      var outcome = new TurnOutcome(truthResult, claim, correct, (limit - remainingTime).TotalSeconds);
+
+      // タイマー停止
+      if (remainingTime.TotalSeconds > 0)
+      {
+        _cancellationTokenSource.Cancel();
+        timerRemainsPresenter.SetTimerRemains((float)limit.TotalSeconds, (float)limit.TotalSeconds);
+      }
+      
+      // 手のアニメーションが完了するまで待機
+      await UniTask.WhenAll(playerHandPlayTask, opponentHandPlayTask);
+      _disposables = new CompositeDisposable { timerObservable };
+      return outcome;
+    }
+
+    public void Dispose()
+    {
+      _cancellationTokenSource.Cancel();
+      _cancellationTokenSource.Dispose();
+      _disposables?.Dispose();
     }
   }
 }
