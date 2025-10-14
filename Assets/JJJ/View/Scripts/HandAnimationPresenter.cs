@@ -121,10 +121,11 @@ namespace JJJ.View
         _animator.ResetTrigger(_currentState);
         _animator.SetTrigger("DoReset");
         _isHandReset = true;
+        int watchingHash = IsSpecialHand(_currentState) ? InitHash : ResetHash;
         return UniTask.WaitUntil(() =>
         {
           var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-          return stateInfo.shortNameHash == ResetHash && stateInfo.normalizedTime >= 1.0f;
+          return stateInfo.shortNameHash == watchingHash && stateInfo.normalizedTime >= 1.0f;
         }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
       }
       else
@@ -153,6 +154,11 @@ namespace JJJ.View
         var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         return stateInfo.shortNameHash == InitHash && stateInfo.normalizedTime >= 1.0f;
       }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
+    }
+
+    private bool IsSpecialHand(string hand)
+    {
+      return hand == "PlayAlpha" || hand == "PlayBetaL" || hand == "PlayBetaR";
     }
   }
 }
