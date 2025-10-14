@@ -71,6 +71,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var mockRandomService = new MockRandomService(new[] { 0.0, 0 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService);
       var turnContext = new TurnContext();
+      strategy.Initialize();
 
       var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
       var expectedHandType = validHands[0];
@@ -92,6 +93,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability / 2.0, 0 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService);
       var turnContext = new TurnContext(alphaRemainingTurns: 1);
+      strategy.Initialize();
 
       var hand = strategy.GetNextCpuHand(turnContext);
 
@@ -110,6 +112,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0, 0 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService);
       var turnContext = new TurnContext(betaRemainingTurns: 1, sealedHandType: HandType.Rock);
+      strategy.Initialize();
 
       var hand = strategy.GetNextCpuHand(turnContext);
 
@@ -128,6 +131,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0, 1 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService);
       var turnContext = new TurnContext(betaRemainingTurns: 1, sealedHandType: HandType.Paper);
+      strategy.Initialize();
 
       var hand = strategy.GetNextCpuHand(turnContext);
 
@@ -145,6 +149,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var mockRandomService = new MockRandomService(new[] { 1.0, 0 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService);
       var turnContext = new TurnContext();
+      strategy.Initialize();
 
       var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
       var expectedHandType = validHands[0];
