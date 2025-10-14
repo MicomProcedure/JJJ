@@ -30,7 +30,12 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// <summary>
     /// ゲームモード
     /// </summary>
-    private readonly GameMode _gameMode;
+    private GameMode _gameMode;
+
+    /// <summary>
+    /// ゲームモードプロバイダー
+    /// </summary>
+    private readonly IGameModeProvider _gameModeProvider;
 
     /// <summary>
     /// 乱数生成サービス
@@ -41,7 +46,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
 
     public ViolationProneStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
     {
-      _gameMode = gameModeProvider.Current;
+      _gameModeProvider = gameModeProvider;
       _randomService = randomService;
     }
 
@@ -50,7 +55,8 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     public void Initialize()
     {
-      // 初期化処理は不要
+      _gameMode = _gameModeProvider.Current;
+      _logger.ZLogDebug($"ViolationProneStrategy initialized with GameMode: {_gameMode}");
     }
 
     /// <summary>

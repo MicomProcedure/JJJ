@@ -14,6 +14,16 @@ namespace JJJ.View
   public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
     /// <summary>
+    /// この手がプレイヤーのものかどうか
+    /// </summary>
+    [SerializeField] private bool _isPlayerHand = true;
+
+    /// <summary>
+    /// この手が右手かどうか
+    /// </summary>
+    [SerializeField] private bool _isRightHand = true;
+
+    /// <summary>
     /// 手のアニメーションを制御するAnimator
     /// </summary>
     [SerializeField] private Animator? _animator;
@@ -52,21 +62,30 @@ namespace JJJ.View
         await UniTask.CompletedTask;
         return;
       }
+
       if (_isHandReset)
       {
-        // TODO: Alpha/Betaのアニメーションが実装されたらここを削除する
-        if (handType == HandType.Alpha || handType == HandType.Beta)
+        // ベータは左右でアニメーションが異なるので分岐する
+        if (handType == HandType.Beta)
         {
-          _logger.ZLogWarning($"Alpha/Beta are not implemented yet. Playing Rock instead.");
-          _animator.SetTrigger("PlayRock");
-          _currentState = "PlayRock";
+          if (_isPlayerHand ^ _isRightHand)
+          {
+            _animator.SetTrigger("PlayBetaL");
+            _currentState = $"PlayBetaL";
+          }
+          else
+          {
+            _animator.SetTrigger("PlayBetaR");
+            _currentState = $"PlayBetaR";
+          }
         }
         else
         {
-          _logger.ZLogDebug($"Playing {handType} hand animation.");
           _animator.SetTrigger($"Play{handType}");
           _currentState = $"Play{handType}";
         }
+
+        _logger.ZLogDebug($"Playing {handType} hand animation.");
         await UniTask.WaitUntil(() =>
         {
           if (_animator == null) return false;
@@ -102,10 +121,11 @@ namespace JJJ.View
         _animator.ResetTrigger(_currentState);
         _animator.SetTrigger("DoReset");
         _isHandReset = true;
+        int watchingHash = IsSpecialHand(_currentState) ? InitHash : ResetHash;
         return UniTask.WaitUntil(() =>
         {
           var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-          return stateInfo.shortNameHash == ResetHash && stateInfo.normalizedTime >= 1.0f;
+          return stateInfo.shortNameHash == watchingHash && stateInfo.normalizedTime >= 1.0f;
         }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
       }
       else
@@ -134,6 +154,11 @@ namespace JJJ.View
         var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         return stateInfo.shortNameHash == InitHash && stateInfo.normalizedTime >= 1.0f;
       }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
+    }
+
+    private bool IsSpecialHand(string hand)
+    {
+      return hand == "PlayAlpha" || hand == "PlayBetaL" || hand == "PlayBetaR";
     }
   }
 }
