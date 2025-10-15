@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using JJJ.View;
+using JJJ.Core.Interfaces;
 using MackySoft.Navigathena.SceneManagement;
 using MackySoft.Navigathena.SceneManagement.Utilities;
 using MackySoft.Navigathena.Transitions;
@@ -29,7 +29,7 @@ namespace JJJ.Infrastructure
     {
       private readonly ISceneIdentifier _sceneInfo;
       private ISceneHandle _sceneHandle = null!;
-      private FadeTransitionDirectorBehaviour _director = null!;
+      private ITransitionEffect _effect = null!;
 
       public FadeTransitionHandle(ISceneIdentifier sceneInfo)
       {
@@ -40,19 +40,19 @@ namespace JJJ.Infrastructure
       {
         var handle = _sceneInfo.CreateHandle();
         var scene = await handle.Load(cancellationToken: cancellationToken);
-        if (!scene.TryGetComponentInScene(out _director, true))
+        if (!scene.TryGetComponentInScene(out _effect, true))
         {
-          throw new InvalidOperationException($"Scene '{scene.name}' does not have a {nameof(FadeTransitionDirectorBehaviour)} component.");
+          throw new InvalidOperationException($"Scene '{scene.name}' does not have a {nameof(ITransitionEffect)} component.");
         }
 
         _sceneHandle = handle;
 
-        await _director.StartTransition(cancellationToken);
+        await _effect.StartTransition(cancellationToken);
       }
 
       public async UniTask End(CancellationToken cancellationToken = default)
       {
-        await _director.EndTransition(cancellationToken);
+        await _effect.EndTransition(cancellationToken);
 
         await _sceneHandle.Unload(cancellationToken: cancellationToken);
       }
