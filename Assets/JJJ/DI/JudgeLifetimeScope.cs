@@ -29,8 +29,6 @@ namespace JJJ.DI
     {
       builder.RegisterSceneLifecycle<JudgeSceneLifecycle>();
 
-      builder.Register<IGameModeProvider, GameModeProvider>(Lifetime.Scoped);
-
       builder.Register<EasyRuleSet>(Lifetime.Scoped);
       builder.Register<NormalRuleSet>(Lifetime.Scoped);
       builder.Register<HardRuleSet>(Lifetime.Scoped);

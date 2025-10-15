@@ -30,11 +30,9 @@ namespace JJJ.DI
     protected override UniTask OnEditorFirstPreInitialize(ISceneDataWriter writer, CancellationToken cancellationToken)
     {
       _logger.ZLogTrace($"OnEditorFirstPreInitialize called");
-      writer.Write(new JudgeSceneData
-      {
-        GameMode = _gameMode
-      });
-      _logger.ZLogInformation($"Wrote JudgeSceneData with GameMode: {_gameMode}");
+
+      _gameModeProvider.Set(_gameMode);
+      _logger.ZLogInformation($"Set GameMode: {_gameMode}");
       return UniTask.CompletedTask;
     }
 #endif
@@ -42,17 +40,6 @@ namespace JJJ.DI
     protected override UniTask OnInitialize(ISceneDataReader reader, IProgress<IProgressDataStore> progress, CancellationToken cancellationToken)
     {
       _logger.ZLogTrace($"OnInitialize called");
-      // 初期化処理
-      if (reader.TryRead<JudgeSceneData>(out var sceneData))
-      {
-        _gameModeProvider.Set(sceneData.GameMode);
-        _logger.ZLogInformation($"GameMode set to {_gameModeProvider.Current}");
-      }
-      else
-      {
-        _gameModeProvider.Set(GameMode.Normal);
-        _logger.ZLogError($"Failed to read JudgeSceneData. Defaulting GameMode to {_gameModeProvider.Current}");
-      }
 
       // ルールセットの初期化を強制的に行う
       _ = _ruleSetFactory.Create();
@@ -76,10 +63,5 @@ namespace JJJ.DI
       // 終了処理
       return UniTask.CompletedTask;
     }
-  }
-
-  public class JudgeSceneData : ISceneData
-  {
-    public GameMode GameMode { get; set; } = GameMode.Normal;
   }
 }

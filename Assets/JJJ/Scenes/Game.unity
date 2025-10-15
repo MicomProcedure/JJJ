@@ -2227,7 +2227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: JJJ.DI.GameLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
   _judgeInput: {fileID: 1540167803}
