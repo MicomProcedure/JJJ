@@ -57,8 +57,8 @@ namespace JJJ.UseCase.Turn
       {
         throw new InvalidOperationException("HandAnimationPresenter is not set.");
       }
-      var playerHandPlayTask = playerHandAnimationPresenter.PlayHand(playerHand.Type);
-      var opponentHandPlayTask = opponentHandAnimationPresenter.PlayHand(opponentHand.Type);
+      var playerHandPlayTask = playerHandAnimationPresenter.PlayHand(playerHand.Type, playerHand.IsTimeout);
+      var opponentHandPlayTask = opponentHandAnimationPresenter.PlayHand(opponentHand.Type, opponentHand.IsTimeout);
 
       // 時間切れを表すTimeSpan
       var remainingTime = default(TimeSpan);

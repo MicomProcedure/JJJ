@@ -12,7 +12,7 @@ namespace JJJ.Core.Interfaces
     /// <summary>
     /// 手のアニメーションを再生する
     /// </summary>
-    public UniTask PlayHand(HandType handType, CancellationToken cancellationToken = default);
+    public UniTask PlayHand(HandType handType, bool isTimeout = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 手のアニメーションをリセットする
