@@ -17,7 +17,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     /// Alpha/Beta特殊手による引き分けテスト
     /// 特殊効果の発動時間外において、Alpha/Betaが絡む場合は常に引き分けになることを確認
     /// </summary>
-    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetAlphaBetaDrawTestCases))]
+    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetAlphaBetaTestCases))]
     public void Judge_WithAlphaBeta_ReturnsAlwaysDraw(HandType playerHand, HandType opponentHand, JudgeResultType expectedResult)
     {
       var player = new Hand(playerHand);
@@ -72,13 +72,13 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     public void ValidateHand_AlphaRepeat_ReturnsViolation()
     {
       var hand = new Hand(HandType.Alpha);
-      var turnContext = new TurnContext().ActivateAlpha(2); // Alpha有効中
+      var turnContext = new TurnContext().ActivateAlpha(2, PersonType.Player); // Alpha有効中
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.False, 
+      Assert.That(result.IsValid, Is.False,
                   "Alpha hand should not be valid when Alpha is active.");
-      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.AlphaRepeat), 
+      Assert.That(result.ViolationType, Is.EqualTo(ViolationType.AlphaRepeat),
                   "Alpha hand should result in AlphaRepeat violation.");
     }
 
@@ -89,7 +89,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     public void ValidateHand_BetaRepeat_ReturnsViolation()
     {
       var hand = new Hand(HandType.Beta);
-      var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock); // Beta有効中
+      var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock, PersonType.Player); // Beta有効中
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
@@ -106,11 +106,11 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     public void ValidateHand_SealedHand_ReturnsViolation()
     {
       var hand = new Hand(HandType.Rock);
-      var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock); // Rockが封印
+      var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock, PersonType.Player); // Rockが封印
 
       var result = _hardRuleSet.ValidateHand(hand, turnContext);
 
-      Assert.That(result.IsValid, Is.False, 
+      Assert.That(result.IsValid, Is.False,
                   "Sealed hand should not be valid when the hand is sealed.");
       Assert.That(result.ViolationType, Is.EqualTo(ViolationType.SealedHandUsed),
                   "Sealed hand should result in SealedHandUsed violation.");
@@ -158,7 +158,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     {
       var player = new Hand(HandType.Alpha);
       var opponent = new Hand(HandType.Rock);
-      var turnContext = new TurnContext().ActivateAlpha(2);
+      var turnContext = new TurnContext().ActivateAlpha(2, PersonType.Player);
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
@@ -177,8 +177,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       var player = new Hand(HandType.Alpha);
       var opponent = new Hand(HandType.Beta);
       var turnContext = new TurnContext()
-        .ActivateAlpha(2)                 // Alphaを2ターン有効化
-        .ActivateBeta(1, HandType.Rock);  // BetaをRockに対して1ターン有効化
+        .ActivateAlpha(2, PersonType.Player)                 // Alphaを2ターン有効化
+        .ActivateBeta(1, HandType.Rock, PersonType.Opponent);  // BetaをRockに対して1ターン有効化
 
       var result = _hardRuleSet.Judge(player, opponent, turnContext);
 
@@ -204,6 +204,249 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 
       Assert.That(result.Type, Is.EqualTo(expectedResult),
                   $"Normal rules: {playerHand} vs {opponentHand}");
+    }
+
+    /// <summary>
+    /// Alpha効果中にプレイヤーが勝利または引き分けの場合、引き分けになることをテスト
+    /// </summary>
+    [TestCase(HandType.Rock, HandType.Scissors)]
+    [TestCase(HandType.Rock, HandType.Rock)]
+    public void Judge_AlphaActive_PlayerWinBecomesDrawExceptLastTurn(HandType playerHand, HandType opponentHand)
+    {
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(2, PersonType.Player);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw),
+                  "Player win should become draw when Alpha is active (not last turn).");
+    }
+
+    /// <summary>
+    /// Alpha効果の最終ターンにプレイヤーが勝利または引き分けの場合、勝利になることをテスト
+    /// </summary>
+    [TestCase(HandType.Rock, HandType.Scissors)]
+    [TestCase(HandType.Rock, HandType.Rock)]
+    public void Judge_AlphaActive_PlayerWinOnLastTurnBecomesWin(HandType playerHand, HandType opponentHand)
+    {
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(1, PersonType.Player);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win),
+                  "Player win should remain win when Alpha is on last turn.");
+    }
+
+    /// <summary>
+    /// Alpha効果中にプレイヤーが敗北の場合、そのまま敗北になることをテスト
+    /// </summary>
+    [Test]
+    public void Judge_AlphaActive_PlayerLoseRemainsLose()
+    {
+      var player = new Hand(HandType.Scissors);
+      var opponent = new Hand(HandType.Rock);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(2, PersonType.Player);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Lose),
+                  "Player lose should remain lose even when Alpha is active.");
+    }
+
+    /// <summary>
+    /// 相手のAlpha効果中に相手が勝利または引き分けの場合、引き分けになることをテスト
+    /// </summary>
+    [TestCase(HandType.Scissors, HandType.Rock)]
+    [TestCase(HandType.Rock, HandType.Rock)]
+    public void Judge_AlphaActive_OpponentWinBecomesDrawExceptLastTurn(HandType playerHand, HandType opponentHand)
+    {
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(2, PersonType.Opponent);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw),
+                  "Opponent win should become draw when Alpha is active (not last turn).");
+    }
+
+    /// <summary>
+    /// 相手のAlpha効果の最終ターンに相手が勝利または引き分けの場合、敗北になることをテスト
+    /// </summary>
+    [TestCase(HandType.Scissors, HandType.Rock)]
+    [TestCase(HandType.Rock, HandType.Rock)]
+    public void Judge_AlphaActive_OpponentWinOnLastTurnBecomesLose(HandType playerHand, HandType opponentHand)
+    {
+      var player = new Hand(playerHand);
+      var opponent = new Hand(opponentHand);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(1, PersonType.Opponent);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Lose),
+                  "Opponent win should become lose when Alpha is on last turn.");
+    }
+
+    /// <summary>
+    /// Alpha効果中に相手が敗北の場合、そのまま勝利になることをテスト
+    /// </summary>
+    [Test]
+    public void Judge_AlphaActive_OpponentLoseRemainsWin()
+    {
+      var player = new Hand(HandType.Rock);
+      var opponent = new Hand(HandType.Scissors);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(2, PersonType.Opponent);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win),
+                  "Player win should remain win when opponent's Alpha is active and player wins.");
+    }
+
+    /// <summary>
+    /// BetaとThreeの相性テスト - プレイヤーがBeta、相手がThreeの場合は敗北
+    /// </summary>
+    [Test]
+    public void Judge_PlayerBetaVsOpponentThree_ReturnsLose()
+    {
+      var player = new Hand(HandType.Beta);
+      var opponent = new Hand(HandType.Three);
+      var turnContext = new TurnContext(turnCount: 1);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Lose),
+                  "Player Beta should lose to Opponent Three.");
+    }
+
+    /// <summary>
+    /// BetaとThreeの相性テスト - 相手がBeta、プレイヤーがThreeの場合は勝利
+    /// </summary>
+    [Test]
+    public void Judge_PlayerThreeVsOpponentBeta_ReturnsWin()
+    {
+      var player = new Hand(HandType.Three);
+      var opponent = new Hand(HandType.Beta);
+      var turnContext = new TurnContext(turnCount: 1);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Win),
+                  "Player Three should win against Opponent Beta.");
+    }
+
+    /// <summary>
+    /// Alpha発動時にActivateAlphaが呼ばれることをテスト（プレイヤー）
+    /// </summary>
+    [Test]
+    public void Judge_PlayerAlpha_ActivatesAlphaContext()
+    {
+      var player = new Hand(HandType.Alpha);
+      var opponent = new Hand(HandType.Rock);
+      var turnContext = new TurnContext(turnCount: 1);
+
+      _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(turnContext.AlphaRemainingTurns, Is.GreaterThan(0),
+                  "Alpha should be activated for more than 0 turns.");
+      Assert.That(turnContext.AlphaActivatedBy, Is.EqualTo(PersonType.Player),
+                  "Alpha should be activated by Player.");
+    }
+
+    /// <summary>
+    /// Alpha発動時にActivateAlphaが呼ばれることをテスト（相手）
+    /// </summary>
+    [Test]
+    public void Judge_OpponentAlpha_ActivatesAlphaContext()
+    {
+      var player = new Hand(HandType.Rock);
+      var opponent = new Hand(HandType.Alpha);
+      var turnContext = new TurnContext(turnCount: 1);
+
+      _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(turnContext.AlphaRemainingTurns, Is.GreaterThan(0),
+                  "Alpha should be activated for more than 0 turns.");
+      Assert.That(turnContext.AlphaActivatedBy, Is.EqualTo(PersonType.Opponent),
+                  "Alpha should be activated by Opponent.");
+    }
+
+    /// <summary>
+    /// Beta発動時にActivateBetaが呼ばれることをテスト（プレイヤー、Three以外）
+    /// </summary>
+    [Test]
+    public void Judge_PlayerBeta_ActivatesBetaContext()
+    {
+      var player = new Hand(HandType.Beta);
+      var opponent = new Hand(HandType.Rock);
+      var turnContext = new TurnContext(turnCount: 1);
+
+      _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(turnContext.BetaRemainingTurns, Is.GreaterThan(0),
+                  "Beta should be activated for more than 0 turns.");
+      Assert.That(turnContext.SealedHandType, Is.EqualTo(HandType.Rock),
+                  "Opponent's hand should be sealed.");
+      Assert.That(turnContext.BetaActivatedBy, Is.EqualTo(PersonType.Player),
+                  "Beta should be activated by Player.");
+    }
+
+    /// <summary>
+    /// Beta発動時にActivateBetaが呼ばれることをテスト（相手、Three以外）
+    /// </summary>
+    [Test]
+    public void Judge_OpponentBeta_ActivatesBetaContext()
+    {
+      var player = new Hand(HandType.Paper);
+      var opponent = new Hand(HandType.Beta);
+      var turnContext = new TurnContext(turnCount: 1);
+
+      _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(turnContext.BetaRemainingTurns, Is.GreaterThan(0),
+                  "Beta should be activated for more than 0 turns.");
+      Assert.That(turnContext.SealedHandType, Is.EqualTo(HandType.Paper),
+                  "Player's hand should be sealed.");
+      Assert.That(turnContext.BetaActivatedBy, Is.EqualTo(PersonType.Opponent),
+                  "Beta should be activated by Opponent.");
+    }
+
+    /// <summary>
+    /// Alpha効果中の反則処理テスト - 相手プレイヤーが反則でOpponentViolationの場合、引き分けになる
+    /// </summary>
+    [Test]
+    public void Judge_AlphaActive_PlayerWinByOpponentViolationBecomesDrawExceptLastTurn()
+    {
+      var player = new Hand(HandType.Rock);
+      var opponent = new Hand(HandType.Beta);
+      var turnContext = new TurnContext(turnCount: 1)
+        .ActivateAlpha(2, PersonType.Player)
+        .ActivateBeta(1, HandType.Paper, PersonType.Opponent);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw),
+                  "Player win by opponent violation should become draw when Alpha is active (not last turn).");
+    }
+
+    /// <summary>
+    /// Alpha効果中の反則処理テスト - 相手が反則でViolationの場合、引き分けになる
+    /// </summary>
+    [Test]
+    public void Judge_AlphaActive_OpponentWinByPlayerViolationBecomesDrawExceptLastTurn()
+    {
+      var player = new Hand(HandType.Alpha);
+      var opponent = new Hand(HandType.Rock);
+      var turnContext = new TurnContext(turnCount: 1)
+        .ActivateAlpha(2, PersonType.Opponent);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw),
+                  "Opponent win by player violation should become draw when opponent's Alpha is active (not last turn).");
     }
   }
 }

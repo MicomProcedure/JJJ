@@ -107,16 +107,24 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 
     /// <summary>
     /// Alpha/Betaの引き分けテストケースを生成
-    /// Alpha/Betaが絡む場合は常に引き分けになることを確認
+    /// BetaとThreeが絡む場合以外を除いて、Alpha/Betaが絡む場合は常に引き分けになることを確認
+    /// BetaとThreeが絡む場合は、Threeが勝つ
     /// </summary>
-    internal static IEnumerable<TestCaseData> GetAlphaBetaDrawTestCases()
+    internal static IEnumerable<TestCaseData> GetAlphaBetaTestCases()
     {
       var testCases = HandUtil.GetAllHandCombinations()
-        .Where(combo => HandUtil.SpecialHandTypes.Contains(combo.player) || HandUtil.SpecialHandTypes.Contains(combo.opponent))
-        .Where(combo => combo.player != combo.opponent); // 同じ手は除外
+        .Where(combo => HandUtil.SpecialHandTypes.Contains(combo.player) || HandUtil.SpecialHandTypes.Contains(combo.opponent));
 
       foreach (var (player, opponent) in testCases)
       {
+        if ((player == HandType.Beta && opponent == HandType.Three) ||
+            (player == HandType.Three && opponent == HandType.Beta))
+        {
+          var winner = player == HandType.Three ? player : opponent;
+          yield return new TestCaseData(player, opponent, player == HandType.Three ? JudgeResultType.Win : JudgeResultType.Lose)
+            .SetName($"{player}_vs_{opponent}_AlphaBeta_{winner}_Wins");
+          continue;
+        }
         yield return new TestCaseData(player, opponent, JudgeResultType.Draw)
           .SetName($"{player}_vs_{opponent}_AlphaBeta_Draw");
       }
