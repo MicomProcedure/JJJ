@@ -161,7 +161,7 @@ namespace JJJ.UseCase
         _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
 
         // 引き分けならターン継続、勝敗がついたらセッション再開
-        if (outcome.TruthResult.Type == JudgeResultType.Draw)
+        if (outcome.TruthResult.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation)
         {
           _logger.ZLogTrace($"JudgeService: Draw - Restart Turn");
           await _compositeHandAnimationPresenter.ResetHandAll();
