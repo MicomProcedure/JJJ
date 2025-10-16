@@ -4,6 +4,9 @@ using UnityEngine.EventSystems;
 
 namespace JJJ.UI
 {
+  /// <summary>
+  /// ボタンをクリックしたときにSEを再生するコンポーネント
+  /// </summary>
   public class ButtonSoundEffector : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler
   {
     [SerializeField, SEPathSelector] private string _hoverSE = "";
