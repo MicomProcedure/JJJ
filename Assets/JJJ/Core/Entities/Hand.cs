@@ -18,12 +18,12 @@ namespace JJJ.Core.Entities
       HandType.Rock => "グー",
       HandType.Paper => "パー",
       HandType.Scissors => "チョキ",
-      HandType.Alpha => "α",
-      HandType.Beta => "β",
-      HandType.One => "1",
-      HandType.Two => "2",
-      HandType.Three => "3",
-      HandType.Four => "4",
+      HandType.Alpha => "ヘイワ",
+      HandType.Beta => "オフダ",
+      HandType.One => "ツン",
+      HandType.Two => "メト",
+      HandType.Three => "ロロ",
+      HandType.Four => "フリャ",
       _ => throw new System.ArgumentOutOfRangeException()
     };
 
