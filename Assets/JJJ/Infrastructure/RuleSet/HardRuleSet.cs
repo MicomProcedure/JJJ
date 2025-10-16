@@ -33,9 +33,9 @@ namespace JJJ.Infrastructure
         // どちらが反則かに応じて結果を返す
         result = (playerHandValidation.IsValid, opponentHandValidation.IsValid) switch
         {
-          (false, false) => new JudgeResult(JudgeResultType.DoubleViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
-          (false, true) => new JudgeResult(JudgeResultType.Violation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
-          (true, false) => new JudgeResult(JudgeResultType.OpponentViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
+          (false, false) => new(JudgeResultType.DoubleViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
+          (false, true) => new(JudgeResultType.Violation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
+          (true, false) => new(JudgeResultType.OpponentViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
           // 理論上ありえないが、型の安全性のために追加
           _ => throw new System.Exception("Invalid hand detected.")
         };
@@ -96,8 +96,8 @@ namespace JJJ.Infrastructure
         // Alphaを発動させた人が勝ちまたは引き分けなら、引き分けにする
         // Alphaを発動させた人が負けなら、そのまま負けにする
         var overrideResultType = result.Type;
-        bool isPlayerWinning = result.Type == JudgeResultType.Win || result.Type == JudgeResultType.OpponentViolation;
-        bool isOpponentWinning = result.Type == JudgeResultType.Lose || result.Type == JudgeResultType.Violation;
+        bool isPlayerWinning = result.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation;
+        bool isOpponentWinning = result.Type is JudgeResultType.Lose or JudgeResultType.Violation;
         bool isDraw = result.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation;
         if (turnContext.AlphaActivatedBy == PersonType.Player && (isPlayerWinning || isDraw))
         {
