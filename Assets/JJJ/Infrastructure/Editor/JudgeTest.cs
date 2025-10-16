@@ -176,7 +176,7 @@ namespace JJJ.Infrastructure.Editor
         _logs.Add(FormatResultMessage(turnContext, playerHand, opponentHand, result));
         _logs.Add(FormatContextState(turnContext));
 
-        if (result.Type != JudgeResultType.Draw)
+        if (result.Type is not (JudgeResultType.Draw or JudgeResultType.DoubleViolation))
         {
           _logs.Add("勝敗が確定したため TurnContext をリセットしました。");
           turnContext = new TurnContext();
@@ -229,7 +229,7 @@ namespace JJJ.Infrastructure.Editor
         builder.Append($" (By {context.BetaActivatedBy.Value})");
       }
       builder.Append(", SealedHand: ");
-      builder.Append(context.SealedHandType?.ToString() ?? "None");
+      builder.Append(context.SealedHandType != null ? new Hand(context.SealedHandType.Value).Name : "None");
       return builder.ToString();
     }
 
