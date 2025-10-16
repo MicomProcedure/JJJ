@@ -8,6 +8,9 @@ namespace JJJ.Infrastructure
   /// </summary>
   public class HardRuleSet : IRuleSet
   {
+    private const int AlphaDuration = 3;
+    private const int BetaDuration = 3;
+
     /// <summary>
     /// じゃんけんの結果を判定する
     /// </summary>
@@ -22,11 +25,13 @@ namespace JJJ.Infrastructure
       var playerHandValidation = ValidateHand(playerHand, turnContext);
       var opponentHandValidation = ValidateHand(opponentHand, turnContext);
 
+      JudgeResult result;
+
       // どちらかまたは両方が反則の場合の処理
       if (!playerHandValidation.IsValid || !opponentHandValidation.IsValid)
       {
         // どちらが反則かに応じて結果を返す
-        return (playerHandValidation.IsValid, opponentHandValidation.IsValid) switch
+        result = (playerHandValidation.IsValid, opponentHandValidation.IsValid) switch
         {
           (false, false) => new(JudgeResultType.DoubleViolation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
           (false, true) => new(JudgeResultType.Violation, playerHand, opponentHand, playerHandValidation.ViolationType, opponentHandValidation.ViolationType),
@@ -35,31 +40,84 @@ namespace JJJ.Infrastructure
           _ => throw new System.Exception("Invalid hand detected.")
         };
       }
-
-      // 特殊なルールの適用
-      // Alpha または Beta の手が出された場合は、そのターンを引き分けとする
-      if (playerHand.Type == HandType.Alpha || opponentHand.Type == HandType.Alpha) return new(JudgeResultType.Draw, playerHand, opponentHand);
-      if (playerHand.Type == HandType.Beta || opponentHand.Type == HandType.Beta) return new(JudgeResultType.Draw, playerHand, opponentHand);
-
-      // 両者が特殊な三すくみの手を出し、かつ偶数ターンの場合は特別な勝敗ルールを適用
-      if (turnContext.IsEvenTurn && RuleSetHelper.IsSpecialTriangle(playerHand) && RuleSetHelper.IsSpecialTriangle(opponentHand))
+      else
       {
-        return (playerHand.Type, opponentHand.Type) switch
+        // 特殊なルールの適用
+        // Alpha または Beta の手が出された場合は、そのターンを引き分けとする
+        if (playerHand.Type == HandType.Alpha || opponentHand.Type == HandType.Alpha)
         {
-          (HandType.One, HandType.Three) => new(JudgeResultType.Win, playerHand, opponentHand),
-          (HandType.Three, HandType.Scissors) => new(JudgeResultType.Win, playerHand, opponentHand),
-          (HandType.Scissors, HandType.One) => new(JudgeResultType.Win, playerHand, opponentHand),
+          turnContext.ActivateAlpha(AlphaDuration, playerHand.Type == HandType.Alpha ? PersonType.Player : PersonType.Opponent);
+          return new(JudgeResultType.Draw, playerHand, opponentHand);
+        }
+        if (playerHand.Type == HandType.Beta || opponentHand.Type == HandType.Beta)
+        {
+          // BetaはThreeには負けるので、ActivateBetaの前に判定
+          if (playerHand.Type == HandType.Beta && opponentHand.Type == HandType.Three)
+          {
+            return new(JudgeResultType.Lose, playerHand, opponentHand);
+          }
+          else if (opponentHand.Type == HandType.Beta && playerHand.Type == HandType.Three)
+          {
+            return new(JudgeResultType.Win, playerHand, opponentHand);
+          }
+          // Betaを発動させる
+          // Betaを出した人がPlayerならOpponentの手を、OpponentならPlayerの手を封印する
+          bool isPlayerHandIsBeta = playerHand.Type == HandType.Beta;
+          turnContext.ActivateBeta(BetaDuration, isPlayerHandIsBeta ? opponentHand.Type : playerHand.Type, isPlayerHandIsBeta ? PersonType.Player : PersonType.Opponent);
+          return new(JudgeResultType.Draw, playerHand, opponentHand);
+        }
 
-          (HandType.Three, HandType.One) => new(JudgeResultType.Lose, playerHand, opponentHand),
-          (HandType.Scissors, HandType.Three) => new(JudgeResultType.Lose, playerHand, opponentHand),
-          (HandType.One, HandType.Scissors) => new(JudgeResultType.Lose, playerHand, opponentHand),
+        // 両者が特殊な三すくみの手を出し、かつ偶数ターンの場合は特別な勝敗ルールを適用
+        if (turnContext.IsEvenTurn && RuleSetHelper.IsSpecialTriangle(playerHand) && RuleSetHelper.IsSpecialTriangle(opponentHand))
+        {
+          result = (playerHand.Type, opponentHand.Type) switch
+          {
+            (HandType.One, HandType.Three) => new(JudgeResultType.Win, playerHand, opponentHand),
+            (HandType.Three, HandType.Scissors) => new(JudgeResultType.Win, playerHand, opponentHand),
+            (HandType.Scissors, HandType.One) => new(JudgeResultType.Win, playerHand, opponentHand),
 
-          _ => new(JudgeResultType.Draw, playerHand, opponentHand)
-        };
+            (HandType.Three, HandType.One) => new(JudgeResultType.Lose, playerHand, opponentHand),
+            (HandType.Scissors, HandType.Three) => new(JudgeResultType.Lose, playerHand, opponentHand),
+            (HandType.One, HandType.Scissors) => new(JudgeResultType.Lose, playerHand, opponentHand),
+
+            _ => new(JudgeResultType.Draw, playerHand, opponentHand)
+          };
+        }
+        else
+        {
+          // 通常のじゃんけんの勝敗を判定
+          result = RuleSetHelper.DetermineResult(playerHand, opponentHand);
+        }
       }
 
-      // 通常のじゃんけんの勝敗を判定
-      return RuleSetHelper.DetermineResult(playerHand, opponentHand);
+      // Alphaの効果を適用
+      if (turnContext.AlphaRemainingTurns > 0)
+      {
+        // Alphaを発動させた人が勝ちまたは引き分けなら、引き分けにする
+        // Alphaを発動させた人が負けなら、そのまま負けにする
+        var overrideResultType = result.Type;
+        bool isPlayerWinning = result.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation;
+        bool isOpponentWinning = result.Type is JudgeResultType.Lose or JudgeResultType.Violation;
+        bool isDraw = result.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation;
+        if (turnContext.AlphaActivatedBy == PersonType.Player && (isPlayerWinning || isDraw))
+        {
+          // Alphaの残りターンが1ターンのときにあいこの場合は勝ちにする
+          overrideResultType = turnContext.AlphaRemainingTurns == 1 ?
+              isDraw ? JudgeResultType.Win : result.Type
+            : isDraw ? result.Type : JudgeResultType.Draw;
+        }
+        else if (turnContext.AlphaActivatedBy == PersonType.Opponent && (isOpponentWinning || isDraw))
+        {
+          // Alphaの残りターンが1ターンのときにあいこの場合は負けにする
+          overrideResultType = turnContext.AlphaRemainingTurns == 1 ?
+              isDraw ? JudgeResultType.Lose : result.Type
+            : isDraw ? result.Type : JudgeResultType.Draw;
+        }
+
+        // 上書きした結果を返す
+        return new(overrideResultType, playerHand, opponentHand, result.PlayerViolationType, result.OpponentViolationType);
+      }
+      return result;
     }
 
     /// <summary>

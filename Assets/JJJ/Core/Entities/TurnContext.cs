@@ -22,9 +22,17 @@ namespace JJJ.Core.Entities
     /// </summary>
     public int AlphaRemainingTurns { get; private set; }
     /// <summary>
+    /// αを発動させた人
+    /// </summary>
+    public PersonType? AlphaActivatedBy { get; private set; }
+    /// <summary>
     /// βの残りターン数
     /// </summary>
     public int BetaRemainingTurns { get; private set; }
+    /// <summary>
+    /// βを発動させた人
+    /// </summary>
+    public PersonType? BetaActivatedBy { get; private set; }
     /// <summary>
     /// βによって封印されている手の種類
     /// </summary>
@@ -56,8 +64,12 @@ namespace JJJ.Core.Entities
     {
       TurnCount++;
       if (AlphaRemainingTurns > 0) AlphaRemainingTurns--;
+      if (AlphaRemainingTurns == 0) AlphaActivatedBy = null;
       if (BetaRemainingTurns > 0) BetaRemainingTurns--;
-      if (BetaRemainingTurns == 0) SealedHandType = null;
+      if (BetaRemainingTurns == 0) {
+        SealedHandType = null;
+        BetaActivatedBy = null; 
+      }
       return this;
     }
 
@@ -66,13 +78,14 @@ namespace JJJ.Core.Entities
     /// </summary>
     /// <param name="turns">αの発動ターン数</param>
     /// <returns>更新されたTurnContext</returns>
-    public TurnContext ActivateAlpha(int turns)
+    public TurnContext ActivateAlpha(int turns, PersonType activatedBy)
     {
       if (turns <= 0)
       {
         throw new ArgumentOutOfRangeException(nameof(turns), "Alpha remaining turns must be greater than 0.");
       } 
       AlphaRemainingTurns = turns;
+      AlphaActivatedBy = activatedBy;
       return this;
     }
 
@@ -82,7 +95,7 @@ namespace JJJ.Core.Entities
     /// <param name="turns">βの発動ターン数</param>
     /// <param name="sealedHand">βによって封印される手</param>
     /// <returns>更新されたTurnContext</returns>
-    public TurnContext ActivateBeta(int turns, HandType sealedHandType)
+    public TurnContext ActivateBeta(int turns, HandType sealedHandType, PersonType activatedBy)
     {
       if (turns <= 0)
       {
@@ -90,6 +103,7 @@ namespace JJJ.Core.Entities
       }
       BetaRemainingTurns = turns;
       SealedHandType = sealedHandType;
+      BetaActivatedBy = activatedBy;
       return this;
     }
   }
