@@ -13,6 +13,9 @@ namespace JJJ.View
   /// </summary>
   public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
+    // 後出しのときに遅らせる時間(ミリ秒)
+    private const int TimeoutTime = 1000;
+
     /// <summary>
     /// この手がプレイヤーのものかどうか
     /// </summary>
@@ -54,7 +57,7 @@ namespace JJJ.View
     /// <remarks>
     /// 最初の場合は、自動的に初回用の振り下ろすアニメーションが再生される
     /// </remarks>
-    public async UniTask PlayHand(HandType handType, CancellationToken cancellationToken = default)
+    public async UniTask PlayHand(HandType handType, bool isTimeout = false, CancellationToken cancellationToken = default)
     {
       if (_animator == null)
       {
@@ -65,18 +68,24 @@ namespace JJJ.View
 
       if (_isHandReset)
       {
+        if (isTimeout)
+        {
+          _logger.ZLogDebug($"Timeout occurred.");
+          await UniTask.Delay(TimeoutTime, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
+        }
+
         // ベータは左右でアニメーションが異なるので分岐する
         if (handType == HandType.Beta)
         {
           if (_isPlayerHand ^ _isRightHand)
           {
             _animator.SetTrigger("PlayBetaL");
-            _currentState = $"PlayBetaL";
+            _currentState = "PlayBetaL";
           }
           else
           {
             _animator.SetTrigger("PlayBetaR");
-            _currentState = $"PlayBetaR";
+            _currentState = "PlayBetaR";
           }
         }
         else
