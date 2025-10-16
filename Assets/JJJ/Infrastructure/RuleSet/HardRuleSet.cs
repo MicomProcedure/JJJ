@@ -8,8 +8,8 @@ namespace JJJ.Infrastructure
   /// </summary>
   public class HardRuleSet : IRuleSet
   {
-    private const int AlphaDuration = 2;
-    private const int BetaDuration = 2;
+    private const int AlphaDuration = 3;
+    private const int BetaDuration = 3;
 
     /// <summary>
     /// じゃんけんの結果を判定する
