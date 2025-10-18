@@ -12,7 +12,7 @@ namespace JJJ.DI
   {
     [SerializeField] private ResultView _resultView = null!;
     [SerializeField] private TextMeshProUGUI _clickScreenText = null!;
-    [SerializeField] private ResultButtonObservables _resultButtonObservales = null!;
+    [SerializeField] private ResultButtonObservables _resultButtonObservables = null!;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -21,7 +21,7 @@ namespace JJJ.DI
       builder.RegisterEntryPoint<ResultButtonManager>(Lifetime.Scoped);
 
       builder.RegisterComponent(_resultView);
-      builder.RegisterComponent(_resultButtonObservales);
+      builder.RegisterComponent(_resultButtonObservables);
 
       builder.RegisterInstance(_clickScreenText.gameObject).Keyed("ClickScreenText");
     }
