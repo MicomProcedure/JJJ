@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace JJJ.UI
 {
-  public class ResultButtonObservales : MonoBehaviour
+  public class ResultButtonObservables : MonoBehaviour
   {
     [SerializeField] private Button _backgroundButton = null!;
 

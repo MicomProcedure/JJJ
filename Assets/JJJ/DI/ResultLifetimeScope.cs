@@ -12,7 +12,7 @@ namespace JJJ.DI
   {
     [SerializeField] private ResultView _resultView = null!;
     [SerializeField] private TextMeshProUGUI _clickScreenText = null!;
-    [SerializeField] private ResultButtonObservales _resultButtonObservales = null!;
+    [SerializeField] private ResultButtonObservables _resultButtonObservales = null!;
 
     protected override void Configure(IContainerBuilder builder)
     {
