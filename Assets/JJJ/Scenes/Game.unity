@@ -2236,6 +2236,7 @@ MonoBehaviour:
   _currentScorePresenter: {fileID: 9135481869503724627}
   _currentJudgesPresenter: {fileID: 5437819995607102209}
   _remainJudgeTimePresenter: {fileID: 293637844272892295}
+  _gameSettingsProvider: {fileID: 11400000, guid: 4f8a2a1e46155464fb791658b9f1f34c, type: 2}
 --- !u!4 &1536809471
 Transform:
   m_ObjectHideFlags: 0
