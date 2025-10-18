@@ -35,7 +35,7 @@ Material:
     - _ScaleRatioC: 0.73125
     - _UnderlayDilate: 0.3
     m_Colors:
-    - _FaceColor: {r: 1, g: 0, b: 0, a: 1}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _UnderlayColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
