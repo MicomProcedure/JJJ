@@ -1425,8 +1425,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u30B8\u30E3\u30B8\u30E3\u30F3\u30B8\u30E3\u30C3\u30B8"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1ecc72810dc514f9d8f66ac6178d2049, type: 2}
-  m_sharedMaterial: {fileID: 2800072957493451750, guid: 1ecc72810dc514f9d8f66ac6178d2049, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 52a78fe891bd448d994ec75eeb9b6006, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 98e16cfb8517893498be9e6da57a6dff, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
