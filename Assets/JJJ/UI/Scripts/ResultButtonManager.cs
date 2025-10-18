@@ -12,21 +12,21 @@ namespace JJJ.UI
 {
   public class ResultButtonManager : IStartable, IDisposable
   {
-    private ResultButtonObservales _resultButtonObservales;
+    private ResultButtonObservables _resultButtonObservables;
     private GameObject _clickScreenText;
 
     private CompositeDisposable _disposables = new();
 
-    public ResultButtonManager(ResultButtonObservales resultButtonObservales,
+    public ResultButtonManager(ResultButtonObservables resultButtonObservables,
                                [Key("ClickScreenText")] GameObject clickScreenText)
     {
-      _resultButtonObservales = resultButtonObservales;
+      _resultButtonObservables = resultButtonObservables;
       _clickScreenText = clickScreenText;
     }
 
     public void Start()
     {
-      _resultButtonObservales.BackgroundButtonOnClick
+      _resultButtonObservables.BackgroundButtonOnClick
         .DelaySubscription(TimeSpan.FromSeconds(3))
         .Do(onSubscribe: () => _clickScreenText.SetActive(true))
         .Subscribe(async _ =>
