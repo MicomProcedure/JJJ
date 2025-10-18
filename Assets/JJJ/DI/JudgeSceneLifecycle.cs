@@ -16,14 +16,17 @@ namespace JJJ.DI
     private readonly IGameModeProvider _gameModeProvider;
     private readonly IGameSettingsProvider _gameSettingsProvider;
     private readonly IRuleSetFactory _ruleSetFactory;
+    private readonly IJudgeService _judgeService;
     private readonly ILogger _logger = LogManager.CreateLogger<JudgeSceneLifecycle>();
 
     public JudgeSceneLifecycle(IGameModeProvider gameModeProvider,
                                IGameSettingsProvider gameSettingsProvider,
+                               IJudgeService judgeService,
                                IRuleSetFactory ruleSetFactory)
     {
       _gameModeProvider = gameModeProvider;
       _gameSettingsProvider = gameSettingsProvider;
+      _judgeService = judgeService;
       _ruleSetFactory = ruleSetFactory;
     }
 
@@ -44,6 +47,7 @@ namespace JJJ.DI
 
       // ルールセットの初期化を強制的に行う
       _ = _ruleSetFactory.Create();
+      _judgeService.ApplyGameSettings();
       return UniTask.CompletedTask;
     }
 
