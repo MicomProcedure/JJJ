@@ -935,7 +935,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _resultView: {fileID: 1853952278}
   _clickScreenText: {fileID: 336171118}
-  _resultButtonObservales: {fileID: 1992083421}
+  _resultButtonObservables: {fileID: 1992083421}
 --- !u!1 &390046048
 GameObject:
   m_ObjectHideFlags: 0
