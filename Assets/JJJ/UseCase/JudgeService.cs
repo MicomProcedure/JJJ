@@ -17,8 +17,9 @@ namespace JJJ.UseCase
     private IRuleSet _ruleSet;
     private IEnumerable<ICpuHandStrategy> _strategies;
     private ITimerService _timerService;
-    private readonly TimeSpan _gameEndLimit = TimeSpan.FromSeconds(10);
-    private readonly TimeSpan _judgeLimit = TimeSpan.FromSeconds(5);
+    private readonly IGameModeProvider _gameModeProvider;
+    private readonly TimeSpan _gameEndLimit;
+    private readonly TimeSpan _judgeLimit;
     private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
     private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IScoreCalculator _scoreCalculator;
@@ -33,6 +34,7 @@ namespace JJJ.UseCase
     private ICpuHandStrategy? _currentOpponentStrategy = null;
     private readonly IStrategySelector _strategySelector;
     private readonly ITurnExecutor _turnExecutor;
+    private readonly IGameSettingsProvider _gameSettingsProvider;
 
     /// <summary>
     /// 現在のターン情報
@@ -64,7 +66,9 @@ namespace JJJ.UseCase
                         CurrentJudgesPresenter currentJudgesPresenter,
                         RemainJudgeTimePresenter remainJudgeTimePresenter,
                         IStrategySelector strategySelector,
-                        ITurnExecutor turnExecutor)
+                        ITurnExecutor turnExecutor,
+                        IGameModeProvider gameModeProvider,
+                        IGameSettingsProvider gameSettingsProvider)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
@@ -78,6 +82,30 @@ namespace JJJ.UseCase
       _judgeInput = judgeInput;
       _strategySelector = strategySelector;
       _turnExecutor = turnExecutor;
+      _gameModeProvider = gameModeProvider;
+      _gameSettingsProvider = gameSettingsProvider;
+
+      switch (_gameModeProvider.Current)
+      {
+        case GameMode.Easy:
+          _judgeLimit = TimeSpan.FromSeconds(_gameSettingsProvider.EasyJudgeTimeLimit);
+          _gameEndLimit = TimeSpan.FromMinutes(_gameSettingsProvider.EasyGameTimeLimit);
+          break;
+        case GameMode.Normal:
+          _judgeLimit = TimeSpan.FromSeconds(_gameSettingsProvider.NormalJudgeTimeLimit);
+          _gameEndLimit = TimeSpan.FromMinutes(_gameSettingsProvider.NormalGameTimeLimit);
+          break;
+        case GameMode.Hard:
+          _judgeLimit = TimeSpan.FromSeconds(_gameSettingsProvider.HardJudgeTimeLimit);
+          _gameEndLimit = TimeSpan.FromMinutes(_gameSettingsProvider.HardGameTimeLimit);
+          break;
+        default:
+          _logger.ZLogWarning($"JudgeService: Unknown GameMode {_gameModeProvider.Current}, defaulting judge limit to 10 seconds.");
+          _logger.ZLogWarning($"JudgeService: Unknown GameMode {_gameModeProvider.Current}, defaulting game end limit to 60 minutes.");
+          _judgeLimit = TimeSpan.FromSeconds(10);
+          _gameEndLimit = TimeSpan.FromMinutes(60);
+          break;
+      }
     }
 
     void IStartable.Start()
