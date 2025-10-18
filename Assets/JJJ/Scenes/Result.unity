@@ -273,6 +273,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 85565921}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &85565923 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 85565921}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
 --- !u!1 &232852929
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,6 +573,10 @@ PrefabInstance:
       propertyPath: m_text
       value: "\u6642\u9593\u5207\u308C\u306B\u3088\u308B\u30B8\u30E3\u30C3\u30B8\u5931\u6557"
       objectReference: {fileID: 0}
+    - target: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+      propertyPath: _correctCountText
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -669,6 +684,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 316735511}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &316735513 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1852862561291341060, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 316735511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &373131650
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,6 +781,7 @@ MonoBehaviour:
     TypeName: JJJ.DI.GameLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
+  _resultView: {fileID: 1853952278}
 --- !u!1 &390046048
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,6 +1001,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 479387296}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &479387298 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 479387296}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
 --- !u!1 &882422142
 GameObject:
   m_ObjectHideFlags: 0
@@ -1936,6 +1974,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 1414292090}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1414292092 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 1414292090}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
 --- !u!1 &1614088075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1948,7 +1997,7 @@ GameObject:
   - component: {fileID: 1614088078}
   - component: {fileID: 1614088077}
   m_Layer: 5
-  m_Name: ScoreNumText
+  m_Name: ScoreText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2084,7 +2133,7 @@ GameObject:
   - component: {fileID: 1625025089}
   - component: {fileID: 1625025088}
   m_Layer: 5
-  m_Name: ScoreText
+  m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2362,6 +2411,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 1652658860}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1652658862 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 1652658860}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
 --- !u!224 &1655056984 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
@@ -2600,6 +2660,70 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 1799534049}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1799534051 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 1799534049}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
+--- !u!1 &1853952277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1853952279}
+  - component: {fileID: 1853952278}
+  m_Layer: 0
+  m_Name: ResultView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1853952278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853952277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9159c45d14f81dd4d85b7e7ad91b1a37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultView
+  _scoreText: {fileID: 1614088077}
+  _compatibility: {fileID: 4567989148115139814}
+  _timeoutViolation: {fileID: 1414292092}
+  _doubleViolation: {fileID: 479387298}
+  _timeout: {fileID: 316735513}
+  _alpha: {fileID: 1652658862}
+  _alphaRepeat: {fileID: 2029700126}
+  _betaRepeat: {fileID: 85565923}
+  _sealedHandUsed: {fileID: 1799534051}
+--- !u!4 &1853952279
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853952277}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1877559014
 GameObject:
   m_ObjectHideFlags: 0
@@ -2769,9 +2893,9 @@ RectTransform:
   - {fileID: 1655056984}
   - {fileID: 1414292091}
   - {fileID: 479387297}
-  - {fileID: 1652658861}
   - {fileID: 316735512}
   - {fileID: 272136619}
+  - {fileID: 1652658861}
   - {fileID: 2029700125}
   - {fileID: 85565922}
   - {fileID: 1799534050}
@@ -2962,6 +3086,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6043417866389462221, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
   m_PrefabInstance: {fileID: 2029700124}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2029700126 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 2029700124}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
 --- !u!1001 &4567989148115139813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3111,6 +3246,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+--- !u!114 &4567989148115139814 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5274025634569056973, guid: 93a21f77d5982bd4fa2c3761dea8f367, type: 3}
+  m_PrefabInstance: {fileID: 4567989148115139813}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3120,3 +3266,4 @@ SceneRoots:
   - {fileID: 882422146}
   - {fileID: 1773502950}
   - {fileID: 1253224106}
+  - {fileID: 1853952279}

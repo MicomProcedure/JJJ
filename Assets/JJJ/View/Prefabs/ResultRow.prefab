@@ -282,6 +282,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6043417866389462221}
   - component: {fileID: 2136195441908062766}
+  - component: {fileID: 5274025634569056973}
   m_Layer: 5
   m_Name: ResultRow
   m_TagString: Untagged
@@ -337,6 +338,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &5274025634569056973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3445297563503969158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa386cd7de12333409efa3ac529dfa7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.ResultRow
+  _correctCountText: {fileID: 528064348192829967}
+  _incorrectCountText: {fileID: 1852862561291341060}
 --- !u!1 &7343743357725345456
 GameObject:
   m_ObjectHideFlags: 0
