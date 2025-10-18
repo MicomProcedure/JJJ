@@ -27,8 +27,9 @@ namespace JJJ.UI
     public void Start()
     {
       _resultButtonObservables.BackgroundButtonOnClick
-        .DelaySubscription(TimeSpan.FromSeconds(3))
         .Do(onSubscribe: () => _clickScreenText.SetActive(true))
+        .DelaySubscription(TimeSpan.FromSeconds(2))
+        .Take(1)
         .Subscribe(async _ =>
         {
           SEManager.Instance.Play(SEPath.SE6);
