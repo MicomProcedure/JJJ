@@ -4,8 +4,8 @@ namespace JJJ.View
 {
     public class HandAnimationEventHandler : MonoBehaviour
     {
-        [SerializeField] private GameObject _balance;
-        [SerializeField] private GameObject _ofuda;
+        [SerializeField] private GameObject _balance = null!;
+        [SerializeField] private GameObject _ofuda = null!;
 
         public void OnPlayBalance()
         {
