@@ -6,7 +6,6 @@ using KanKikuchi.AudioManager;
 using MackySoft.Navigathena;
 using MackySoft.Navigathena.SceneManagement;
 using MackySoft.Navigathena.SceneManagement.VContainer;
-using UnityEngine;
 
 namespace JJJ.DI
 {
@@ -27,10 +26,14 @@ namespace JJJ.DI
       writer.Write(new ResultSceneData
       {
         Score = 1500,
-        CompatibilityCount = new(1, 2),
-        TimeoutViolationCount = new(3, 4),
-        DoubleViolationCount = new(5, 6),
-        TimeoutCount = 7
+        CompatibilityCount = (1, 2),
+        TimeoutViolationCount = (3, 4),
+        DoubleViolationCount = (5, 6),
+        TimeoutCount = 7,
+        AlphaCount = (8, 9),
+        AlphaRepeatCount = (10, 11),
+        BetaRepeatCount = (12, 13),
+        SealedHandUsedCount = (14, 15)
       });
       return UniTask.CompletedTask;
     }
@@ -79,14 +82,14 @@ namespace JJJ.DI
   {
     public int Score { get; set; }
 
-    public Vector2Int CompatibilityCount { get; set; }
-    public Vector2Int TimeoutViolationCount { get; set; }
-    public Vector2Int DoubleViolationCount { get; set; }
+    public (int, int) CompatibilityCount { get; set; }
+    public (int, int) TimeoutViolationCount { get; set; }
+    public (int, int) DoubleViolationCount { get; set; }
     public int TimeoutCount { get; set; }
 
-    public Vector2Int? AlphaCount { get; set; } = null;
-    public Vector2Int? AlphaRepeatCount { get; set; } = null;
-    public Vector2Int? BetaRepeatCount { get; set; } = null;
-    public Vector2Int? SealedHandUsedCount { get; set; } = null;
+    public (int, int) AlphaCount { get; set; }
+    public (int, int) AlphaRepeatCount { get; set; }
+    public (int, int) BetaRepeatCount { get; set; }
+    public (int, int) SealedHandUsedCount { get; set; }
   }
 }

@@ -1,5 +1,7 @@
+using JJJ.Core.Interfaces;
 using TMPro;
 using UnityEngine;
+using VContainer;
 
 namespace JJJ.View
 {
@@ -17,37 +19,48 @@ namespace JJJ.View
     [SerializeField] private ResultRow _betaRepeat = null!;
     [SerializeField] private ResultRow _sealedHandUsed = null!;
 
+    private IGameModeProvider _gameModeProvider = null!;
+
+    [Inject]
+    public void Construct(IGameModeProvider gameModeProvider)
+    {
+      _gameModeProvider = gameModeProvider;
+    }
+
     public void SetScore(int score)
     {
       _scoreText.SetText(score.ToString());
     }
 
-    public void SetResult(Vector2Int compatibilityCount,
-                          Vector2Int timeoutViolationCount,
-                          Vector2Int doubleViolationCount,
+    public void SetResult((int, int) compatibilityCount,
+                          (int, int) timeoutViolationCount,
+                          (int, int) doubleViolationCount,
                           int timeoutCount,
-                          Vector2Int? alphaCount,
-                          Vector2Int? alphaRepeatCount,
-                          Vector2Int? betaRepeatCount,
-                          Vector2Int? sealedHandUsedCount)
+                          (int, int) alphaCount,
+                          (int, int) alphaRepeatCount,
+                          (int, int) betaRepeatCount,
+                          (int, int) sealedHandUsedCount)
 
     {
-      _compatibility.SetCount(compatibilityCount.x, compatibilityCount.y);
-      _timeoutViolation.SetCount(timeoutViolationCount.x, timeoutViolationCount.y);
-      _doubleViolation.SetCount(doubleViolationCount.x, doubleViolationCount.y);
+      _compatibility.SetCount(compatibilityCount.Item1, compatibilityCount.Item2);
+      _timeoutViolation.SetCount(timeoutViolationCount.Item1, timeoutViolationCount.Item2);
+      _doubleViolation.SetCount(doubleViolationCount.Item1, doubleViolationCount.Item2);
       _timeout.SetText(timeoutCount.ToString());
 
-      if (alphaCount != null) _alpha.SetCount(alphaCount.Value.x, alphaCount.Value.y);
-      else _alpha.gameObject.SetActive(false);
-
-      if (alphaRepeatCount != null) _alphaRepeat.SetCount(alphaRepeatCount.Value.x, alphaRepeatCount.Value.y);
-      else _alphaRepeat.gameObject.SetActive(false);
-
-      if (betaRepeatCount != null) _betaRepeat.SetCount(betaRepeatCount.Value.x, betaRepeatCount.Value.y);
-      else _betaRepeat.gameObject.SetActive(false);
-
-      if (sealedHandUsedCount != null) _sealedHandUsed.SetCount(sealedHandUsedCount.Value.x, sealedHandUsedCount.Value.y);
-      else _sealedHandUsed.gameObject.SetActive(false);
+      if (_gameModeProvider.Current == Core.Entities.GameMode.Hard)
+      {
+        _alpha.SetCount(alphaCount.Item1, alphaCount.Item2);
+        _alphaRepeat.SetCount(alphaRepeatCount.Item1, alphaRepeatCount.Item2);
+        _betaRepeat.SetCount(betaRepeatCount.Item1, betaRepeatCount.Item2);
+        _sealedHandUsed.SetCount(sealedHandUsedCount.Item1, sealedHandUsedCount.Item2);
+      }
+      else
+      {
+        _alpha.gameObject.SetActive(false);
+        _alphaRepeat.gameObject.SetActive(false);
+        _betaRepeat.gameObject.SetActive(false);
+        _sealedHandUsed.gameObject.SetActive(false);
+      }
     }
   }
 }
