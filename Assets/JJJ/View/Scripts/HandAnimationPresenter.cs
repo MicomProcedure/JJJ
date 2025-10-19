@@ -16,7 +16,7 @@ namespace JJJ.View
   public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
     // 後出しのときに遅らせる時間(ミリ秒)
-    private const int TimeoutTime = 1000;
+    private const int TimeoutTime = 500;
 
     /// <summary>
     /// この手がプレイヤーのものかどうか
@@ -37,6 +37,11 @@ namespace JJJ.View
     /// 手がリセットされているかどうか
     /// </summary>
     private bool _isHandReset = true;
+
+    /// <summary>
+    /// このターンで後出しだったか
+    /// </summary>
+    private bool _isTimeoutThisTurn = false;
 
     private string _currentState = string.Empty;
 
@@ -82,11 +87,7 @@ namespace JJJ.View
 
       if (_isHandReset)
       {
-        if (isTimeout)
-        {
-          _logger.ZLogDebug($"Timeout occurred.");
-          await UniTask.Delay(TimeoutTime, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
-        }
+        _isTimeoutThisTurn = isTimeout;
 
         // ベータは左右でアニメーションが異なるので分岐する
         if (handType == HandType.Beta)
@@ -182,6 +183,27 @@ namespace JJJ.View
     private bool IsSpecialHand(string hand)
     {
       return hand == "PlayAlpha" || hand == "PlayBetaL" || hand == "PlayBetaR";
+    }
+
+    /// <summary>
+    /// 後出しの場合のみアニメーションを遅延させる
+    /// </summary>
+    internal async UniTask DoTimeout(CancellationToken cancellationToken = default)
+    {
+      if (_animator == null)
+      {
+        _logger.ZLogError($"Animator is not assigned in HandAnimationPresenter.");
+        await UniTask.CompletedTask;
+        return;
+      }
+
+      if (_isTimeoutThisTurn)
+      {
+        _animator.speed = 0f;
+        _logger.ZLogDebug($"Timeout occurred.");
+        await UniTask.Delay(TimeoutTime, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
+        _animator.speed = 1f;
+      }
     }
   }
 }

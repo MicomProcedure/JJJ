@@ -2017,6 +2017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32790a2b024128a44992cc91958bc1af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _handAnimationPresenter: {fileID: 1054954208}
   _balance: {fileID: 93460220}
   _ofuda: {fileID: 1170782053}
 --- !u!1 &1113611850
@@ -3799,6 +3800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32790a2b024128a44992cc91958bc1af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _handAnimationPresenter: {fileID: 1811517109}
   _balance: {fileID: 1911599428}
   _ofuda: {fileID: 1803896361}
 --- !u!1 &1867854626
