@@ -19,7 +19,7 @@ namespace JJJ.UseCase.Turn
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ReactiveTurnExecutor>();
 
-    public async UniTask<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
+    public async UniTask<(TurnOutcome, UniTask)> ExecuteTurn(IRuleSet ruleSet,
                                                 ICpuHandStrategy playerStrategy,
                                                 ICpuHandStrategy opponentStrategy,
                                                 TurnContext context,
@@ -108,10 +108,8 @@ namespace JJJ.UseCase.Turn
         timerRemainsPresenter.SetTimerRemains((float)limit.TotalSeconds, (float)limit.TotalSeconds);
       }
       
-      // 手のアニメーションが完了するまで待機
-      await UniTask.WhenAll(playerHandPlayTask, opponentHandPlayTask);
       _disposables = new CompositeDisposable { timerObservable };
-      return outcome;
+      return (outcome, UniTask.WhenAll(playerHandPlayTask, opponentHandPlayTask));
     }
 
     public void Dispose()
