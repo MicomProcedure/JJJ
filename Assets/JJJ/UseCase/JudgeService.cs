@@ -211,54 +211,7 @@ namespace JJJ.UseCase
         _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
 
         // リザルトシーン用データ更新
-        switch (outcome.TruthResult.Type)
-        {
-          // 相性による勝利/敗北/引き分けのジャッジ
-          case JudgeResultType.Win or JudgeResultType.Lose or JudgeResultType.Draw:
-            // ジャッジが時間切れの場合
-            if (outcome.Claim == PlayerClaim.Timeout)
-            {
-              _resultSceneData.TimeoutCount++;
-              break;
-            }
-            // αの効果による勝利の場合
-            if (outcome.TruthResult.WinByAlpha.HasValue)
-            {
-              _resultSceneData.AlphaCount = AddCountByJudgement(_resultSceneData.AlphaCount, outcome.IsPlayerJudgementCorrect);
-              break;
-            }
-            // 通常の相性による勝利/敗北/引き分けの場合
-            _resultSceneData.CompatibilityCount = AddCountByJudgement(_resultSceneData.CompatibilityCount, outcome.IsPlayerJudgementCorrect);
-            break;
-          // 反則による勝利/敗北/引き分けのジャッジ
-          case JudgeResultType.Violation or JudgeResultType.OpponentViolation:
-            // 後出しによる反則
-            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.Timeout))
-            {
-              _resultSceneData.TimeoutViolationCount = AddCountByJudgement(_resultSceneData.TimeoutViolationCount, outcome.IsPlayerJudgementCorrect);
-            }
-            // αの連続使用による反則
-            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.AlphaRepeat))
-            {
-              _resultSceneData.AlphaRepeatCount = AddCountByJudgement(_resultSceneData.AlphaRepeatCount, outcome.IsPlayerJudgementCorrect);
-            }
-            // βの連続使用による反則
-            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.BetaRepeat))
-            {
-              _resultSceneData.BetaRepeatCount = AddCountByJudgement(_resultSceneData.BetaRepeatCount, outcome.IsPlayerJudgementCorrect);
-            }
-            // 封印された手の使用による反則
-            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.SealedHandUsed))
-            {
-              _resultSceneData.SealedHandUsedCount = AddCountByJudgement(_resultSceneData.SealedHandUsedCount, outcome.IsPlayerJudgementCorrect);
-            }
-            break;
-          case JudgeResultType.DoubleViolation:
-            _resultSceneData.DoubleViolationCount = AddCountByJudgement(_resultSceneData.DoubleViolationCount, outcome.IsPlayerJudgementCorrect);
-            break;
-          default:
-            throw new ArgumentOutOfRangeException("Unknown JudgeResultType", nameof(outcome.TruthResult.Type));
-        }
+        UpdateResultSceneData(outcome);
 
         // 引き分けならターン継続、勝敗がついたらセッション再開
         if (outcome.TruthResult.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation)
@@ -303,6 +256,58 @@ namespace JJJ.UseCase
     public void Dispose()
     {
       _currentTurnDisposables?.Dispose();
+    }
+
+    private void UpdateResultSceneData(TurnOutcome outcome)
+    {
+      switch (outcome.TruthResult.Type)
+      {
+        // 相性による勝利/敗北/引き分けのジャッジ
+        case JudgeResultType.Win or JudgeResultType.Lose or JudgeResultType.Draw:
+          // ジャッジが時間切れの場合
+          if (outcome.Claim == PlayerClaim.Timeout)
+          {
+            _resultSceneData.TimeoutCount++;
+            break;
+          }
+          // αの効果による勝利の場合
+          if (outcome.TruthResult.WinByAlpha.HasValue)
+          {
+            _resultSceneData.AlphaCount = AddCountByJudgement(_resultSceneData.AlphaCount, outcome.IsPlayerJudgementCorrect);
+            break;
+          }
+          // 通常の相性による勝利/敗北/引き分けの場合
+          _resultSceneData.CompatibilityCount = AddCountByJudgement(_resultSceneData.CompatibilityCount, outcome.IsPlayerJudgementCorrect);
+          break;
+        // 反則による勝利/敗北/引き分けのジャッジ
+        case JudgeResultType.Violation or JudgeResultType.OpponentViolation:
+          // 後出しによる反則
+          if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.Timeout))
+          {
+            _resultSceneData.TimeoutViolationCount = AddCountByJudgement(_resultSceneData.TimeoutViolationCount, outcome.IsPlayerJudgementCorrect);
+          }
+          // αの連続使用による反則
+          if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.AlphaRepeat))
+          {
+            _resultSceneData.AlphaRepeatCount = AddCountByJudgement(_resultSceneData.AlphaRepeatCount, outcome.IsPlayerJudgementCorrect);
+          }
+          // βの連続使用による反則
+          if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.BetaRepeat))
+          {
+            _resultSceneData.BetaRepeatCount = AddCountByJudgement(_resultSceneData.BetaRepeatCount, outcome.IsPlayerJudgementCorrect);
+          }
+          // 封印された手の使用による反則
+          if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.SealedHandUsed))
+          {
+            _resultSceneData.SealedHandUsedCount = AddCountByJudgement(_resultSceneData.SealedHandUsedCount, outcome.IsPlayerJudgementCorrect);
+          }
+          break;
+        case JudgeResultType.DoubleViolation:
+          _resultSceneData.DoubleViolationCount = AddCountByJudgement(_resultSceneData.DoubleViolationCount, outcome.IsPlayerJudgementCorrect);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException("Unknown JudgeResultType", nameof(outcome.TruthResult.Type));
+      }
     }
 
     private (int, int) AddCountByJudgement((int, int) currentCount, bool correct)
