@@ -1,5 +1,7 @@
 using JJJ.Core.Interfaces;
 using JJJ.Infrastructure;
+using JJJ.Utils;
+using MackySoft.Navigathena.Transitions;
 using VContainer;
 using VContainer.Unity;
 
@@ -16,6 +18,8 @@ namespace JJJ.DI
     protected override void Configure(IContainerBuilder builder)
     {
       builder.Register<IGameModeProvider, GameModeProvider>(Lifetime.Singleton);
+
+      builder.Register<ITransitionDirector>(_ => new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier), Lifetime.Singleton);
 
       builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
       {
