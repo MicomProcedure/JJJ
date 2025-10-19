@@ -168,8 +168,8 @@ GameObject:
   - component: {fileID: 114324825}
   - component: {fileID: 114324824}
   - component: {fileID: 114324823}
-  - component: {fileID: 114324827}
   - component: {fileID: 114324828}
+  - component: {fileID: 114324829}
   m_Layer: 5
   m_Name: LeftWin
   m_TagString: Untagged
@@ -278,18 +278,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 114324821}
   m_CullTransparentMesh: 1
---- !u!114 &114324827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 114324821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c87562dacea429e43ad1eefb686d38d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114324828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,6 +290,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1964b0076b4a5ff468ccdc433d44b85b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114324829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114324821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a1ce083fe0dd74aae7b96a0720980d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.AlphaHitAdjuster
 --- !u!1 &173220097
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,8 +1615,8 @@ GameObject:
   - component: {fileID: 847348458}
   - component: {fileID: 847348457}
   - component: {fileID: 847348456}
-  - component: {fileID: 847348455}
   - component: {fileID: 847348459}
+  - component: {fileID: 847348460}
   m_Layer: 5
   m_Name: RightWin
   m_TagString: Untagged
@@ -1643,18 +1643,6 @@ RectTransform:
   m_AnchoredPosition: {x: -420, y: -0.00000846386}
   m_SizeDelta: {x: 701.907, y: 2163.9}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &847348455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847348453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c87562dacea429e43ad1eefb686d38d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &847348456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1749,6 +1737,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1964b0076b4a5ff468ccdc433d44b85b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &847348460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847348453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a1ce083fe0dd74aae7b96a0720980d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.AlphaHitAdjuster
 --- !u!1 &886821038
 GameObject:
   m_ObjectHideFlags: 0
