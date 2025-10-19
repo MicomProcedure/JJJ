@@ -940,7 +940,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3645614496173599264, guid: 533b132e72729c545996ef055baa4d9c, type: 3}
       propertyPath: m_Name
-      value: HelpButton
+      value: RuleButton
       objectReference: {fileID: 0}
     - target: {fileID: 5163504751086583133, guid: 533b132e72729c545996ef055baa4d9c, type: 3}
       propertyPath: m_Pivot.x
@@ -2237,6 +2237,7 @@ MonoBehaviour:
   _currentJudgesPresenter: {fileID: 5437819995607102209}
   _remainJudgeTimePresenter: {fileID: 293637844272892295}
   _gameSettingsProvider: {fileID: 11400000, guid: 4f8a2a1e46155464fb791658b9f1f34c, type: 2}
+  _gameButtonObservables: {fileID: 2002880289}
 --- !u!4 &1536809471
 Transform:
   m_ObjectHideFlags: 0
@@ -2463,6 +2464,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1052877732683764406, guid: 9c758bd2192bc3341b0c6641486ebfbc, type: 3}
   m_PrefabInstance: {fileID: 444426554}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1734965685 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1306655163147807069, guid: 9c758bd2192bc3341b0c6641486ebfbc, type: 3}
+  m_PrefabInstance: {fileID: 444426554}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1803896361
 GameObject:
   m_ObjectHideFlags: 0
@@ -3067,6 +3079,63 @@ Transform:
   - {fileID: 1193375876}
   m_Father: {fileID: 2066566616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!1 &2002880288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2002880290}
+  - component: {fileID: 2002880289}
+  m_Layer: 0
+  m_Name: GameButtonObservables
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2002880289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002880288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81508748a4ab4bd428cc770918a53b65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.GameButtonObservables
+  _exitButton: {fileID: 1734965685}
+  _ruleButton: {fileID: 2045264815}
+--- !u!4 &2002880290
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2002880288}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2045264815 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 793243952179591260, guid: 533b132e72729c545996ef055baa4d9c, type: 3}
+  m_PrefabInstance: {fileID: 706049937}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2066566616 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -152337959339304171, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
@@ -3888,3 +3957,4 @@ SceneRoots:
   - {fileID: 812952444}
   - {fileID: 1195657624}
   - {fileID: 1867854630}
+  - {fileID: 2002880290}
