@@ -30,6 +30,7 @@ namespace JJJ.DI
     [SerializeField] private RulesView? _rulesView;
     [SerializeField] private GameButtonObservables? _gameButtonObservables;
     [SerializeField] private GameReadyAnimationPresenter? _gameReadyAnimationPresenter;
+    [SerializeField] private GameEndAnimationPresenter? _gameEndAnimationPresenter;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -67,6 +68,7 @@ namespace JJJ.DI
       builder.RegisterComponent(_rulesView).As<IRulesView>();
       builder.RegisterComponent(_gameButtonObservables).As<GameButtonObservables>();
       builder.RegisterComponent(_gameReadyAnimationPresenter).As<IGameReadyAnimationPresenter>();
+      builder.RegisterComponent(_gameEndAnimationPresenter).As<IGameEndAnimationPresenter>();
     }
   }
 }
