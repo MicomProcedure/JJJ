@@ -6,6 +6,7 @@ namespace JJJ.Utils
   {
     public static readonly ISceneIdentifier TitleSceneIdentifier = new BuiltInSceneIdentifier("Title");
     public static readonly ISceneIdentifier GameSceneIdentifier = new BuiltInSceneIdentifier("Game");
+    public static readonly ISceneIdentifier ResultSceneIdentifier = new BuiltInSceneIdentifier("Result");
     public static readonly ISceneIdentifier FadeTransitionIdentifier = new BuiltInSceneIdentifier("FadeTransition");
   }
 }

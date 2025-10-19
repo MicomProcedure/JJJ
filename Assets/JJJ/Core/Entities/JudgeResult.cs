@@ -29,7 +29,12 @@ namespace JJJ.Core.Entities
     /// <summary>
     /// じゃんけんの結果が反則かどうか
     /// </summary>
-    public bool IsValid => Type != JudgeResultType.Violation && Type != JudgeResultType.DoubleViolation;
+    public bool IsValid => Type != JudgeResultType.Violation && Type != JudgeResultType.OpponentViolation && Type != JudgeResultType.DoubleViolation;
+
+    /// <summary>
+    /// αの効果によって勝利したプレイヤー
+    /// </summary>
+    public PersonType? WinByAlpha { get; private set; } = null;
 
     /// <summary>
     /// プレイヤーの反則時の理由
@@ -56,13 +61,14 @@ namespace JJJ.Core.Entities
     /// <param name="playerHand">プレイヤーの手</param>
     /// <param name="opponentHand">相手の手</param>
     /// <param name="playerViolationType">じゃんけんの結果の理由</param>
-    public JudgeResult(JudgeResultType type, Hand playerHand, Hand opponentHand, ViolationType playerViolationType = ViolationType.None, ViolationType opponentViolationType = ViolationType.None)
+    public JudgeResult(JudgeResultType type, Hand playerHand, Hand opponentHand, ViolationType playerViolationType = ViolationType.None, ViolationType opponentViolationType = ViolationType.None, PersonType? winByAlpha = null)
     {
       Type = type;
       PlayerHand = playerHand;
       OpponentHand = opponentHand;
       PlayerViolationType = playerViolationType;
       OpponentViolationType = opponentViolationType;
+      WinByAlpha = winByAlpha;
     }
   }
 }
