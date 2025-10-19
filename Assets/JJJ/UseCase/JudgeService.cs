@@ -39,6 +39,7 @@ namespace JJJ.UseCase
     private readonly ITurnExecutor _turnExecutor;
     private readonly IGameSettingsProvider _gameSettingsProvider;
     private readonly ITransitionDirector _transitionDirector;
+    private readonly IGameReadyAnimationPresenter _gameReadyAnimationPresenter;
 
     /// <summary>
     /// 現在のターン情報
@@ -79,7 +80,8 @@ namespace JJJ.UseCase
                         ITurnExecutor turnExecutor,
                         IGameModeProvider gameModeProvider,
                         IGameSettingsProvider gameSettingsProvider,
-                        ITransitionDirector transitionDirector)
+                        ITransitionDirector transitionDirector,
+                        IGameReadyAnimationPresenter gameReadyAnimationPresenter)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
@@ -96,6 +98,7 @@ namespace JJJ.UseCase
       _gameModeProvider = gameModeProvider;
       _gameSettingsProvider = gameSettingsProvider;
       _transitionDirector = transitionDirector;
+      _gameReadyAnimationPresenter = gameReadyAnimationPresenter;
     }
 
     public void ApplyGameSettings()
@@ -130,34 +133,42 @@ namespace JJJ.UseCase
       _currentTurnContext = new TurnContext();
       _currentScore = 0;
       _currentScorePresenter.SetCurrentScore(_currentScore);
+      _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
+      _remainJudgeTimePresenter.SetRemainJudgeTime((int)_gameEndLimit.TotalSeconds);
+      _judgeInput.SetInputEnabled(false);
 
-      _timerService.Countdown(_gameEndLimit, TimeSpan.FromSeconds(1), _onGameEndCancellationToken)
-        .Subscribe(t =>
-        {
-          _remainJudgeTimePresenter.SetRemainJudgeTime((int)t.TotalSeconds);
-        }, async _ =>
-        {
-          if (_onGameEndCancellationToken.IsCancellationRequested)
+      // ゲーム開始前のアニメーションを再生
+      _gameReadyAnimationPresenter.PlayGameReadyAnimation(_onGameEndCancellationToken).ContinueWith(() =>
+      {
+        _timerService.Countdown(_gameEndLimit, TimeSpan.FromSeconds(1), _onGameEndCancellationToken)
+          .Subscribe(t =>
           {
-            _logger.ZLogWarning($"JudgeService: Game ended before timer has expired. Stopping game end process.");
-            return;
-          }
-          // ゲーム終了処理
-          _logger.ZLogWarning($"JudgeService: Game Ended");
-          _judgeInput.SetInputEnabled(false);
-          _onGameEndCancellationTokenSource?.Cancel();
+            _remainJudgeTimePresenter.SetRemainJudgeTime((int)t.TotalSeconds);
+          }, async _ =>
+          {
+            if (_onGameEndCancellationToken.IsCancellationRequested)
+            {
+              _logger.ZLogWarning($"JudgeService: Game ended before timer has expired. Stopping game end process.");
+              return;
+            }
+            // ゲーム終了処理
+            _logger.ZLogWarning($"JudgeService: Game Ended");
+            _judgeInput.SetInputEnabled(false);
+            _onGameEndCancellationTokenSource?.Cancel();
 
-          // TODO: ゲーム終了の演出
-          await UniTask.Delay(TimeSpan.FromSeconds(1));
+            // TODO: ゲーム終了の演出
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
 
-          // リザルトシーンへ遷移
-          _resultSceneData.Score = _currentScore;
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.ResultSceneIdentifier, _transitionDirector, _resultSceneData);
-        });
+            // リザルトシーンへ遷移
+            _resultSceneData.Score = _currentScore;
+            await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.ResultSceneIdentifier, _transitionDirector, _resultSceneData);
+          });
 
-      // BGMを再生
-      BGMManager.Instance.Play(BGMPath.BGM2);
-      StartSession(_onGameEndCancellationToken).Forget();
+        // BGMを再生
+        BGMManager.Instance.Play(BGMPath.BGM2);
+        _judgeInput.SetInputEnabled(true);
+        StartSession(_onGameEndCancellationToken).Forget();
+      });
     }
 
     /// <summary>
