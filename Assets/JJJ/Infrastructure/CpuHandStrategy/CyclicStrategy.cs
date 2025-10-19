@@ -37,12 +37,18 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     private readonly IRandomService _randomService;
 
+    /// <summary>
+    /// ゲーム設定プロバイダー
+    /// </summary>
+    private readonly IGameSettingsProvider _gameSettingsProvider;
+
     private readonly ILogger _logger = LogManager.CreateLogger<CyclicStrategy>();
 
-    public CyclicStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
+    public CyclicStrategy(IGameModeProvider gameModeProvider, IRandomService randomService, IGameSettingsProvider gameSettingsProvider)
     {
       _gameModeProvider = gameModeProvider;
       _randomService = randomService;
+      _gameSettingsProvider = gameSettingsProvider;
     }
 
     /// <summary>
@@ -52,6 +58,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     {
       _gameMode = _gameModeProvider.Current;
       _currentSelectedIndex = -1;
+      _violationProbability = _gameSettingsProvider.CyclicStrategyViolationProbability;
       _logger.ZLogDebug($"CyclicStrategy initialized with GameMode: {_gameMode}");
     }
 

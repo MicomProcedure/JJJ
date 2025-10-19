@@ -9,6 +9,11 @@ namespace JJJ.Core.Interfaces
   public interface IJudgeService
   {
     /// <summary>
+    /// ゲーム設定を適用する
+    /// </summary>
+    public void ApplyGameSettings();
+
+    /// <summary>
     /// 新しいセッションを開始する
     /// </summary>
     public UniTask StartSession(CancellationToken cancellationToken = default);
