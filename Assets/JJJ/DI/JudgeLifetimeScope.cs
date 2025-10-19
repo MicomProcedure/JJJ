@@ -10,6 +10,7 @@ using MackySoft.Navigathena.SceneManagement.VContainer;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using JJJ.UI;
 
 namespace JJJ.DI
 {
@@ -25,6 +26,8 @@ namespace JJJ.DI
     [SerializeField] private CurrentJudgesPresenter? _currentJudgesPresenter;
     [SerializeField] private RemainJudgeTimePresenter? _remainJudgeTimePresenter;
     [SerializeField] private GameSettingsProvider? _gameSettingsProvider;
+    [SerializeField] private RulesView? _rulesView;
+    [SerializeField] private GameButtonObservables? _gameButtonObservables;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -43,6 +46,7 @@ namespace JJJ.DI
       builder.Register<IJudgeService, JudgeService>(Lifetime.Scoped);
 
       builder.RegisterEntryPoint<JudgeService>(Lifetime.Scoped);
+      builder.RegisterEntryPoint<GameButtonManager>(Lifetime.Scoped);
 
       builder.Register<ICpuHandStrategy, CyclicStrategy>(Lifetime.Scoped);
       builder.Register<ICpuHandStrategy, ViolationProneStrategy>(Lifetime.Scoped);
@@ -58,6 +62,8 @@ namespace JJJ.DI
       builder.RegisterComponent(_currentJudgesPresenter).As<CurrentJudgesPresenter>();
       builder.RegisterComponent(_remainJudgeTimePresenter).As<RemainJudgeTimePresenter>();
       builder.RegisterInstance(_gameSettingsProvider).As<IGameSettingsProvider>();
+      builder.RegisterComponent(_rulesView).As<IRulesView>();
+      builder.RegisterComponent(_gameButtonObservables).As<GameButtonObservables>();
     }
   }
 }
