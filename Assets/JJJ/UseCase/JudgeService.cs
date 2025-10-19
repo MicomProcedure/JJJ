@@ -40,6 +40,7 @@ namespace JJJ.UseCase
     private readonly IGameSettingsProvider _gameSettingsProvider;
     private readonly ITransitionDirector _transitionDirector;
     private readonly IGameReadyAnimationPresenter _gameReadyAnimationPresenter;
+    private readonly IGameEndAnimationPresenter _gameEndAnimationPresenter;
 
     /// <summary>
     /// 現在のターン情報
@@ -81,7 +82,8 @@ namespace JJJ.UseCase
                         IGameModeProvider gameModeProvider,
                         IGameSettingsProvider gameSettingsProvider,
                         ITransitionDirector transitionDirector,
-                        IGameReadyAnimationPresenter gameReadyAnimationPresenter)
+                        IGameReadyAnimationPresenter gameReadyAnimationPresenter,
+                        IGameEndAnimationPresenter gameEndAnimationPresenter)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
@@ -99,6 +101,7 @@ namespace JJJ.UseCase
       _gameSettingsProvider = gameSettingsProvider;
       _transitionDirector = transitionDirector;
       _gameReadyAnimationPresenter = gameReadyAnimationPresenter;
+      _gameEndAnimationPresenter = gameEndAnimationPresenter;
     }
 
     public void ApplyGameSettings()
@@ -156,8 +159,7 @@ namespace JJJ.UseCase
             _judgeInput.SetInputEnabled(false);
             _onGameEndCancellationTokenSource?.Cancel();
 
-            // TODO: ゲーム終了の演出
-            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            await _gameEndAnimationPresenter.PlayGameEndAnimation();
 
             // リザルトシーンへ遷移
             _resultSceneData.Score = _currentScore;
