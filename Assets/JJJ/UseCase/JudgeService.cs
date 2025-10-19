@@ -176,9 +176,10 @@ namespace JJJ.UseCase
         }
 
         // 1ターン実行
-        var outcome = await _turnExecutor.ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
+        var (outcome, handAnimationTask) = await _turnExecutor.ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
                         _judgeLimit, _compositeHandAnimationPresenter, _timerRemainsPresenter, _judgeInput, _timerService, cancellationToken);
-        // TODO: Viewへ手・結果通知（outcome.TruthResult, outcome.Claim, outcome.IsPlayerJudgementCorrect）
+        
+
         _logger.ZLogTrace($"JudgeService: TurnOutcome - Truth: {outcome.TruthResult.Type}, Claim: {outcome.Claim}, Correct: {outcome.IsPlayerJudgementCorrect}, JudgeTime: {outcome.JudgeTime}");
 
         // 点数を加算
@@ -187,6 +188,9 @@ namespace JJJ.UseCase
         if (_currentScore < 0) _currentScore = 0;
         _currentScorePresenter.SetCurrentScore(_currentScore);
         _currentScorePresenter.SetScoreDiff(scoreDiff);
+
+        // 手のアニメーションが完了するまで待機
+        await handAnimationTask;
 
         // ジャッジ回数を更新
         _judgeCount++;
