@@ -58,6 +58,11 @@ namespace JJJ.UseCase
     private int _judgeCount = 1;
 
     /// <summary>
+    /// 前のターンが両者とも反則であったかどうか
+    /// </summary>
+    private bool _isPreviousTurnDoubleViolation = false;
+
+    /// <summary>
     /// リザルトシーンに渡すデータ
     /// </summary>
     private ResultSceneData _resultSceneData = new ResultSceneData();
@@ -186,6 +191,7 @@ namespace JJJ.UseCase
 
       // 新しいターンを開始
       _currentTurnContext = new TurnContext();
+      _isPreviousTurnDoubleViolation = false;
       await StartTurn(cancellationToken);
     }
 
@@ -205,7 +211,8 @@ namespace JJJ.UseCase
         {
           _currentTurnContext = new TurnContext();
         }
-        _currentTurnContext.NextTurn();
+        if (!_isPreviousTurnDoubleViolation) _currentTurnContext.NextTurn();
+        else _logger.ZLogTrace($"JudgeService: Previous turn was Double Violation, not advancing turn count.");
 
         if (_currentPlayerStrategy == null || _currentOpponentStrategy == null)
         {
@@ -245,6 +252,12 @@ namespace JJJ.UseCase
 
         // リザルトシーン用データ更新
         UpdateResultSceneData(outcome);
+
+        // 前のターンが両者反則であったかどうかのフラグを更新
+        if (outcome.TruthResult.Type == JudgeResultType.DoubleViolation)
+        {
+          _isPreviousTurnDoubleViolation = true;
+        }
 
         // 引き分けならターン継続、勝敗がついたらセッション再開
         if (outcome.TruthResult.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation)
