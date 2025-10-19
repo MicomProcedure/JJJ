@@ -1,3 +1,4 @@
+using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using TMPro;
 using UnityEngine;
@@ -27,27 +28,25 @@ namespace JJJ.View
       _gameModeProvider = gameModeProvider;
     }
 
-    public void SetScore(int score)
+    public void SetResult(ResultSceneData resultSceneData)
     {
+      int score = resultSceneData.Score;
+      var compatibilityCount = resultSceneData.CompatibilityCount;
+      var timeoutViolationCount = resultSceneData.TimeoutViolationCount;
+      var doubleViolationCount = resultSceneData.DoubleViolationCount;
+      int timeoutCount = resultSceneData.TimeoutCount;
+      var alphaCount = resultSceneData.AlphaCount;
+      var alphaRepeatCount = resultSceneData.AlphaRepeatCount;
+      var betaRepeatCount = resultSceneData.BetaRepeatCount;
+      var sealedHandUsedCount = resultSceneData.SealedHandUsedCount;
+
       _scoreText.SetText(score.ToString());
-    }
-
-    public void SetResult((int, int) compatibilityCount,
-                          (int, int) timeoutViolationCount,
-                          (int, int) doubleViolationCount,
-                          int timeoutCount,
-                          (int, int) alphaCount,
-                          (int, int) alphaRepeatCount,
-                          (int, int) betaRepeatCount,
-                          (int, int) sealedHandUsedCount)
-
-    {
       _compatibility.SetCount(compatibilityCount.Item1, compatibilityCount.Item2);
       _timeoutViolation.SetCount(timeoutViolationCount.Item1, timeoutViolationCount.Item2);
       _doubleViolation.SetCount(doubleViolationCount.Item1, doubleViolationCount.Item2);
       _timeout.SetText(timeoutCount.ToString());
 
-      if (_gameModeProvider.Current == Core.Entities.GameMode.Hard)
+      if (_gameModeProvider.Current == GameMode.Hard)
       {
         _alpha.SetCount(alphaCount.Item1, alphaCount.Item2);
         _alphaRepeat.SetCount(alphaRepeatCount.Item1, alphaRepeatCount.Item2);
