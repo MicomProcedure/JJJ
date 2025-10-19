@@ -1,8 +1,8 @@
 using System;
 using JJJ.Core.Interfaces;
-using JJJ.Infrastructure;
 using JJJ.Utils;
 using MackySoft.Navigathena.SceneManagement;
+using MackySoft.Navigathena.Transitions;
 using R3;
 using VContainer.Unity;
 
@@ -13,16 +13,19 @@ namespace JJJ.UI
     private GameButtonObservables _gameButtonObservables;
     private IGameModeProvider _gameModeProvider;
     private IRulesView _rulesView;
+    private ITransitionDirector _transitionDirector;
 
     private CompositeDisposable _disposables = new();
 
     public GameButtonManager(GameButtonObservables gameButtonObservables,
                              IGameModeProvider gameModeProvider,
-                             IRulesView rulesView)
+                             IRulesView rulesView,
+                             ITransitionDirector transitionDirector)
     {
       _gameButtonObservables = gameButtonObservables;
       _gameModeProvider = gameModeProvider;
       _rulesView = rulesView;
+      _transitionDirector = transitionDirector;
     }
 
     public void Start()
@@ -30,7 +33,7 @@ namespace JJJ.UI
       _gameButtonObservables.ExitButtonOnClick
         .Subscribe(_ =>
         {
-          GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.TitleSceneIdentifier, new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier));
+          GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.TitleSceneIdentifier, _transitionDirector);
         })
         .AddTo(_disposables);
 
