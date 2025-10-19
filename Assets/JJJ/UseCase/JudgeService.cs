@@ -6,6 +6,8 @@ using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using JJJ.View;
+using MackySoft.Navigathena.SceneManagement;
+using MackySoft.Navigathena.Transitions;
 using R3;
 using VContainer.Unity;
 using ZLogger;
@@ -35,6 +37,7 @@ namespace JJJ.UseCase
     private readonly IStrategySelector _strategySelector;
     private readonly ITurnExecutor _turnExecutor;
     private readonly IGameSettingsProvider _gameSettingsProvider;
+    private readonly ITransitionDirector _transitionDirector;
 
     /// <summary>
     /// 現在のターン情報
@@ -50,6 +53,11 @@ namespace JJJ.UseCase
     /// 現在のジャッジ回数
     /// </summary>
     private int _judgeCount = 1;
+
+    /// <summary>
+    /// リザルトシーンに渡すデータ
+    /// </summary>
+    private ResultSceneData _resultSceneData = new ResultSceneData();
 
     private CancellationToken _onGameEndCancellationToken;
 
@@ -68,7 +76,8 @@ namespace JJJ.UseCase
                         IStrategySelector strategySelector,
                         ITurnExecutor turnExecutor,
                         IGameModeProvider gameModeProvider,
-                        IGameSettingsProvider gameSettingsProvider)
+                        IGameSettingsProvider gameSettingsProvider,
+                        ITransitionDirector transitionDirector)
     {
       _ruleSet = ruleSet;
       _strategies = strategies;
@@ -84,6 +93,7 @@ namespace JJJ.UseCase
       _turnExecutor = turnExecutor;
       _gameModeProvider = gameModeProvider;
       _gameSettingsProvider = gameSettingsProvider;
+      _transitionDirector = transitionDirector;
     }
 
     public void ApplyGameSettings()
@@ -126,11 +136,19 @@ namespace JJJ.UseCase
         .Subscribe(t =>
         {
           _remainJudgeTimePresenter.SetRemainJudgeTime((int)t.TotalSeconds);
-        }, _ =>
+        }, async _ =>
         {
+          // ゲーム終了処理
           _logger.ZLogWarning($"JudgeService: Game Ended");
           cts.Cancel();
           _judgeInput.SetInputEnabled(false);
+
+          // TODO: ゲーム終了の演出
+          await UniTask.Delay(TimeSpan.FromSeconds(1));
+
+          // リザルトシーンへ遷移
+          _resultSceneData.Score = _currentScore;
+          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.ResultSceneIdentifier, _transitionDirector, _resultSceneData);
         });
 
       StartSession(_onGameEndCancellationToken).Forget();
@@ -192,6 +210,56 @@ namespace JJJ.UseCase
         _judgeCount++;
         _currentJudgesPresenter.SetCurrentJudges(_judgeCount);
 
+        // リザルトシーン用データ更新
+        switch (outcome.TruthResult.Type)
+        {
+          // 相性による勝利/敗北/引き分けのジャッジ
+          case JudgeResultType.Win or JudgeResultType.Lose or JudgeResultType.Draw:
+            // ジャッジが時間切れの場合
+            if (outcome.Claim == PlayerClaim.Timeout)
+            {
+              _resultSceneData.TimeoutCount++;
+              break;
+            }
+            // αの効果による勝利の場合
+            if (outcome.TruthResult.WinByAlpha.HasValue)
+            {
+              _resultSceneData.AlphaCount = AddCountByJudgement(_resultSceneData.AlphaCount, outcome.IsPlayerJudgementCorrect);
+              break;
+            }
+            // 通常の相性による勝利/敗北/引き分けの場合
+            _resultSceneData.CompatibilityCount = AddCountByJudgement(_resultSceneData.CompatibilityCount, outcome.IsPlayerJudgementCorrect);
+            break;
+          // 反則による勝利/敗北/引き分けのジャッジ
+          case JudgeResultType.Violation or JudgeResultType.OpponentViolation:
+            // 後出しによる反則
+            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.Timeout))
+            {
+              _resultSceneData.TimeoutViolationCount = AddCountByJudgement(_resultSceneData.TimeoutViolationCount, outcome.IsPlayerJudgementCorrect);
+            }
+            // αの連続使用による反則
+            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.AlphaRepeat))
+            {
+              _resultSceneData.AlphaRepeatCount = AddCountByJudgement(_resultSceneData.AlphaRepeatCount, outcome.IsPlayerJudgementCorrect);
+            }
+            // βの連続使用による反則
+            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.BetaRepeat))
+            {
+              _resultSceneData.BetaRepeatCount = AddCountByJudgement(_resultSceneData.BetaRepeatCount, outcome.IsPlayerJudgementCorrect);
+            }
+            // 封印された手の使用による反則
+            if (AnyPlayerHasViolationType(outcome.TruthResult, ViolationType.SealedHandUsed))
+            {
+              _resultSceneData.SealedHandUsedCount = AddCountByJudgement(_resultSceneData.SealedHandUsedCount, outcome.IsPlayerJudgementCorrect);
+            }
+            break;
+          case JudgeResultType.DoubleViolation:
+            _resultSceneData.DoubleViolationCount = AddCountByJudgement(_resultSceneData.DoubleViolationCount, outcome.IsPlayerJudgementCorrect);
+            break;
+          default:
+            throw new ArgumentOutOfRangeException("Unknown JudgeResultType", nameof(outcome.TruthResult.Type));
+        }
+
         // 引き分けならターン継続、勝敗がついたらセッション再開
         if (outcome.TruthResult.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation)
         {
@@ -236,6 +304,15 @@ namespace JJJ.UseCase
     {
       _currentTurnDisposables?.Dispose();
     }
-  }
 
+    private (int, int) AddCountByJudgement((int, int) currentCount, bool correct)
+    {
+      return correct ? (currentCount.Item1 + 1, currentCount.Item2) : (currentCount.Item1, currentCount.Item2 + 1);
+    }
+
+    private bool AnyPlayerHasViolationType(JudgeResult result, ViolationType violationType)
+    {
+      return result.PlayerViolationType == violationType || result.OpponentViolationType == violationType;
+    }
+  }
 }
