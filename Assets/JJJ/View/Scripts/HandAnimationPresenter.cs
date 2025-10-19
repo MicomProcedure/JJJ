@@ -5,6 +5,8 @@ using JJJ.Utils;
 using ZLogger;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace JJJ.View
 {
@@ -40,6 +42,18 @@ namespace JJJ.View
 
     private static readonly int InitHash = Animator.StringToHash("Init");
     private static readonly int ResetHash = Animator.StringToHash("Reset");
+    private static readonly Dictionary<HandType, IEnumerable<int>> _handTypeToAnimationHashes = new Dictionary<HandType, IEnumerable<int>>()
+    {
+      { HandType.Rock, new List<int> { Animator.StringToHash("Rock"), Animator.StringToHash("Rock_start") } },
+      { HandType.Paper, new List<int> { Animator.StringToHash("Paper"), Animator.StringToHash("Paper_start") } },
+      { HandType.Scissors, new List<int> { Animator.StringToHash("Scissors"), Animator.StringToHash("Scissors_start") } },
+      { HandType.One, new List<int> { Animator.StringToHash("original1"), Animator.StringToHash("original1_start") } },
+      { HandType.Two, new List<int> { Animator.StringToHash("original2"), Animator.StringToHash("original2_start") } },
+      { HandType.Three, new List<int> { Animator.StringToHash("original3"), Animator.StringToHash("original3_start") } },
+      { HandType.Four, new List<int> { Animator.StringToHash("original4"), Animator.StringToHash("original4_start") } },
+      { HandType.Alpha, new List<int> { Animator.StringToHash("Balance"), Animator.StringToHash("Balance_start") } },
+      { HandType.Beta, new List<int> { Animator.StringToHash("OfudaL"), Animator.StringToHash("OfudaL_start"), Animator.StringToHash("OfudaR"), Animator.StringToHash("OfudaR_start") } },
+    };
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<HandAnimationPresenter>();
 
@@ -99,7 +113,7 @@ namespace JJJ.View
         {
           if (_animator == null) return false;
           var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-          return stateInfo.normalizedTime >= 1.0f;
+          return _handTypeToAnimationHashes.GetValueOrDefault(handType, new List<int>()).Contains(stateInfo.shortNameHash) && stateInfo.normalizedTime >= 1.0f;
         }, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
       }
       else
