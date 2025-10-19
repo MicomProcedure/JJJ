@@ -476,8 +476,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 366910984}
+  - component: {fileID: 366910985}
   m_Layer: 5
-  m_Name: Rules
+  m_Name: RulesView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -506,6 +507,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &366910985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 366910983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f79583fb15f476f4886d6b04fb4b6f8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.View::JJJ.View.RulesView
+  _hideRuleButton: {fileID: 931132853}
+  _easyRuleRoot: {fileID: 891451991}
+  _normalRuleRoot: {fileID: 1179813974}
+  _hardRuleRoot: {fileID: 1274316949}
 --- !u!1 &374023528
 GameObject:
   m_ObjectHideFlags: 0
@@ -1802,7 +1819,7 @@ GameObject:
   - component: {fileID: 931132854}
   - component: {fileID: 931132853}
   m_Layer: 5
-  m_Name: CloseRuleButton
+  m_Name: HideRuleButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3115,6 +3132,7 @@ MonoBehaviour:
   _currentJudgesPresenter: {fileID: 5437819995607102209}
   _remainJudgeTimePresenter: {fileID: 293637844272892295}
   _gameSettingsProvider: {fileID: 11400000, guid: 4f8a2a1e46155464fb791658b9f1f34c, type: 2}
+  _rulesView: {fileID: 366910985}
   _gameButtonObservables: {fileID: 2002880289}
 --- !u!4 &1536809471
 Transform:
@@ -4089,6 +4107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: JJJ.UI::JJJ.UI.GameButtonObservables
   _exitButton: {fileID: 1734965685}
   _ruleButton: {fileID: 2045264815}
+  _hideRuleButton: {fileID: 931132853}
 --- !u!4 &2002880290
 Transform:
   m_ObjectHideFlags: 0
