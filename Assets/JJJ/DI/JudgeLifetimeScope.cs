@@ -24,6 +24,7 @@ namespace JJJ.DI
     [SerializeField] private CurrentScorePresenter? _currentScorePresenter;
     [SerializeField] private CurrentJudgesPresenter? _currentJudgesPresenter;
     [SerializeField] private RemainJudgeTimePresenter? _remainJudgeTimePresenter;
+    [SerializeField] private GameSettingsProvider? _gameSettingsProvider;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -50,12 +51,13 @@ namespace JJJ.DI
       builder.Register<ITurnExecutor, ReactiveTurnExecutor>(Lifetime.Scoped);
       builder.Register<IRandomService, RandomService>(Lifetime.Scoped);
       builder.Register<IScoreCalculator, ScoreCalculator>(Lifetime.Scoped);
-      builder.RegisterComponent(_judgeInput).AsImplementedInterfaces();
-      builder.RegisterComponent(_compositeHandAnimationPresenter).AsImplementedInterfaces();
+      builder.RegisterComponent(_judgeInput).As<IJudgeInput>();
+      builder.RegisterComponent(_compositeHandAnimationPresenter).As<ICompositeHandAnimationPresenter>();
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
-      builder.RegisterComponent(_currentScorePresenter);
-      builder.RegisterComponent(_currentJudgesPresenter);
-      builder.RegisterComponent(_remainJudgeTimePresenter);
+      builder.RegisterComponent(_currentScorePresenter).As<CurrentScorePresenter>();
+      builder.RegisterComponent(_currentJudgesPresenter).As<CurrentJudgesPresenter>();
+      builder.RegisterComponent(_remainJudgeTimePresenter).As<RemainJudgeTimePresenter>();
+      builder.RegisterInstance(_gameSettingsProvider).As<IGameSettingsProvider>();
     }
   }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using MackySoft.Navigathena;
@@ -14,15 +13,20 @@ namespace JJJ.DI
 {
   public class JudgeSceneLifecycle : SceneLifecycleBase
   {
-    private readonly GameMode _gameMode = GameMode.Normal;
     private readonly IGameModeProvider _gameModeProvider;
+    private readonly IGameSettingsProvider _gameSettingsProvider;
     private readonly IRuleSetFactory _ruleSetFactory;
+    private readonly IJudgeService _judgeService;
     private readonly ILogger _logger = LogManager.CreateLogger<JudgeSceneLifecycle>();
 
     public JudgeSceneLifecycle(IGameModeProvider gameModeProvider,
-                              IRuleSetFactory ruleSetFactory)
+                               IGameSettingsProvider gameSettingsProvider,
+                               IJudgeService judgeService,
+                               IRuleSetFactory ruleSetFactory)
     {
       _gameModeProvider = gameModeProvider;
+      _gameSettingsProvider = gameSettingsProvider;
+      _judgeService = judgeService;
       _ruleSetFactory = ruleSetFactory;
     }
 
@@ -30,9 +34,9 @@ namespace JJJ.DI
     protected override UniTask OnEditorFirstPreInitialize(ISceneDataWriter writer, CancellationToken cancellationToken)
     {
       _logger.ZLogTrace($"OnEditorFirstPreInitialize called");
-
-      _gameModeProvider.Set(_gameMode);
-      _logger.ZLogInformation($"Set GameMode: {_gameMode}");
+      var gameMode = _gameSettingsProvider.DefaultGameMode;
+      _gameModeProvider.Set(gameMode);
+      _logger.ZLogInformation($"Set GameMode: {gameMode}");
       return UniTask.CompletedTask;
     }
 #endif
@@ -43,6 +47,7 @@ namespace JJJ.DI
 
       // ルールセットの初期化を強制的に行う
       _ = _ruleSetFactory.Create();
+      _judgeService.ApplyGameSettings();
       return UniTask.CompletedTask;
     }
 

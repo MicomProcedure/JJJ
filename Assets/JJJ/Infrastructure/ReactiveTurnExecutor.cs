@@ -93,7 +93,7 @@ namespace JJJ.UseCase.Turn
       {
         PlayerClaim.PlayerWin => truthResult.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation,
         PlayerClaim.OpponentWin => truthResult.Type is JudgeResultType.Lose or JudgeResultType.Violation,
-        PlayerClaim.Draw => truthResult.Type == JudgeResultType.Draw,
+        PlayerClaim.Draw => truthResult.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation,
         PlayerClaim.Timeout => false,
         _ => throw new ArgumentOutOfRangeException(nameof(claim), claim, null)
       };
