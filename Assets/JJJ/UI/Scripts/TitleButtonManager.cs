@@ -4,6 +4,7 @@ using JJJ.Core.Interfaces;
 using JJJ.Infrastructure;
 using JJJ.Utils;
 using MackySoft.Navigathena.SceneManagement;
+using MackySoft.Navigathena.Transitions;
 using R3;
 using VContainer.Unity;
 
@@ -13,14 +14,17 @@ namespace JJJ.UI
   {
     private IGameModeProvider _gameModeProvider;
     private TitleButtonObservables _titleButtonObservables;
+    private ITransitionDirector _transitionDirector;
 
     private CompositeDisposable _disposables = new();
 
     public TitleButtonManager(IGameModeProvider gameModeProvider,
-                              TitleButtonObservables titleButtonObservables)
+                              TitleButtonObservables titleButtonObservables,
+                              ITransitionDirector transitionDirector)
     {
       _gameModeProvider = gameModeProvider;
       _titleButtonObservables = titleButtonObservables;
+      _transitionDirector = transitionDirector;
     }
 
     public void Start()
@@ -29,7 +33,7 @@ namespace JJJ.UI
         .Subscribe(async _ =>
         {
           _gameModeProvider.Set(GameMode.Easy);
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier));
+          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, _transitionDirector);
         })
         .AddTo(_disposables);
 
@@ -37,7 +41,7 @@ namespace JJJ.UI
         .Subscribe(async _ =>
         {
           _gameModeProvider.Set(GameMode.Normal);
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier));
+          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, _transitionDirector);
         })
         .AddTo(_disposables);
 
