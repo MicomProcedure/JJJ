@@ -1,4 +1,5 @@
 using System;
+using JJJ.Core.Interfaces;
 using JJJ.Infrastructure;
 using JJJ.Utils;
 using MackySoft.Navigathena.SceneManagement;
@@ -10,12 +11,18 @@ namespace JJJ.UI
   public class GameButtonManager : IStartable, IDisposable
   {
     private GameButtonObservables _gameButtonObservables;
+    private IGameModeProvider _gameModeProvider;
+    private IRulesView _rulesView;
 
     private CompositeDisposable _disposables = new();
 
-    public GameButtonManager(GameButtonObservables gameButtonObservables)
+    public GameButtonManager(GameButtonObservables gameButtonObservables,
+                             IGameModeProvider gameModeProvider,
+                             IRulesView rulesView)
     {
       _gameButtonObservables = gameButtonObservables;
+      _gameModeProvider = gameModeProvider;
+      _rulesView = rulesView;
     }
 
     public void Start()
@@ -30,7 +37,14 @@ namespace JJJ.UI
       _gameButtonObservables.RuleButtonOnClick
         .Subscribe(_ =>
         {
+          _rulesView.Show(_gameModeProvider.Current);
+        })
+        .AddTo(_disposables);
 
+      _gameButtonObservables.HideRuleButtonOnClick
+        .Subscribe(_ =>
+        {
+          _rulesView.Hide();
         })
         .AddTo(_disposables);
     }
