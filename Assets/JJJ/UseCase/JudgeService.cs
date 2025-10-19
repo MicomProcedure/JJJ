@@ -60,7 +60,8 @@ namespace JJJ.UseCase
     /// </summary>
     private ResultSceneData _resultSceneData = new ResultSceneData();
 
-    private CancellationToken _onGameEndCancellationToken;
+    private CancellationTokenSource _onGameEndCancellationTokenSource = new CancellationTokenSource();
+    private CancellationToken _onGameEndCancellationToken => _onGameEndCancellationTokenSource.Token;
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<JudgeService>();
 
@@ -130,19 +131,21 @@ namespace JJJ.UseCase
       _currentScore = 0;
       _currentScorePresenter.SetCurrentScore(_currentScore);
 
-      var cts = new CancellationTokenSource();
-      _onGameEndCancellationToken = cts.Token;
-
-      _timerService.Countdown(_gameEndLimit, TimeSpan.FromSeconds(1))
+      _timerService.Countdown(_gameEndLimit, TimeSpan.FromSeconds(1), _onGameEndCancellationToken)
         .Subscribe(t =>
         {
           _remainJudgeTimePresenter.SetRemainJudgeTime((int)t.TotalSeconds);
         }, async _ =>
         {
+          if (_onGameEndCancellationToken.IsCancellationRequested)
+          {
+            _logger.ZLogWarning($"JudgeService: Game ended before timer has expired. Stopping game end process.");
+            return;
+          }
           // ゲーム終了処理
           _logger.ZLogWarning($"JudgeService: Game Ended");
-          cts.Cancel();
           _judgeInput.SetInputEnabled(false);
+          _onGameEndCancellationTokenSource?.Cancel();
 
           // TODO: ゲーム終了の演出
           await UniTask.Delay(TimeSpan.FromSeconds(1));
@@ -199,7 +202,7 @@ namespace JJJ.UseCase
         // 1ターン実行
         var (outcome, handAnimationTask) = await _turnExecutor.ExecuteTurn(_ruleSet, _currentPlayerStrategy, _currentOpponentStrategy, _currentTurnContext,
                         _judgeLimit, _compositeHandAnimationPresenter, _timerRemainsPresenter, _judgeInput, _timerService, cancellationToken);
-        
+
 
         _logger.ZLogTrace($"JudgeService: TurnOutcome - Truth: {outcome.TruthResult.Type}, Claim: {outcome.Claim}, Correct: {outcome.IsPlayerJudgementCorrect}, JudgeTime: {outcome.JudgeTime}");
 
@@ -219,7 +222,7 @@ namespace JJJ.UseCase
         {
           SEManager.Instance.Play(SEPath.SE4);
         }
-        
+
         // 手のアニメーションが完了するまで待機
         await handAnimationTask;
 
@@ -258,20 +261,29 @@ namespace JJJ.UseCase
       }
       catch (OperationCanceledException ex)
       {
-        if (_onGameEndCancellationToken.IsCancellationRequested)
+        try
         {
-          _logger.ZLogWarning($"JudgeService: Game end timeout reached. Ending session.");
+          if (_onGameEndCancellationToken.IsCancellationRequested)
+          {
+            _logger.ZLogWarning($"JudgeService: Game end timeout reached. Ending session.");
+          }
+          else
+          {
+            _logger.ZLogWarning($"JudgeService: Operation canceled - {ex.Message}");
+          }
+          await UniTask.CompletedTask;
         }
-        else
+        catch (ObjectDisposedException disposeEx)
         {
-          _logger.ZLogWarning($"JudgeService: Operation canceled - {ex.Message}");
+          _logger.ZLogWarning($"JudgeService: Object disposed during cancellation handling - {disposeEx.Message}");
         }
-        await UniTask.CompletedTask;
       }
     }
 
     public void Dispose()
     {
+      _onGameEndCancellationTokenSource.Cancel();
+      _onGameEndCancellationTokenSource.Dispose();
       _currentTurnDisposables?.Dispose();
     }
 
