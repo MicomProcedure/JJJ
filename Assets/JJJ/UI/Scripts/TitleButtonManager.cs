@@ -1,7 +1,6 @@
 using System;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
-using JJJ.Infrastructure;
 using JJJ.Utils;
 using MackySoft.Navigathena.SceneManagement;
 using MackySoft.Navigathena.Transitions;
@@ -32,29 +31,17 @@ namespace JJJ.UI
 
     public void Start()
     {
-      _titleButtonObservables.EasyButtonOnClick
-        .Subscribe(async _ =>
-        {
-          _gameModeProvider.Set(GameMode.Easy);
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, _transitionDirector);
-        })
-        .AddTo(_disposables);
-
-      _titleButtonObservables.NormalButtonOnClick
-        .Subscribe(async _ =>
-        {
-          _gameModeProvider.Set(GameMode.Normal);
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, _transitionDirector);
-        })
-        .AddTo(_disposables);
-
-      _titleButtonObservables.HardButtonOnClick
-        .Subscribe(async _ =>
-        {
-          _gameModeProvider.Set(GameMode.Hard);
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier));
-        })
-        .AddTo(_disposables);
+      Observable.Merge(
+        _titleButtonObservables.EasyButtonOnClick.Select(_ => GameMode.Easy),
+        _titleButtonObservables.NormalButtonOnClick.Select(_ => GameMode.Normal),
+        _titleButtonObservables.HardButtonOnClick.Select(_ => GameMode.Hard)
+      ).Take(1)
+      .Subscribe(async gameMode =>
+      {
+        _gameModeProvider.Set(gameMode);
+        await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, _transitionDirector);
+      })
+      .AddTo(_disposables);
 
       _titleButtonObservables.ExitButtonOnClick
         .Subscribe(_ =>
