@@ -13,16 +13,19 @@ namespace JJJ.UI
   public sealed class TitleButtonManager : IStartable, IDisposable
   {
     private IGameModeProvider _gameModeProvider;
+    private IVisible _helpsView;
     private TitleButtonObservables _titleButtonObservables;
     private ITransitionDirector _transitionDirector;
 
     private CompositeDisposable _disposables = new();
 
     public TitleButtonManager(IGameModeProvider gameModeProvider,
+                              IVisible helpsView,
                               TitleButtonObservables titleButtonObservables,
                               ITransitionDirector transitionDirector)
     {
       _gameModeProvider = gameModeProvider;
+      _helpsView = helpsView;
       _titleButtonObservables = titleButtonObservables;
       _transitionDirector = transitionDirector;
     }
@@ -74,7 +77,7 @@ namespace JJJ.UI
       _titleButtonObservables.HelpButtonOnClick
         .Subscribe(_ =>
         {
-
+          _helpsView.Show();
         })
         .AddTo(_disposables);
 
@@ -82,6 +85,13 @@ namespace JJJ.UI
         .Subscribe(_ =>
         {
 
+        })
+        .AddTo(_disposables);
+
+      _titleButtonObservables.HidePanelButtonOnClick
+        .Subscribe(_ =>
+        {
+          _helpsView.Hide();
         })
         .AddTo(_disposables);
     }
