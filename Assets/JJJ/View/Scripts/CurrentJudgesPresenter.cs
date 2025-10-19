@@ -17,7 +17,7 @@ namespace JJJ.View
     /// </summary>
     [SerializeField] private int _initialJudges = 1;
 
-    private void Start()
+    private void Awake()
     {
       SetCurrentJudges(_initialJudges);
     }
