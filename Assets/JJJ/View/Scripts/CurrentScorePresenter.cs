@@ -26,7 +26,7 @@ namespace JJJ.View
     private Vector3 _initialPosition = Vector3.zero;
     private Tweener? _tweener;
 
-    private void Start()
+    private void Awake()
     {
       if (_currentScoreText == null)
       {
