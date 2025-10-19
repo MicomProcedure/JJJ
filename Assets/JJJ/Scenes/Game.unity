@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 114324823}
   - component: {fileID: 114324828}
   - component: {fileID: 114324829}
+  - component: {fileID: 114324830}
   m_Layer: 5
   m_Name: LeftWin
   m_TagString: Untagged
@@ -302,6 +303,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a1ce083fe0dd74aae7b96a0720980d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: JJJ.UI::JJJ.UI.AlphaHitAdjuster
+--- !u!114 &114324830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114324821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe34fcc34265ec41855e945e8c7779d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.ButtonSoundEffector
+  _hoverSE: SE/SE5
+  _clickSE: 
 --- !u!1 &173220097
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,6 +1092,7 @@ GameObject:
   - component: {fileID: 651858361}
   - component: {fileID: 651858360}
   - component: {fileID: 651858363}
+  - component: {fileID: 651858364}
   m_Layer: 5
   m_Name: Draw
   m_TagString: Untagged
@@ -1197,6 +1213,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1964b0076b4a5ff468ccdc433d44b85b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &651858364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651858358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe34fcc34265ec41855e945e8c7779d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.ButtonSoundEffector
+  _hoverSE: SE/SE5
+  _clickSE: 
 --- !u!1 &703295963
 GameObject:
   m_ObjectHideFlags: 0
@@ -1617,6 +1647,7 @@ GameObject:
   - component: {fileID: 847348456}
   - component: {fileID: 847348459}
   - component: {fileID: 847348460}
+  - component: {fileID: 847348461}
   m_Layer: 5
   m_Name: RightWin
   m_TagString: Untagged
@@ -1749,6 +1780,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a1ce083fe0dd74aae7b96a0720980d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: JJJ.UI::JJJ.UI.AlphaHitAdjuster
+--- !u!114 &847348461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847348453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe34fcc34265ec41855e945e8c7779d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.ButtonSoundEffector
+  _hoverSE: SE/SE5
+  _clickSE: 
 --- !u!1 &886821038
 GameObject:
   m_ObjectHideFlags: 0

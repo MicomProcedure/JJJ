@@ -6,6 +6,7 @@ using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using JJJ.View;
+using KanKikuchi.AudioManager;
 using MackySoft.Navigathena.SceneManagement;
 using MackySoft.Navigathena.Transitions;
 using R3;
@@ -151,6 +152,8 @@ namespace JJJ.UseCase
           await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.ResultSceneIdentifier, _transitionDirector, _resultSceneData);
         });
 
+      // BGMを再生
+      BGMManager.Instance.Play(BGMPath.BGM2);
       StartSession(_onGameEndCancellationToken).Forget();
     }
 
@@ -207,6 +210,16 @@ namespace JJJ.UseCase
         _currentScorePresenter.SetCurrentScore(_currentScore);
         _currentScorePresenter.SetScoreDiff(scoreDiff);
 
+        // 正解/不正解音の再生
+        if (outcome.IsPlayerJudgementCorrect)
+        {
+          SEManager.Instance.Play(SEPath.SE3);
+        }
+        else
+        {
+          SEManager.Instance.Play(SEPath.SE4);
+        }
+        
         // 手のアニメーションが完了するまで待機
         await handAnimationTask;
 
