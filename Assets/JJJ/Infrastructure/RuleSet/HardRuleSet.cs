@@ -96,6 +96,7 @@ namespace JJJ.Infrastructure
         // Alphaを発動させた人が勝ちまたは引き分けなら、引き分けにする
         // Alphaを発動させた人が負けなら、そのまま負けにする
         var overrideResultType = result.Type;
+        PersonType? winByAlpha = null;
         bool isPlayerWinning = result.Type is JudgeResultType.Win or JudgeResultType.OpponentViolation;
         bool isOpponentWinning = result.Type is JudgeResultType.Lose or JudgeResultType.Violation;
         bool isDraw = result.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation;
@@ -105,6 +106,10 @@ namespace JJJ.Infrastructure
           overrideResultType = turnContext.AlphaRemainingTurns == 1 ?
               isDraw ? JudgeResultType.Win : result.Type
             : isDraw ? result.Type : JudgeResultType.Draw;
+          if (turnContext.AlphaRemainingTurns == 1)
+          {
+            winByAlpha = PersonType.Player;
+          }
         }
         else if (turnContext.AlphaActivatedBy == PersonType.Opponent && (isOpponentWinning || isDraw))
         {
@@ -112,10 +117,14 @@ namespace JJJ.Infrastructure
           overrideResultType = turnContext.AlphaRemainingTurns == 1 ?
               isDraw ? JudgeResultType.Lose : result.Type
             : isDraw ? result.Type : JudgeResultType.Draw;
+          if (turnContext.AlphaRemainingTurns == 1)
+          {
+            winByAlpha = PersonType.Opponent;
+          }
         }
 
         // 上書きした結果を返す
-        return new(overrideResultType, playerHand, opponentHand, result.PlayerViolationType, result.OpponentViolationType);
+        return new(overrideResultType, playerHand, opponentHand, result.PlayerViolationType, result.OpponentViolationType, winByAlpha);
       }
       return result;
     }
