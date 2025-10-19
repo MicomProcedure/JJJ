@@ -23,8 +23,8 @@ namespace JJJ.Core.Interfaces
     /// <param name="judgeInput">ジャッジ入力</param>
     /// <param name="timerService">タイマーサービス</param>
     /// <param name="cancellationToken">キャンセルトークン</param>
-    /// <returns>ターンの結果を通知するObservable</returns>
-    public UniTask<TurnOutcome> ExecuteTurn(IRuleSet ruleSet,
+    /// <returns>ターンの結果と手のアニメーションが完了するまで待機するUniTaskのタプル</returns>
+    public UniTask<(TurnOutcome, UniTask)> ExecuteTurn(IRuleSet ruleSet,
                                          ICpuHandStrategy playerStrategy,
                                          ICpuHandStrategy opponentStrategy,
                                          TurnContext context,
