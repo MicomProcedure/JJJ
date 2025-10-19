@@ -14,18 +14,17 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// <summary>
     /// 後出しする確率
     /// </summary>
-    private static readonly double TimeoutProbability = 0.1;
+    private double _timeoutProbability = 0.1;
 
     /// <summary>
     /// αの効果が発動中にαを出す確率
     /// </summary>
-    private static readonly double AlphaViolationProbability = 0.2;
+    private double _alphaViolationProbability = 0.2;
 
     /// <summary>
     /// βの効果が発動中にβまたは封印された手を出す確率
     /// </summary>
-    /// <remarks>αが発動中の場合はAlphaViolationProbabilityの抽選が優先される</remarks>
-    private static readonly double BetaViolationProbability = 0.2;
+    private double _betaViolationProbability = 0.2;
 
     /// <summary>
     /// ゲームモード
@@ -42,12 +41,18 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     private readonly IRandomService _randomService;
 
+    /// <summary>
+    /// ゲーム設定プロバイダー
+    /// </summary>
+    private readonly IGameSettingsProvider _gameSettingsProvider;
+
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ViolationProneStrategy>();
 
-    public ViolationProneStrategy(IGameModeProvider gameModeProvider, IRandomService randomService)
+    public ViolationProneStrategy(IGameModeProvider gameModeProvider, IRandomService randomService, IGameSettingsProvider gameSettingsProvider)
     {
       _gameModeProvider = gameModeProvider;
       _randomService = randomService;
+      _gameSettingsProvider = gameSettingsProvider;
     }
 
     /// <summary>
@@ -56,6 +61,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     public void Initialize()
     {
       _gameMode = _gameModeProvider.Current;
+      _timeoutProbability = _gameSettingsProvider.ViolationProneStrategyTimeoutProbability;
+      _alphaViolationProbability = _gameSettingsProvider.ViolationProneStrategyAlphaViolationProbability;
+      _betaViolationProbability = _gameSettingsProvider.ViolationProneStrategyBetaViolationProbability;
       _logger.ZLogDebug($"ViolationProneStrategy initialized with GameMode: {_gameMode}");
     }
 
@@ -72,7 +80,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       double randomValue = _randomService.NextDouble();
 
       // 後出しするかどうかを判定
-      if (randomValue < TimeoutProbability)
+      if (randomValue < _timeoutProbability)
       {
         _logger.ZLogDebug($"ViolationProneStrategy: Timeout occurred.");
         // 後出しする場合、有効な手の中からランダムに手を選択
@@ -80,7 +88,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
         var selectedHandType = availableHandTypes[index];
         return new Hand(selectedHandType, isTimeout: true);
       }
-      else if (randomValue < TimeoutProbability + AlphaViolationProbability)
+      else if (randomValue < _timeoutProbability + _alphaViolationProbability)
       {
         _logger.ZLogDebug($"ViolationProneStrategy: Alpha violation check.");
         // αの効果が発動中の場合
@@ -91,7 +99,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
           return Hand.Alpha;
         }
       }
-      else if (randomValue < TimeoutProbability + AlphaViolationProbability + BetaViolationProbability)
+      else if (randomValue < _timeoutProbability + _alphaViolationProbability + _betaViolationProbability)
       {
         _logger.ZLogDebug($"ViolationProneStrategy: Beta violation check.");
         // βの効果が発動中の場合
