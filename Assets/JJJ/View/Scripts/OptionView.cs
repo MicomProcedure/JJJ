@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace JJJ.View
 {
-  public class UserSettingsView : MonoBehaviour, IUserSettingsView
+  public class OptionView : MonoBehaviour, IOptionView
   {
     [SerializeField] private Slider _bgmVolumeSlider = null!;
     [SerializeField] private TextMeshProUGUI _bgmValueText = null!;

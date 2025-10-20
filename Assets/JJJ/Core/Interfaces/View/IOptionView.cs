@@ -1,6 +1,6 @@
 namespace JJJ.Core.Interfaces
 {
-  public interface IUserSettingsView
+  public interface IOptionView
   {
     /// <summary>
     /// BGMの音量

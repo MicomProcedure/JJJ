@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 74001983}
   - component: {fileID: 74001984}
   m_Layer: 5
-  m_Name: HideUserSettingsButton
+  m_Name: HideOptionButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 74001985}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1142,7 +1142,7 @@ GameObject:
   - component: {fileID: 232351716}
   - component: {fileID: 232351717}
   m_Layer: 5
-  m_Name: UserSettingsVIew
+  m_Name: OptionView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2722,7 +2722,7 @@ MonoBehaviour:
   _helpButton: {fileID: 404573435859125387}
   _rankingButton: {fileID: 2388838983292481520}
   _hidePanelButton: {fileID: 180460226}
-  _hideUserSettingsButton: {fileID: 74001983}
+  _hideOptionButton: {fileID: 74001983}
 --- !u!4 &1203571379
 Transform:
   m_ObjectHideFlags: 0
@@ -3284,8 +3284,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -89.999985}
-  m_SizeDelta: {x: 1500, y: 700}
+  m_AnchoredPosition: {x: 0, y: -100}
+  m_SizeDelta: {x: 1500, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1515088086
 MonoBehaviour:
@@ -3667,7 +3667,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -410}
+  m_AnchoredPosition: {x: 750, y: -360}
   m_SizeDelta: {x: 1400, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1677231593
@@ -4123,7 +4123,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -565}
+  m_AnchoredPosition: {x: 750, y: -515}
   m_SizeDelta: {x: 1400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1744057472
@@ -4434,7 +4434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4397346983316243332, guid: 866143c868657054e9003a12e45fe0bb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -255
+      value: -205
       objectReference: {fileID: 0}
     - target: {fileID: 4397346983316243332, guid: 866143c868657054e9003a12e45fe0bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4727,8 +4727,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 310}
-  m_SizeDelta: {x: 300, y: 100}
+  m_AnchoredPosition: {x: 0, y: 280}
+  m_SizeDelta: {x: 1500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1956012866
 MonoBehaviour:
@@ -4750,7 +4750,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8A2D\u5B9A"
+  m_text: "\u30AA\u30D7\u30B7\u30E7\u30F3"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 52a78fe891bd448d994ec75eeb9b6006, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: ea9ac531a04220042ab2089b52382f46, type: 2}
@@ -5589,7 +5589,7 @@ MonoBehaviour:
     TypeName: JJJ.DI.GameLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
-  _userSettingsView: {fileID: 232351717}
+  _optionView: {fileID: 232351717}
   _helpsView: {fileID: 1707673869}
   _titleButtonObservables: {fileID: 1203571378}
 --- !u!1 &2115661270
@@ -6288,7 +6288,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4397346983316243332, guid: 866143c868657054e9003a12e45fe0bb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -135
+      value: -85
       objectReference: {fileID: 0}
     - target: {fileID: 4397346983316243332, guid: 866143c868657054e9003a12e45fe0bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -17,7 +17,7 @@ namespace JJJ.DI
     /// </summary>
     protected override void Configure(IContainerBuilder builder)
     {
-      builder.RegisterEntryPoint<UserSettingsProvider>(Lifetime.Singleton).As<IUserSettingsProvider>();
+      builder.RegisterEntryPoint<OptionProvider>(Lifetime.Singleton).As<IOptionProvider>();
 
       builder.Register<IGameModeProvider, GameModeProvider>(Lifetime.Singleton);
 

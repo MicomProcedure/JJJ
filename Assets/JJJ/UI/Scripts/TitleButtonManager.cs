@@ -12,8 +12,8 @@ namespace JJJ.UI
   public sealed class TitleButtonManager : IStartable, IDisposable
   {
     private IGameModeProvider _gameModeProvider;
-    private IUserSettingsProvider _userSettingsProvider;
-    private IUserSettingsView _userSettingsView;
+    private IOptionProvider _optionProvider;
+    private IOptionView _optionView;
     private IVisible _helpsView;
     private TitleButtonObservables _titleButtonObservables;
     private ITransitionDirector _transitionDirector;
@@ -21,15 +21,15 @@ namespace JJJ.UI
     private CompositeDisposable _disposables = new();
 
     public TitleButtonManager(IGameModeProvider gameModeProvider,
-                              IUserSettingsProvider userSettingsProvider,
-                              IUserSettingsView userSettingsView,
+                              IOptionProvider optionProvider,
+                              IOptionView optionView,
                               IVisible helpsView,
                               TitleButtonObservables titleButtonObservables,
                               ITransitionDirector transitionDirector)
     {
       _gameModeProvider = gameModeProvider;
-      _userSettingsProvider = userSettingsProvider;
-      _userSettingsView = userSettingsView;
+      _optionProvider = optionProvider;
+      _optionView = optionView;
       _helpsView = helpsView;
       _titleButtonObservables = titleButtonObservables;
       _transitionDirector = transitionDirector;
@@ -63,11 +63,11 @@ namespace JJJ.UI
       _titleButtonObservables.OptionButtonOnClick
         .Subscribe(_ =>
         {
-          _userSettingsView.SetValue(_userSettingsProvider.BGMVolume,
-                                     _userSettingsProvider.SEVolume,
-                                     _userSettingsProvider.IsAutoRankingSubmit,
-                                     _userSettingsProvider.RankingDefaultName);
-          _userSettingsView.Show();
+          _optionView.SetValue(_optionProvider.BGMVolume,
+                               _optionProvider.SEVolume,
+                               _optionProvider.IsAutoRankingSubmit,
+                               _optionProvider.RankingDefaultName);
+          _optionView.Show();
         })
         .AddTo(_disposables);
 
@@ -92,14 +92,14 @@ namespace JJJ.UI
         })
         .AddTo(_disposables);
 
-      _titleButtonObservables.HideUserSettingsButtonOnClick
+      _titleButtonObservables.HideOptionButtonOnClick
         .Subscribe(_ =>
         {
-          _userSettingsProvider.Set(_userSettingsView.BGMVolume,
-                                    _userSettingsView.SEVolume,
-                                    _userSettingsView.IsAutoRankingSubmit,
-                                    _userSettingsView.RankingDefaultName);
-          _userSettingsView.Hide();
+          _optionProvider.Set(_optionView.BGMVolume,
+                              _optionView.SEVolume,
+                              _optionView.IsAutoRankingSubmit,
+                              _optionView.RankingDefaultName);
+          _optionView.Hide();
         })
         .AddTo(_disposables);
     }

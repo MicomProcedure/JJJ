@@ -6,9 +6,9 @@ namespace JJJ.Infrastructure
 {
   public static class SaveFileHandler
   {
-    public static void Save(UserSettingsProvider data)
+    public static void Save(OptionProvider optionProvider)
     {
-      Save(data, "UserSettings");
+      Save(optionProvider, "Option");
     }
 
     private static void Save<T>(T data, string fileName)
@@ -20,10 +20,10 @@ namespace JJJ.Infrastructure
       File.WriteAllText(path, json, Encoding.UTF8);
     }
 
-    public static bool TryLoad(out UserSettingsProvider? userSettingsProvider)
+    public static bool TryLoad(out OptionProvider? optionProvider)
     {
-      userSettingsProvider = null;
-      return TryLoad(out userSettingsProvider, "UserSettings");
+      optionProvider = null;
+      return TryLoad(out optionProvider, "Option");
     }
 
     private static bool TryLoad<T>(out T? data, string fileName)

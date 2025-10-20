@@ -5,7 +5,7 @@ using VContainer.Unity;
 
 namespace JJJ.Infrastructure
 {
-  public class UserSettingsProvider : IUserSettingsProvider, IStartable
+  public class OptionProvider : IOptionProvider, IStartable
   {
     [SerializeField] private float _bgmVolume = 1f;
     public float BGMVolume
