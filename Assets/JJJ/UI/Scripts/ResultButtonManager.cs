@@ -1,8 +1,7 @@
 using System;
+using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using KanKikuchi.AudioManager;
-using MackySoft.Navigathena.SceneManagement;
-using MackySoft.Navigathena.Transitions;
 using R3;
 using UnityEngine;
 using VContainer;
@@ -14,16 +13,16 @@ namespace JJJ.UI
   {
     private ResultButtonObservables _resultButtonObservables;
     private GameObject _clickScreenText;
-    private ITransitionDirector _transitionDirector;
+    private ISceneManager _sceneManager;
     private CompositeDisposable _disposables = new();
 
     public ResultButtonManager(ResultButtonObservables resultButtonObservables,
                                [Key("ClickScreenText")] GameObject clickScreenText,
-                               ITransitionDirector transitionDirector)
+                               ISceneManager sceneManager)
     {
       _resultButtonObservables = resultButtonObservables;
       _clickScreenText = clickScreenText;
-      _transitionDirector = transitionDirector;
+      _sceneManager = sceneManager;
     }
 
     public void Start()
@@ -35,7 +34,7 @@ namespace JJJ.UI
         .Subscribe(async _ =>
         {
           SEManager.Instance.Play(SEPath.SE6);
-          await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.TitleSceneIdentifier, _transitionDirector);
+          await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
         })
         .AddTo(_disposables);
     }
