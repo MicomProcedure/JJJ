@@ -1,6 +1,7 @@
 using JJJ.Core.Interfaces;
 using JJJ.Infrastructure;
 using JJJ.Utils;
+using MackySoft.Navigathena.SceneManagement;
 using MackySoft.Navigathena.Transitions;
 using VContainer;
 using VContainer.Unity;
@@ -20,8 +21,9 @@ namespace JJJ.DI
       builder.RegisterEntryPoint<OptionProvider>(Lifetime.Singleton).As<IOptionProvider>();
 
       builder.Register<IGameModeProvider, GameModeProvider>(Lifetime.Singleton);
-
-      builder.Register<ITransitionDirector>(_ => new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier), Lifetime.Singleton);
+      builder.Register(_ => SceneNavigationUtil.FadeTransitionIdentifier, Lifetime.Singleton).As<ISceneIdentifier>();
+      builder.Register<ITransitionDirector, FadeTransitionDirector>(Lifetime.Singleton);
+      builder.Register<ISceneManager, SceneManager>(Lifetime.Singleton);
     }
   }
 }
