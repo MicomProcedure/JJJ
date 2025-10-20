@@ -11,6 +11,9 @@ using ZLogger;
 
 namespace JJJ.UseCase
 {
+  /// <summary>
+  /// ゲーム初期化処理を担当するクラス
+  /// </summary>
   public class GameInitializer : IDisposable
   {
     private readonly ITimerService _timerService;
@@ -60,6 +63,9 @@ namespace JJJ.UseCase
       _judgeInput = judgeInput;
     }
 
+    /// <summary>
+    /// ゲーム初期化処理
+    /// </summary>
     public async UniTask InitializeGame(CancellationToken cancellationToken = default)
     {
       BindPresenters();
@@ -68,6 +74,9 @@ namespace JJJ.UseCase
       await PlayGameReadyAnimationAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// ゲームモードから時間制限を設定する
+    /// </summary>
     private void SetTimeLimit()
     {
       switch (_gameModeProvider.Current)
@@ -96,6 +105,9 @@ namespace JJJ.UseCase
       _gameStateProvider.GameRemainTime.Value = _gameStateProvider.GameEndLimit;
     }
 
+    /// <summary>
+    /// PresenterをReactivePropertyにバインドする
+    /// </summary>
     private void BindPresenters()
     {
       _gameStateProvider.JudgeCount
@@ -119,9 +131,14 @@ namespace JJJ.UseCase
         .AddTo(_disposables);
     }
 
+    /// <summary>
+    /// ゲーム開始時のアニメーションを再生する
+    /// </summary>
     private async UniTask PlayGameReadyAnimationAsync(CancellationToken cancellationToken)
     {
+      // ゲーム開始アニメーション再生
       await _gameReadyAnimationPresenter.PlayGameReadyAnimation(cancellationToken);
+      // ゲーム全体のタイマー開始
       _timerService.Countdown(_gameStateProvider.GameEndLimit, TimeSpan.FromSeconds(1), cancellationToken)
         .Subscribe(remaining =>
         {
@@ -130,6 +147,7 @@ namespace JJJ.UseCase
         _ =>
         {
           _gameStateProvider.IsInputEnabled.Value = false;
+          // タイトルに戻るボタンによってキャンセルされたときはOnTimerHasExpiredを発行しない
           if (cancellationToken.IsCancellationRequested) return;
           _gameStateProvider.OnTimerHasExpired.OnNext(Unit.Default);
         })
@@ -138,11 +156,17 @@ namespace JJJ.UseCase
       BGMManager.Instance.Play(BGMPath.BGM2);
     }
 
+    /// <summary>
+    /// ゲーム終了時の処理
+    /// </summary>
     public async UniTask OnGameEnd(CancellationToken cancellationToken = default)
     {
+      // 入力を無効化する
       _gameStateProvider.IsInputEnabled.Value = false;
+      // ゲーム終了アニメーション再生
       await _gameEndAnimationPresenter.PlayGameEndAnimation(cancellationToken);
       _gameStateProvider.CurrentResultSceneData.Score = _gameStateProvider.CurrentScore.Value;
+      // リザルト画面へ遷移
       await _sceneManager.PushWithFade(SceneNavigationUtil.ResultSceneIdentifier, _gameStateProvider.CurrentResultSceneData);
     }
 
