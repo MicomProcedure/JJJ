@@ -1,12 +1,13 @@
 using System;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
+using KanKikuchi.AudioManager;
 using MackySoft.Navigathena;
 using MackySoft.Navigathena.SceneManagement;
 using MackySoft.Navigathena.SceneManagement.VContainer;
-using Microsoft.Extensions.Logging;
 using ZLogger;
 
 namespace JJJ.DI
@@ -57,10 +58,10 @@ namespace JJJ.DI
       return UniTask.CompletedTask;
     }
 
-    protected override UniTask OnExit(ISceneDataWriter writer, CancellationToken cancellationToken)
+    protected override async UniTask OnExit(ISceneDataWriter writer, CancellationToken cancellationToken)
     {
-      // シーンから出るときの処理
-      return UniTask.CompletedTask;
+      BGMManager.Instance.FadeOut(duration: 0.5f);
+      await UniTask.Delay(500);
     }
 
     protected override UniTask OnFinalize(ISceneDataWriter writer, IProgress<IProgressDataStore> progress, CancellationToken cancellationToken)
