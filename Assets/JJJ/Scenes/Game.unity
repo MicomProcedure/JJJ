@@ -181,7 +181,7 @@ MonoBehaviour:
   _ready1: {fileID: 1805711901}
   _readyGo: {fileID: 1977010039}
   _readySE: SE/SE1
-  _animationInterval: 0.5
+  _animationInterval: 0.387
 --- !u!1 &93460220
 GameObject:
   m_ObjectHideFlags: 0
