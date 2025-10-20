@@ -14,6 +14,7 @@ namespace JJJ.UI
     [SerializeField] private Button _helpButton = null!;
     [SerializeField] private Button _rankingButton = null!;
     [SerializeField] private Button _hidePanelButton = null!;
+    [SerializeField] private Button _hideUserSettingsButton = null!;
 
     public Observable<Unit> EasyButtonOnClick => _easyButton.OnClickAsObservable();
     public Observable<Unit> NormalButtonOnClick => _normalButton.OnClickAsObservable();
@@ -23,5 +24,6 @@ namespace JJJ.UI
     public Observable<Unit> HelpButtonOnClick => _helpButton.OnClickAsObservable();
     public Observable<Unit> RankingButtonOnClick => _rankingButton.OnClickAsObservable();
     public Observable<Unit> HidePanelButtonOnClick => _hidePanelButton.OnClickAsObservable();
+    public Observable<Unit> HideUserSettingsButtonOnClick => _hideUserSettingsButton.OnClickAsObservable();
   }
 }
