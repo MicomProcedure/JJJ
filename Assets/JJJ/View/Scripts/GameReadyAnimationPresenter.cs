@@ -10,13 +10,13 @@ namespace JJJ.View.Scripts
   public class GameReadyAnimationPresenter : MonoBehaviour, IGameReadyAnimationPresenter
   {
     [SerializeField]
-    private GameObject _ready3;
+    private GameObject _ready3 = null!;
     [SerializeField]
-    private GameObject _ready2;
+    private GameObject _ready2 = null!;
     [SerializeField]
-    private GameObject _ready1;
+    private GameObject _ready1 = null!;
     [SerializeField]
-    private GameObject _readyGo;
+    private GameObject _readyGo = null!;
     [SerializeField, SEPathSelector]
     private string _readySE = "";
     [SerializeField]
