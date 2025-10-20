@@ -83,7 +83,7 @@ namespace JJJ.UseCase.Turn
           _gameStateProvider.JudgeRemainTime.Value = remaining;
         });
 
-      _logger.ZLogDebug($"[TurnExecutor] Start Turn - Limit {limit.TotalSeconds} seconds");
+      _logger.ZLogDebug($"Waiting Judge... (Limit {limit.TotalSeconds} seconds)");
       // 一番最初に発生したイベントを待つ
       var claim = await Observable.Merge(
         playerWinObservable != null ? playerWinObservable.Select(_ => PlayerClaim.PlayerWin) : Observable.Empty<PlayerClaim>(),
@@ -93,8 +93,8 @@ namespace JJJ.UseCase.Turn
       ).FirstAsync(cancellationToken: _cancellationTokenSource.Token);
 
       _cancellationTokenSource.Cancel();
-      _logger.ZLogDebug($"[TurnExecutor] Claim - {claim}, Remaining - {_gameStateProvider.JudgeRemainTime.Value.TotalSeconds} seconds");
-      _logger.ZLogDebug($"[TurnExecutor] PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
+      _logger.ZLogDebug($"Claim - {claim}, Remaining - {_gameStateProvider.JudgeRemainTime.Value.TotalSeconds} seconds");
+      _logger.ZLogDebug($"PlayerHand: {playerHand.Type}, OpponentHand: {opponentHand.Type}, Truth: {truthResult.Type}, Claim: {claim}");
 
       // 入力を無効化
       _gameStateProvider.IsInputEnabled.Value = false;
@@ -108,7 +108,7 @@ namespace JJJ.UseCase.Turn
         PlayerClaim.Timeout => false,
         _ => throw new ArgumentOutOfRangeException(nameof(claim), claim, null)
       };
-      _logger.ZLogDebug($"[TurnExecutor] Judgement - {(correct ? "Correct" : "Incorrect")}");
+      _logger.ZLogDebug($"Judgement - {(correct ? "Correct" : "Incorrect")}");
       // ターンの結果を生成
       var outcome = new TurnOutcome(truthResult, claim, correct, (limit - _gameStateProvider.JudgeRemainTime.Value).TotalSeconds);
 

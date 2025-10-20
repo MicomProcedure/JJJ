@@ -85,13 +85,13 @@ namespace JJJ.UseCase
           _gameStateProvider.GameEndLimit = TimeSpan.FromSeconds(_gameSettingsProvider.HardGameTimeLimit);
           break;
         default:
-          _logger.ZLogWarning($"[GameInitializer] Unknown GameMode {_gameModeProvider.Current}, defaulting judge limit to 10 seconds.");
-          _logger.ZLogWarning($"[GameInitializer] Unknown GameMode {_gameModeProvider.Current}, defaulting game end limit to 60 seconds.");
+          _logger.ZLogWarning($"Unknown GameMode {_gameModeProvider.Current}, defaulting judge limit to 10 seconds.");
+          _logger.ZLogWarning($"Unknown GameMode {_gameModeProvider.Current}, defaulting game end limit to 60 seconds.");
           _gameStateProvider.JudgeTimeLimit = TimeSpan.FromSeconds(10);
           _gameStateProvider.GameEndLimit = TimeSpan.FromSeconds(60);
           break;
       }
-      _logger.ZLogDebug($"[GameInitializer] Set JudgeTimeLimit to {_gameStateProvider.JudgeTimeLimit}, GameEndLimit to {_gameStateProvider.GameEndLimit}");
+      _logger.ZLogDebug($"Set JudgeTimeLimit to {_gameStateProvider.JudgeTimeLimit}, GameEndLimit to {_gameStateProvider.GameEndLimit}");
       _gameStateProvider.JudgeRemainTime.Value = _gameStateProvider.JudgeTimeLimit;
       _gameStateProvider.GameRemainTime.Value = _gameStateProvider.GameEndLimit;
     }
