@@ -25,7 +25,7 @@ namespace JJJ.DI
     [SerializeField] private TimerRemainsPresenter? _timerRemainsPresenter;
     [SerializeField] private CurrentScorePresenter? _currentScorePresenter;
     [SerializeField] private CurrentJudgesPresenter? _currentJudgesPresenter;
-    [SerializeField] private RemainJudgeTimePresenter? _remainJudgeTimePresenter;
+    [SerializeField] private GameRemainTimePresenter? _remainJudgeTimePresenter;
     [SerializeField] private GameSettingsProvider? _gameSettingsProvider;
     [SerializeField] private RulesView? _rulesView;
     [SerializeField] private GameButtonObservables? _gameButtonObservables;
@@ -46,16 +46,21 @@ namespace JJJ.DI
         return factory.Create();
       }, Lifetime.Scoped);
 
-      builder.Register<IJudgeService, JudgeService>(Lifetime.Scoped);
+      builder.Register<GameController>(Lifetime.Scoped);
+      builder.Register<GameStateProvider>(Lifetime.Scoped);
+      builder.Register<GameInitializer>(Lifetime.Scoped);
+      builder.Register<GameTurnManager>(Lifetime.Scoped);
+      builder.Register<GameSessionManager>(Lifetime.Scoped);
+      builder.Register<ResultDataAggregator>(Lifetime.Scoped);
 
-      builder.RegisterEntryPoint<JudgeService>(Lifetime.Scoped);
+      builder.RegisterEntryPoint<GameController>(Lifetime.Scoped);
       builder.RegisterEntryPoint<GameButtonManager>(Lifetime.Scoped);
 
       builder.Register<ICpuHandStrategy, CyclicStrategy>(Lifetime.Scoped);
       builder.Register<ICpuHandStrategy, ViolationProneStrategy>(Lifetime.Scoped);
       builder.Register<ITimerService, TimerService>(Lifetime.Scoped);
       builder.Register<IStrategySelector, RandomStrategySelector>(Lifetime.Scoped);
-      builder.Register<ITurnExecutor, ReactiveTurnExecutor>(Lifetime.Scoped);
+      builder.Register<ITurnExecutor, TurnExecutor>(Lifetime.Scoped);
       builder.Register<IRandomService, RandomService>(Lifetime.Scoped);
       builder.Register<IScoreCalculator, ScoreCalculator>(Lifetime.Scoped);
       builder.RegisterComponent(_judgeInput).As<IJudgeInput>();
@@ -63,7 +68,7 @@ namespace JJJ.DI
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
       builder.RegisterComponent(_currentScorePresenter).As<CurrentScorePresenter>();
       builder.RegisterComponent(_currentJudgesPresenter).As<CurrentJudgesPresenter>();
-      builder.RegisterComponent(_remainJudgeTimePresenter).As<RemainJudgeTimePresenter>();
+      builder.RegisterComponent(_remainJudgeTimePresenter).As<GameRemainTimePresenter>();
       builder.RegisterInstance(_gameSettingsProvider).As<IGameSettingsProvider>();
       builder.RegisterComponent(_rulesView).As<IRulesView>();
       builder.RegisterComponent(_gameButtonObservables).As<GameButtonObservables>();
