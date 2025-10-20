@@ -3,7 +3,7 @@ namespace JJJ.Core.Interfaces
   /// <summary>
   /// ユーザ設定を提供するインターフェース
   /// </summary>
-  public interface IUserSettingsProvider
+  public interface IOptionProvider
   {
     /// <summary>
     /// BGMの音量
