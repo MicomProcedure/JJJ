@@ -22,9 +22,6 @@ namespace JJJ.Core.Interfaces
     /// </summary>
     public string RankingDefaultName { get; }
 
-    public void Set(float bgmVolume,
-                    float seVolume,
-                    bool isAutoRankingSubmit,
-                    string rankingDefaultName);
+    public void Set(Option option);
   }
 }

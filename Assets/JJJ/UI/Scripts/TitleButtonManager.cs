@@ -88,10 +88,7 @@ namespace JJJ.UI
       _titleButtonObservables.HideOptionButtonOnClick
         .Subscribe(_ =>
         {
-          _optionProvider.Set(_optionView.BGMVolume,
-                              _optionView.SEVolume,
-                              _optionView.IsAutoRankingSubmit,
-                              _optionView.RankingDefaultName);
+          _optionProvider.Set(_optionView.Option);
           _optionView.Hide();
         })
         .AddTo(_disposables);

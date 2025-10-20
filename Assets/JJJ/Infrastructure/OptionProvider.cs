@@ -2,6 +2,7 @@ using UnityEngine;
 using JJJ.Core.Interfaces;
 using KanKikuchi.AudioManager;
 using VContainer.Unity;
+using JJJ.Core;
 
 namespace JJJ.Infrastructure
 {
@@ -33,32 +34,27 @@ namespace JJJ.Infrastructure
 
     public void Start()
     {
-      if (SaveFileHandler.TryLoad(out var data) && data != null)
+      if (SaveFileHandler.TryLoad<Option>(out var data) && data != null)
       {
-        Set(data.BGMVolume,
-            data.SEVolume,
-            data.IsAutoRankingSubmit,
-            data.RankingDefaultName);
+        Set(data);
       }
       else
       {
-        SaveFileHandler.Save(this);
+        var option = new Option();
+        SaveFileHandler.Save(option);
       }
     }
 
-    public void Set(float bgmVolume,
-                    float seVolume,
-                    bool isAutoRankingSubmit,
-                    string rankingDefaultName)
+    public void Set(Option option)
     {
-      BGMVolume = bgmVolume;
-      SEVolume = seVolume;
-      IsAutoRankingSubmit = isAutoRankingSubmit;
-      RankingDefaultName = rankingDefaultName;
+      BGMVolume = option.BGMVolume;
+      SEVolume = option.SEVolume;
+      IsAutoRankingSubmit = option.IsAutoRankingSubmit;
+      RankingDefaultName = option.RankingDefaultName;
 
       ApplyVolume();
 
-      SaveFileHandler.Save(this);
+      SaveFileHandler.Save(option);
     }
 
     private void ApplyVolume()
