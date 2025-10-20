@@ -1,3 +1,4 @@
+using JJJ.Core;
 using JJJ.Core.Interfaces;
 using KanKikuchi.AudioManager;
 using TMPro;
@@ -15,10 +16,12 @@ namespace JJJ.View
     [SerializeField] private Toggle _isAutoRankingSubmit = null!;
     [SerializeField] private TMP_InputField _rankingDefaultName = null!;
 
-    public float BGMVolume => _bgmVolumeSlider.value;
-    public float SEVolume => _seVolumeSlider.value;
-    public bool IsAutoRankingSubmit => _isAutoRankingSubmit.isOn;
-    public string RankingDefaultName => _rankingDefaultName.text;
+    public Option Option => new(
+      _bgmVolumeSlider.value,
+      _seVolumeSlider.value,
+      _isAutoRankingSubmit.isOn,
+      _rankingDefaultName.text
+    );
 
     private void OnEnable()
     {

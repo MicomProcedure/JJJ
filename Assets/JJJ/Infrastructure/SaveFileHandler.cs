@@ -6,29 +6,18 @@ namespace JJJ.Infrastructure
 {
   public static class SaveFileHandler
   {
-    public static void Save(OptionProvider optionProvider)
-    {
-      Save(optionProvider, "Option");
-    }
-
-    private static void Save<T>(T data, string fileName)
+    public static void Save<T>(T data)
     {
       string json = JsonUtility.ToJson(data);
 
-      string path = Path.Combine(Application.persistentDataPath, $"{fileName}.sav");
+      string path = Path.Combine(Application.persistentDataPath, $"{typeof(T).Name}.sav");
 
       File.WriteAllText(path, json, Encoding.UTF8);
     }
 
-    public static bool TryLoad(out OptionProvider? optionProvider)
+    public static bool TryLoad<T>(out T? data)
     {
-      optionProvider = null;
-      return TryLoad(out optionProvider, "Option");
-    }
-
-    private static bool TryLoad<T>(out T? data, string fileName)
-    {
-      string path = Path.Combine(Application.persistentDataPath, $"{fileName}.sav");
+      string path = Path.Combine(Application.persistentDataPath, $"{typeof(T).Name}.sav");
 
       if (!File.Exists(path))
       {
