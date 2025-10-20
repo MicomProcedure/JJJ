@@ -62,14 +62,14 @@ namespace JJJ.View
 
     private void SetBGMVolumeText()
     {
-      int persent = (int)(_bgmVolumeSlider.value * 100);
-      _bgmValueText.SetText($"{persent}%");
+      int percent = (int)(_bgmVolumeSlider.value * 100);
+      _bgmValueText.SetText($"{percent}%");
     }
 
     private void SetSEVolumeText()
     {
-      int persent = (int)(_seVolumeSlider.value * 100);
-      _seValueText.SetText($"{persent}%");
+      int percent = (int)(_seVolumeSlider.value * 100);
+      _seValueText.SetText($"{percent}%");
     }
 
     private void OnBGMVolumeChanged(float value)
