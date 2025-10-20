@@ -42,7 +42,7 @@ namespace JJJ.UseCase
     {
       try
       {
-        _logger.ZLogDebug($"[GameTurnManager] StartTurn");
+        _logger.ZLogDebug($"StartTurn");
 
         var currentContext = _gameStateProvider.CurrentTurnContext;
         if (!currentContext.IsPreviousTurnDoubleViolation)
@@ -51,7 +51,7 @@ namespace JJJ.UseCase
         }
         else
         {
-          _logger.ZLogDebug($"[GameTurnManager] Previous turn was double violation. Not advancing turn context.");
+          _logger.ZLogDebug($"Previous turn was double violation. Not advancing turn context.");
           currentContext.SetPreviousTurnDoubleViolation(false);
         }
 
@@ -60,7 +60,7 @@ namespace JJJ.UseCase
 
         var (outcome, handAnimationTask) = await _turnExecutor.ExecuteTurn(cancellationToken);
 
-        _logger.ZLogTrace($"[GameTurnManager] Turn Outcome: {outcome}");
+        _logger.ZLogTrace($"Turn Outcome: Claim={outcome.Claim}, Truth={outcome.TruthResult.Type}, PlayerJudgementCorrect={outcome.IsPlayerJudgementCorrect}, JudgeTime={outcome.JudgeTime}s");
 
         int scoreDiff = _scoreCalculator.CalculateScore(outcome.IsPlayerJudgementCorrect, outcome.JudgeTime);
         _gameStateProvider.ScoreDiff.Value = scoreDiff;
@@ -88,22 +88,22 @@ namespace JJJ.UseCase
 
         if (outcome.TruthResult.Type is JudgeResultType.Draw or JudgeResultType.DoubleViolation)
         {
-          _logger.ZLogDebug($"[GameTurnManager] Turn resulted in a draw or double violation. Retaining current turn context.");
+          _logger.ZLogDebug($"Turn resulted in a draw or double violation. Retaining current turn context.");
           await _compositeHandAnimationPresenter.ResetHandAll(cancellationToken);
           if (cancellationToken.IsCancellationRequested)
           {
-            _logger.ZLogDebug($"[GameTurnManager] Turn cancelled after draw/double violation.");
+            _logger.ZLogDebug($"Turn cancelled after draw/double violation.");
             return false;
           }
           return true;
         }
         else
         {
-          _logger.ZLogDebug($"[GameTurnManager] Turn completed. Proceeding to next turn.");
+          _logger.ZLogDebug($"Turn completed. Proceeding to next turn.");
           await _compositeHandAnimationPresenter.ReturnInitAll(cancellationToken);
           if (cancellationToken.IsCancellationRequested)
           {
-            _logger.ZLogDebug($"[GameTurnManager] Turn cancelled after completion.");
+            _logger.ZLogDebug($"Turn cancelled after completion.");
           }
           return false;
         }
@@ -114,16 +114,16 @@ namespace JJJ.UseCase
         {
           if (_gameStateProvider.GameEndCancellationTokenSource.Token.IsCancellationRequested)
           {
-            _logger.ZLogDebug($"[GameTurnManager] Turn cancelled due to game end.");
+            _logger.ZLogDebug($"Turn cancelled due to game end.");
           }
           else
           {
-            _logger.ZLogDebug($"[GameTurnManager] Turn cancelled by external request. \n{ex.Message}");
+            _logger.ZLogDebug($"Turn cancelled by external request. \n{ex.Message}");
           }
         }
         catch (ObjectDisposedException disposeEx)
         {
-          _logger.ZLogDebug($"[GameTurnManager] Turn cancellation token source already disposed. \n{disposeEx.Message}");
+          _logger.ZLogDebug($"Turn cancellation token source already disposed. \n{disposeEx.Message}");
         }
         return false;
       }

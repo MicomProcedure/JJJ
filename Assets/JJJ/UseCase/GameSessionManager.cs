@@ -31,7 +31,7 @@ namespace JJJ.UseCase
 
     public async UniTask StartSession(CancellationToken cancellationToken = default)
     {
-      _logger.ZLogDebug($"[GameSessionManager] StartSession");
+      _logger.ZLogDebug($"StartSession");
 
       var (pStrategy, oStrategy) = _strategySelector.SelectPair(_cpuHandStrategies);
       pStrategy.Initialize();
@@ -48,7 +48,7 @@ namespace JJJ.UseCase
         isDraw = await _gameTurnManager.StartTurn(cancellationToken);
       } while (isDraw);
 
-      _logger.ZLogDebug($"[GameSessionManager] Session ended");
+      _logger.ZLogDebug($"Session ended");
     }
   }
 }
