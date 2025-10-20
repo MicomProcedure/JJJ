@@ -12,6 +12,8 @@ namespace JJJ.UI
   public sealed class TitleButtonManager : IStartable, IDisposable
   {
     private IGameModeProvider _gameModeProvider;
+    private IOptionProvider _optionProvider;
+    private IOptionView _optionView;
     private IVisible _helpsView;
     private TitleButtonObservables _titleButtonObservables;
     private ITransitionDirector _transitionDirector;
@@ -19,11 +21,15 @@ namespace JJJ.UI
     private CompositeDisposable _disposables = new();
 
     public TitleButtonManager(IGameModeProvider gameModeProvider,
+                              IOptionProvider optionProvider,
+                              IOptionView optionView,
                               IVisible helpsView,
                               TitleButtonObservables titleButtonObservables,
                               ITransitionDirector transitionDirector)
     {
       _gameModeProvider = gameModeProvider;
+      _optionProvider = optionProvider;
+      _optionView = optionView;
       _helpsView = helpsView;
       _titleButtonObservables = titleButtonObservables;
       _transitionDirector = transitionDirector;
@@ -57,7 +63,11 @@ namespace JJJ.UI
       _titleButtonObservables.OptionButtonOnClick
         .Subscribe(_ =>
         {
-
+          _optionView.SetValue(_optionProvider.BGMVolume,
+                               _optionProvider.SEVolume,
+                               _optionProvider.IsAutoRankingSubmit,
+                               _optionProvider.RankingDefaultName);
+          _optionView.Show();
         })
         .AddTo(_disposables);
 
@@ -75,7 +85,15 @@ namespace JJJ.UI
         })
         .AddTo(_disposables);
 
-      _titleButtonObservables.HidePanelButtonOnClick
+      _titleButtonObservables.HideOptionButtonOnClick
+        .Subscribe(_ =>
+        {
+          _optionProvider.Set(_optionView.Option);
+          _optionView.Hide();
+        })
+        .AddTo(_disposables);
+
+      _titleButtonObservables.HideHelpsButtonOnClick
         .Subscribe(_ =>
         {
           _helpsView.Hide();

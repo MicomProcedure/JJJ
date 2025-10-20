@@ -10,6 +10,7 @@ namespace JJJ.DI
 {
   public sealed class TitleLifetimeScope : LifetimeScope
   {
+    [SerializeField] private OptionView _optionView = null!;
     [SerializeField] private HelpsView _helpsView = null!;
     [SerializeField] private TitleButtonObservables _titleButtonObservables = null!;
 
@@ -19,6 +20,7 @@ namespace JJJ.DI
 
       builder.RegisterEntryPoint<TitleButtonManager>(Lifetime.Scoped);
 
+      builder.RegisterComponent(_optionView).As<IOptionView>();
       builder.RegisterComponent(_helpsView).As<IVisible>();
       builder.RegisterComponent(_titleButtonObservables);
     }
