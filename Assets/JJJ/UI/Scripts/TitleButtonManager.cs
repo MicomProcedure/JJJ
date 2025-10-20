@@ -85,13 +85,6 @@ namespace JJJ.UI
         })
         .AddTo(_disposables);
 
-      _titleButtonObservables.HidePanelButtonOnClick
-        .Subscribe(_ =>
-        {
-          _helpsView.Hide();
-        })
-        .AddTo(_disposables);
-
       _titleButtonObservables.HideOptionButtonOnClick
         .Subscribe(_ =>
         {
@@ -100,6 +93,13 @@ namespace JJJ.UI
                               _optionView.IsAutoRankingSubmit,
                               _optionView.RankingDefaultName);
           _optionView.Hide();
+        })
+        .AddTo(_disposables);
+
+      _titleButtonObservables.HideHelpsButtonOnClick
+        .Subscribe(_ =>
+        {
+          _helpsView.Hide();
         })
         .AddTo(_disposables);
     }

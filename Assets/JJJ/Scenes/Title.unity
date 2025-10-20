@@ -677,12 +677,12 @@ GameObject:
   - component: {fileID: 180460227}
   - component: {fileID: 180460226}
   m_Layer: 5
-  m_Name: HidePanelButton
+  m_Name: HideHelpsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &180460225
 RectTransform:
   m_ObjectHideFlags: 0
@@ -695,7 +695,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 200533376}
+  m_Father: {fileID: 1707673868}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -884,7 +884,6 @@ RectTransform:
   - {fileID: 1604158797}
   - {fileID: 2033133332}
   - {fileID: 1374796936}
-  - {fileID: 180460225}
   - {fileID: 232351716}
   - {fileID: 1707673868}
   m_Father: {fileID: 0}
@@ -931,8 +930,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1200, y: 800}
+  m_AnchoredPosition: {x: 0, y: -30}
+  m_SizeDelta: {x: 1300, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &215533413
 MonoBehaviour:
@@ -1052,8 +1051,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1200, y: 800}
+  m_AnchoredPosition: {x: 0, y: -30}
+  m_SizeDelta: {x: 1300, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &231939284
 MonoBehaviour:
@@ -2047,8 +2046,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1200, y: 800}
+  m_AnchoredPosition: {x: 0, y: -30}
+  m_SizeDelta: {x: 1300, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &717991177
 MonoBehaviour:
@@ -2721,8 +2720,8 @@ MonoBehaviour:
   _optionButton: {fileID: 1121714494}
   _helpButton: {fileID: 404573435859125387}
   _rankingButton: {fileID: 2388838983292481520}
-  _hidePanelButton: {fileID: 180460226}
   _hideOptionButton: {fileID: 74001983}
+  _hideHelpsButton: {fileID: 180460226}
 --- !u!4 &1203571379
 Transform:
   m_ObjectHideFlags: 0
@@ -3842,6 +3841,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 180460225}
   - {fileID: 717991176}
   - {fileID: 215533412}
   - {fileID: 231939283}
