@@ -17,7 +17,7 @@ namespace JJJ.View
     /// </summary>
     [SerializeField] private int _initialTime = 0;
 
-    private void Start()
+    private void Awake()
     {
       SetRemainJudgeTime(_initialTime);
     }
