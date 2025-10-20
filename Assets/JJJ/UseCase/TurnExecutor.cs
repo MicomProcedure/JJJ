@@ -10,7 +10,7 @@ using ZLogger;
 namespace JJJ.UseCase.Turn
 {
   /// <summary>
-  /// ターン実行のリアクティブ実装
+  /// ターンを実行するクラス
   /// </summary>
   public class TurnExecutor : ITurnExecutor, IDisposable
   {
@@ -40,9 +40,14 @@ namespace JJJ.UseCase.Turn
       _timerService = timerService;
     }
 
+    /// <summary>
+    /// ターンを実行する
+    /// </summary>
+    /// <returns>ターンの結果と手のアニメーション完了を待つUniTaskのタプル</returns>
     public async UniTask<(TurnOutcome, UniTask)> ExecuteTurn(CancellationToken cancellationToken = default)
     {
       _disposables?.Dispose();
+      // 外部キャンセルトークンと連結したトークンソースを作成
       _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
       if (_disposables == null)
       {
@@ -50,13 +55,11 @@ namespace JJJ.UseCase.Turn
       }
 
       var context = _gameStateProvider.CurrentTurnContext;
-      var playerStrategy = _gameStateProvider.PlayerCpuHandStrategy;
-      var opponentStrategy = _gameStateProvider.OpponentCpuHandStrategy;
-      var limit = _gameStateProvider.JudgeTimeLimit;
+      var judgeTimeLimit = _gameStateProvider.JudgeTimeLimit;
 
       // CPU hands & truth
-      var playerHand = playerStrategy.GetNextCpuHand(context);
-      var opponentHand = opponentStrategy.GetNextCpuHand(context);
+      var playerHand = _gameStateProvider.PlayerCpuHandStrategy.GetNextCpuHand(context);
+      var opponentHand = _gameStateProvider.OpponentCpuHandStrategy.GetNextCpuHand(context);
       var truthResult = _ruleSet.Judge(playerHand, opponentHand, context);
 
       // Observables
@@ -77,19 +80,19 @@ namespace JJJ.UseCase.Turn
       var opponentHandPlayTask = opponentHandAnimationPresenter.PlayHand(opponentHand.Type, opponentHand.IsTimeout, cancellationToken);
 
       // タイマー開始
-      var timerObservable = _timerService.CountdownEveryFrame(limit, _cancellationTokenSource.Token)
+      var timerObservable = _timerService.CountdownEveryFrame(judgeTimeLimit, _cancellationTokenSource.Token)
         .Subscribe(remaining =>
         {
           _gameStateProvider.JudgeRemainTime.Value = remaining;
         });
 
-      _logger.ZLogDebug($"Waiting Judge... (Limit {limit.TotalSeconds} seconds)");
+      _logger.ZLogDebug($"Waiting Judge... (Limit {judgeTimeLimit.TotalSeconds} seconds)");
       // 一番最初に発生したイベントを待つ
       var claim = await Observable.Merge(
         playerWinObservable != null ? playerWinObservable.Select(_ => PlayerClaim.PlayerWin) : Observable.Empty<PlayerClaim>(),
         opponentWinObservable != null ? opponentWinObservable.Select(_ => PlayerClaim.OpponentWin) : Observable.Empty<PlayerClaim>(),
         drawObservable != null ? drawObservable.Select(_ => PlayerClaim.Draw) : Observable.Empty<PlayerClaim>(),
-        _timerService.After(limit).Select(_ => PlayerClaim.Timeout)
+        _timerService.After(judgeTimeLimit).Select(_ => PlayerClaim.Timeout)
       ).FirstAsync(cancellationToken: _cancellationTokenSource.Token);
 
       _cancellationTokenSource.Cancel();
@@ -108,11 +111,11 @@ namespace JJJ.UseCase.Turn
         PlayerClaim.Timeout => false,
         _ => throw new ArgumentOutOfRangeException(nameof(claim), claim, null)
       };
-      _logger.ZLogDebug($"Judgement - {(correct ? "Correct" : "Incorrect")}");
+      _logger.ZLogDebug($"Judgement is {(correct ? "Correct" : "Incorrect")}");
       // ターンの結果を生成
-      var outcome = new TurnOutcome(truthResult, claim, correct, (limit - _gameStateProvider.JudgeRemainTime.Value).TotalSeconds);
+      var outcome = new TurnOutcome(truthResult, claim, correct, (judgeTimeLimit - _gameStateProvider.JudgeRemainTime.Value).TotalSeconds);
 
-      // タイマー停止
+      // タイマーをリセット
       _gameStateProvider.JudgeRemainTime.Value = _gameStateProvider.JudgeTimeLimit;
 
       _disposables = new CompositeDisposable { timerObservable };

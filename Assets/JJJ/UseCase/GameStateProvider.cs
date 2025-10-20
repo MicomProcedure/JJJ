@@ -6,6 +6,9 @@ using R3;
 
 namespace JJJ.UseCase
 {
+  /// <summary>
+  /// ゲーム内の状態を提供するクラス
+  /// </summary>
   public sealed class GameStateProvider
   {
     public ICpuHandStrategy PlayerCpuHandStrategy { get; set; } = null!;
@@ -23,7 +26,16 @@ namespace JJJ.UseCase
     public ReactiveProperty<int> JudgeCount { get; } = new(0);
     public ReactiveProperty<bool> IsInputEnabled { get; } = new(false);
 
+    /// <summary>
+    /// ゲーム終了時に発行されるイベント
+    /// </summary>
+    /// <remarks>時間切れ時とタイトルに戻るボタン押下時に発行される</remarks>
+    /// <seealso cref="OnTimerHasExpired"/>
     public Subject<Unit> OnGameEnd { get; } = new Subject<Unit>();
+
+    /// <summary>
+    /// タイマーが時間切れになったときに発行されるイベント
+    /// </summary>
     public Subject<Unit> OnTimerHasExpired { get; } = new Subject<Unit>();
   }
 }

@@ -3,6 +3,9 @@ using JJJ.Core.Entities;
 
 namespace JJJ.UseCase
 {
+  /// <summary>
+  /// リザルトシーンに送るデータを集計するクラス
+  /// </summary>
   public class ResultDataAggregator
   {
     private readonly GameStateProvider _gameStateProvider;
@@ -12,6 +15,10 @@ namespace JJJ.UseCase
       _gameStateProvider = gameStateProvider;
     }
 
+    /// <summary>
+    /// ターンの結果を集計する
+    /// </summary>
+    /// <param name="outcome">ターンの結果</param>
     public void Aggregate(TurnOutcome outcome)
     {
       var _resultSceneData = _gameStateProvider.CurrentResultSceneData;
@@ -58,6 +65,7 @@ namespace JJJ.UseCase
           }
           break;
         case JudgeResultType.DoubleViolation:
+          // 両者反則の場合
           _resultSceneData.DoubleViolationCount = AddCountByJudgement(_resultSceneData.DoubleViolationCount, outcome.IsPlayerJudgementCorrect);
           break;
         default:
@@ -65,6 +73,7 @@ namespace JJJ.UseCase
       }
       _gameStateProvider.CurrentResultSceneData = _resultSceneData;
     }
+    
     private (int, int) AddCountByJudgement((int, int) currentCount, bool correct)
     {
       return correct ? (currentCount.Item1 + 1, currentCount.Item2) : (currentCount.Item1, currentCount.Item2 + 1);
