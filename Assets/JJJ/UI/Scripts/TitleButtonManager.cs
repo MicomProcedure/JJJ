@@ -12,6 +12,8 @@ namespace JJJ.UI
   public sealed class TitleButtonManager : IStartable, IDisposable
   {
     private IGameModeProvider _gameModeProvider;
+    private IUserSettingsProvider _userSettingsProvider;
+    private IUserSettingsView _userSettingsView;
     private IVisible _helpsView;
     private TitleButtonObservables _titleButtonObservables;
     private ITransitionDirector _transitionDirector;
@@ -19,11 +21,15 @@ namespace JJJ.UI
     private CompositeDisposable _disposables = new();
 
     public TitleButtonManager(IGameModeProvider gameModeProvider,
+                              IUserSettingsProvider userSettingsProvider,
+                              IUserSettingsView userSettingsView,
                               IVisible helpsView,
                               TitleButtonObservables titleButtonObservables,
                               ITransitionDirector transitionDirector)
     {
       _gameModeProvider = gameModeProvider;
+      _userSettingsProvider = userSettingsProvider;
+      _userSettingsView = userSettingsView;
       _helpsView = helpsView;
       _titleButtonObservables = titleButtonObservables;
       _transitionDirector = transitionDirector;
@@ -57,7 +63,11 @@ namespace JJJ.UI
       _titleButtonObservables.OptionButtonOnClick
         .Subscribe(_ =>
         {
-
+          _userSettingsView.SetValue(_userSettingsProvider.BGMVolume,
+                                     _userSettingsProvider.SEVolume,
+                                     _userSettingsProvider.IsAutoRankingSubmit,
+                                     _userSettingsProvider.RankingDefaultName);
+          _userSettingsView.Show();
         })
         .AddTo(_disposables);
 
@@ -79,6 +89,17 @@ namespace JJJ.UI
         .Subscribe(_ =>
         {
           _helpsView.Hide();
+        })
+        .AddTo(_disposables);
+
+      _titleButtonObservables.HideUserSettingsButtonOnClick
+        .Subscribe(_ =>
+        {
+          _userSettingsProvider.Set(_userSettingsView.BGMVolume,
+                                    _userSettingsView.SEVolume,
+                                    _userSettingsView.IsAutoRankingSubmit,
+                                    _userSettingsView.RankingDefaultName);
+          _userSettingsView.Hide();
         })
         .AddTo(_disposables);
     }

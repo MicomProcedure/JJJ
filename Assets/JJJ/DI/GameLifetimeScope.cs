@@ -17,14 +17,11 @@ namespace JJJ.DI
     /// </summary>
     protected override void Configure(IContainerBuilder builder)
     {
+      builder.RegisterEntryPoint<UserSettingsProvider>(Lifetime.Singleton).As<IUserSettingsProvider>();
+
       builder.Register<IGameModeProvider, GameModeProvider>(Lifetime.Singleton);
 
       builder.Register<ITransitionDirector>(_ => new FadeTransitionDirector(SceneNavigationUtil.FadeTransitionIdentifier), Lifetime.Singleton);
-
-      builder.UseEntryPoints(Lifetime.Singleton, entryPoints =>
-      {
-        // entryPoints.Add<Test>();
-      });
     }
   }
 }
