@@ -2,8 +2,6 @@ using System;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
-using MackySoft.Navigathena.SceneManagement;
-using MackySoft.Navigathena.Transitions;
 using R3;
 using VContainer.Unity;
 
@@ -16,7 +14,7 @@ namespace JJJ.UI
     private IOptionView _optionView;
     private IVisible _helpsView;
     private TitleButtonObservables _titleButtonObservables;
-    private ITransitionDirector _transitionDirector;
+    private ISceneManager _sceneManager;
 
     private CompositeDisposable _disposables = new();
 
@@ -25,14 +23,14 @@ namespace JJJ.UI
                               IOptionView optionView,
                               IVisible helpsView,
                               TitleButtonObservables titleButtonObservables,
-                              ITransitionDirector transitionDirector)
+                              ISceneManager sceneManager)
     {
       _gameModeProvider = gameModeProvider;
       _optionProvider = optionProvider;
       _optionView = optionView;
       _helpsView = helpsView;
       _titleButtonObservables = titleButtonObservables;
-      _transitionDirector = transitionDirector;
+      _sceneManager = sceneManager;
     }
 
     public void Start()
@@ -45,7 +43,7 @@ namespace JJJ.UI
       .Subscribe(async gameMode =>
       {
         _gameModeProvider.Set(gameMode);
-        await GlobalSceneNavigator.Instance.Push(SceneNavigationUtil.GameSceneIdentifier, _transitionDirector);
+        await _sceneManager.PushWithFade(SceneNavigationUtil.GameSceneIdentifier);
       })
       .AddTo(_disposables);
 
