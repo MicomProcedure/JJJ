@@ -12,6 +12,7 @@ namespace JJJ.DI
   {
     [SerializeField] private OptionView _optionView = null!;
     [SerializeField] private HelpsView _helpsView = null!;
+    [SerializeField] private RankingsView _rankingsView = null!;
     [SerializeField] private TitleButtonObservables _titleButtonObservables = null!;
 
     protected override void Configure(IContainerBuilder builder)
@@ -21,7 +22,8 @@ namespace JJJ.DI
       builder.RegisterEntryPoint<TitleButtonManager>(Lifetime.Scoped);
 
       builder.RegisterComponent(_optionView).As<IOptionView>();
-      builder.RegisterComponent(_helpsView).As<IVisible>();
+      builder.RegisterComponent(_helpsView).As<IHelpsView>();
+      builder.RegisterComponent(_rankingsView).As<IRankingsView>();
       builder.RegisterComponent(_titleButtonObservables);
     }
   }
