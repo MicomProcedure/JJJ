@@ -1,4 +1,3 @@
-using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using UnityEngine;
 
@@ -15,9 +14,9 @@ namespace JJJ.View
       // ハイスコアを取得
       int highScore = -1;
 
-      _easyRankingPanel.SetValue(GameMode.Easy, highScore);
-      _normalRankingPanel.SetValue(GameMode.Normal, highScore);
-      _hardRankingPanel.SetValue(GameMode.Hard, highScore);
+      _easyRankingPanel.SetHighScore(highScore);
+      _normalRankingPanel.SetHighScore(highScore);
+      _hardRankingPanel.SetHighScore(highScore);
 
       gameObject.SetActive(true);
     }
@@ -25,10 +24,6 @@ namespace JJJ.View
     public void Hide()
     {
       gameObject.SetActive(false);
-
-      _easyRankingPanel.HideValue();
-      _normalRankingPanel.HideValue();
-      _hardRankingPanel.HideValue();
     }
   }
 }
