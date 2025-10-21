@@ -3,6 +3,7 @@ using System.Threading;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using R3;
+using UnityEngine;
 using ZLogger;
 
 namespace JJJ.Infrastructure
@@ -94,12 +95,11 @@ namespace JJJ.Infrastructure
         duration = TimeSpan.FromSeconds(1);
       }
 
-      var now = DateTimeOffset.UtcNow;
-      var end = now + duration;
+      var remaining = duration;
 
       return Observable
         .EveryUpdate()
-        .Select(_ => end - DateTimeOffset.UtcNow)
+        .Select(_ => remaining -= TimeSpan.FromSeconds(Time.deltaTime))
         .Where(remaining => remaining > TimeSpan.Zero)
         .Concat(Observable.Return(TimeSpan.Zero))
         .TakeUntil(ct);

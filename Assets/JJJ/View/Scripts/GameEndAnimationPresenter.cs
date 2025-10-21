@@ -14,7 +14,7 @@ namespace JJJ.View.Scripts
   public class GameEndAnimationPresenter : MonoBehaviour, IGameEndAnimationPresenter
   {
     [SerializeField]
-    private CanvasGroup _gameEndCg;
+    private CanvasGroup _gameEndCg = null!;
     [SerializeField]
     private double _fadeInDuration = 2.0;
     [SerializeField, SEPathSelector]

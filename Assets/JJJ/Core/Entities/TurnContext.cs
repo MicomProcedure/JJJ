@@ -40,6 +40,10 @@ namespace JJJ.Core.Entities
     /// βの残りターン数が0のときは null になる
     /// </remarks>
     public HandType? SealedHandType { get; private set; }
+    /// <summary>
+    /// 以前のターンが両者とも反則だったかどうか
+    /// </summary>
+    public bool IsPreviousTurnDoubleViolation { get; private set; } = false;
 
     /// <summary>
     /// TurnContextクラスのコンストラクタ
@@ -104,6 +108,17 @@ namespace JJJ.Core.Entities
       BetaRemainingTurns = turns;
       SealedHandType = sealedHandType;
       BetaActivatedBy = activatedBy;
+      return this;
+    }
+
+    /// <summary>
+    /// 以前のターンが両者とも反則だったかどうかを設定する
+    /// </summary>
+    /// <param name="isDoubleViolation">両者とも反則だったかどうか</param>
+    /// <returns>更新されたTurnContext</returns>
+    public TurnContext SetPreviousTurnDoubleViolation(bool isDoubleViolation)
+    {
+      IsPreviousTurnDoubleViolation = isDoubleViolation;
       return this;
     }
   }
