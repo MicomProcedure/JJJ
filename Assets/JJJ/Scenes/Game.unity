@@ -3247,6 +3247,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: JJJ.UI::JJJ.UI.ButtonSoundEffector
   _hoverSE: 
   _clickSE: SE/SE5
+--- !u!114 &1345220790 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8593081109531251458, guid: cc419d741c99ba44e98e694a0d15f63f, type: 3}
+  m_PrefabInstance: {fileID: 1223971241607518549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1386800800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3510,7 +3521,7 @@ GameObject:
   - component: {fileID: 1536809471}
   - component: {fileID: 1536809470}
   m_Layer: 0
-  m_Name: GameSceneLifecycle
+  m_Name: JudgeLifetimeScope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5253,6 +5264,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7535350967621141956, guid: cc419d741c99ba44e98e694a0d15f63f, type: 3}
+      propertyPath: _remainGameTimeText
+      value: 
+      objectReference: {fileID: 1345220790}
     - target: {fileID: 8593081109531251458, guid: cc419d741c99ba44e98e694a0d15f63f, type: 3}
       propertyPath: m_fontAsset
       value: 

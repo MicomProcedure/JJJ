@@ -7,7 +7,7 @@ namespace JJJ.View
 {
     public class HandAnimationEventHandler : MonoBehaviour
     {
-        [SerializeField] private HandAnimationPresenter _handAnimationPresenter;
+        [SerializeField] private HandAnimationPresenter _handAnimationPresenter = null!;
         [SerializeField] private GameObject _balance = null!;
         [SerializeField] private GameObject _ofuda = null!;
 
