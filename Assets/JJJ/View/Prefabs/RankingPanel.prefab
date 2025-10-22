@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '-'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 52a78fe891bd448d994ec75eeb9b6006, type: 2}
-  m_sharedMaterial: {fileID: 2100000, guid: faf25389b2717bb4d94e9650e41c24da, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 43ee7bb2e0eeb47e8b5ed6618a0e8c8a, type: 2}
+  m_sharedMaterial: {fileID: 8886564986299139488, guid: 43ee7bb2e0eeb47e8b5ed6618a0e8c8a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 65
+  m_fontSizeBase: 65
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -239,7 +239,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 15
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -643,6 +643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 249a8debaecf6ae47b95717e544b4bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: JJJ.View::JJJ.View.RankingPanel
+  _gameMode: 0
   _rankingRoot: {fileID: 297191962508501127}
   _highScoreText: {fileID: 4826701363865812178}
   _loadingText: {fileID: 8408522351949941488}
