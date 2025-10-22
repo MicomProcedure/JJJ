@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using JJJ.Utils;
 
 namespace JJJ.View
 {
@@ -15,8 +16,6 @@ namespace JJJ.View
     [SerializeField] private TextMeshProUGUI _loadingText;
     [SerializeField] private RankingRow _rankingRowPrefab;
 
-    private string StoreName(GameMode gameMode) => $"JJJ-{gameMode.ToString().ToLower()}-store";
-
     public void SetHighScore(int highScore)
     {
       _highScoreText.SetText(highScore < 0 ? "-" : highScore.ToString());
@@ -24,7 +23,7 @@ namespace JJJ.View
 
     private void OnEnable()
     {
-      var query = new ProcRaQuery<ProcRaData>(StoreName(_gameMode))
+      var query = new ProcRaQuery<ProcRaData>(ProcRaUtil.StoreName(_gameMode))
         .SetLimit(5)
         .SetDescSort("score");
 
