@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace JJJ.View
 {
-  public class HelpsView : MonoBehaviour, IVisible
+  public class HelpsView : MonoBehaviour, IHelpsView
   {
 
     public void Show()
