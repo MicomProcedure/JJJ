@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
+using JJJ.UI;
 using JJJ.View;
 using KanKikuchi.AudioManager;
 using MackySoft.Navigathena;
@@ -15,10 +16,13 @@ namespace JJJ.DI
     private string _sceneBGM = BGMPath.BGM3;
 
     private ResultView _resultView;
+    private RankingRegisterPanel _rankingRegisterPanel;
 
-    public ResultSceneLifecycle(ResultView resultView)
+    public ResultSceneLifecycle(ResultView resultView,
+                                RankingRegisterPanel rankingRegisterPanel)
     {
       _resultView = resultView;
+      _rankingRegisterPanel = rankingRegisterPanel;
     }
 
 #if UNITY_EDITOR
@@ -45,6 +49,7 @@ namespace JJJ.DI
       if (reader.TryRead<ResultSceneData>(out var sceneData))
       {
         _resultView.SetResult(sceneData);
+        _rankingRegisterPanel.SetScore(sceneData.Score);
       }
       return UniTask.CompletedTask;
     }
