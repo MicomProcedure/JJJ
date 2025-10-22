@@ -17,6 +17,8 @@ namespace JJJ.View.Scripts
     private GameObject _ready1 = null!;
     [SerializeField]
     private GameObject _readyGo = null!;
+    [SerializeField]
+    private GameObject _raycastBlocker = null!;
     [SerializeField, SEPathSelector]
     private string _readySE = "";
     [SerializeField]
@@ -24,6 +26,7 @@ namespace JJJ.View.Scripts
 
     private void Awake()
     {
+      _raycastBlocker.SetActive(true);
       _ready3.SetActive(false);
       _ready2.SetActive(false);
       _ready1.SetActive(false);
@@ -52,9 +55,11 @@ namespace JJJ.View.Scripts
       await UniTask.Delay(TimeSpan.FromSeconds(_animationInterval), cancellationToken: cancellationToken);
       _readyGo.SetActive(false);
 
+      _raycastBlocker.SetActive(false);
+
       await UniTask.CompletedTask;
     }
-    
+
     private void PlayReadySE()
     {
       if (!string.IsNullOrEmpty(_readySE)) SEManager.Instance.Play(_readySE);
