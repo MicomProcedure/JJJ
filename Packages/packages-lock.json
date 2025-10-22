@@ -44,6 +44,13 @@
       "dependencies": {},
       "hash": "0034a5d4ab27fac4ae8eea52b7c57a8d47c8a585"
     },
+    "com.micomprocedure.procranking.unity": {
+      "version": "https://github.com/MicomProcedure/procranking-unity-sdk.git?path=Packages/com.micomprocedure.procranking.unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "1f24d823be45a3d40416365bcc33da7722cc5441"
+    },
     "com.starasgames.tmpro-dynamic-data-cleaner": {
       "version": "https://github.com/STARasGAMES/tmpro-dynamic-data-cleaner.git#upm",
       "depth": 0,

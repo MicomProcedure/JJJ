@@ -13,6 +13,7 @@ namespace JJJ.UI
     private IOptionProvider _optionProvider;
     private IOptionView _optionView;
     private IVisible _helpsView;
+    private IVisible _rankingsView;
     private TitleButtonObservables _titleButtonObservables;
     private ISceneManager _sceneManager;
 
@@ -21,7 +22,8 @@ namespace JJJ.UI
     public TitleButtonManager(IGameModeProvider gameModeProvider,
                               IOptionProvider optionProvider,
                               IOptionView optionView,
-                              IVisible helpsView,
+                              IHelpsView helpsView,
+                              IRankingsView rankingsView,
                               TitleButtonObservables titleButtonObservables,
                               ISceneManager sceneManager)
     {
@@ -29,6 +31,7 @@ namespace JJJ.UI
       _optionProvider = optionProvider;
       _optionView = optionView;
       _helpsView = helpsView;
+      _rankingsView = rankingsView;
       _titleButtonObservables = titleButtonObservables;
       _sceneManager = sceneManager;
     }
@@ -79,7 +82,7 @@ namespace JJJ.UI
       _titleButtonObservables.RankingButtonOnClick
         .Subscribe(_ =>
         {
-
+          _rankingsView.Show();
         })
         .AddTo(_disposables);
 
@@ -95,6 +98,13 @@ namespace JJJ.UI
         .Subscribe(_ =>
         {
           _helpsView.Hide();
+        })
+        .AddTo(_disposables);
+
+      _titleButtonObservables.HideRankingsButtonOnClick
+        .Subscribe(_ =>
+        {
+          _rankingsView.Hide();
         })
         .AddTo(_disposables);
     }
