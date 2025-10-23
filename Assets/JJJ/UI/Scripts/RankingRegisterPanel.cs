@@ -11,8 +11,12 @@ namespace JJJ.UI
   {
     public int Score { get; private set; }
 
+    [SerializeField] private GameObject _contentsRoot;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TMP_InputField _rankingName;
+    [SerializeField] private TextMeshProUGUI _loadingText;
+    [SerializeField] private TextMeshProUGUI _succeedText;
+    [SerializeField] private TextMeshProUGUI _failedText;
     [SerializeField] private Button _yesButton;
     [SerializeField] private Button _noButton;
 
@@ -36,6 +40,30 @@ namespace JJJ.UI
     public void Show()
     {
       gameObject.SetActive(true);
+    }
+
+    public void ShowLoading()
+    {
+      _contentsRoot.SetActive(false);
+      _loadingText.gameObject.SetActive(true);
+      _succeedText.gameObject.SetActive(false);
+      _failedText.gameObject.SetActive(false);
+    }
+
+    public void ShowSucceed()
+    {
+      _contentsRoot.SetActive(false);
+      _loadingText.gameObject.SetActive(false);
+      _succeedText.gameObject.SetActive(true);
+      _failedText.gameObject.SetActive(false);
+    }
+
+    public void ShowFailed()
+    {
+      _contentsRoot.SetActive(false);
+      _loadingText.gameObject.SetActive(false);
+      _succeedText.gameObject.SetActive(false);
+      _failedText.gameObject.SetActive(true);
     }
 
     private void Start()
