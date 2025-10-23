@@ -14,6 +14,7 @@ namespace JJJ.View
     [SerializeField] private Transform _rankingRoot;
     [SerializeField] private TextMeshProUGUI _highScoreText;
     [SerializeField] private TextMeshProUGUI _loadingText;
+    [SerializeField] private TextMeshProUGUI _failedText;
     [SerializeField] private RankingRow _rankingRowPrefab;
 
     public void SetHighScore(int highScore)
@@ -31,7 +32,8 @@ namespace JJJ.View
       {
         if (e != null)
         {
-          // TODO: 通信エラーの旨を表示する
+          _loadingText.gameObject.SetActive(false);
+          _failedText.gameObject.SetActive(true);
         }
         else
         {
@@ -57,6 +59,7 @@ namespace JJJ.View
       }
       _rankingRoot.gameObject.SetActive(false);
       _loadingText.gameObject.SetActive(true);
+      _failedText.gameObject.SetActive(false);
     }
   }
 }
