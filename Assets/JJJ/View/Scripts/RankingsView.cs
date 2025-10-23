@@ -1,5 +1,6 @@
 using JJJ.Core.Interfaces;
 using UnityEngine;
+using VContainer;
 
 namespace JJJ.View
 {
@@ -9,15 +10,19 @@ namespace JJJ.View
     [SerializeField] private RankingPanel _normalRankingPanel;
     [SerializeField] private RankingPanel _hardRankingPanel;
 
+    private IHighScoreProvider _highScoreProvider = null!;
+
+    [Inject]
+    public void Construct(IHighScoreProvider highScoreProvider)
+    {
+      _highScoreProvider = highScoreProvider;
+    }
+
     public void Show()
     {
-      // ハイスコアを取得
-      int highScore = -1;
-
-      _easyRankingPanel.SetHighScore(highScore);
-      _normalRankingPanel.SetHighScore(highScore);
-      _hardRankingPanel.SetHighScore(highScore);
-
+      _easyRankingPanel.SetHighScore(_highScoreProvider.HighScoreEasy);
+      _normalRankingPanel.SetHighScore(_highScoreProvider.HighScoreNormal);
+      _hardRankingPanel.SetHighScore(_highScoreProvider.HighScoreHard);
       gameObject.SetActive(true);
     }
 
