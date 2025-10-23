@@ -7,7 +7,7 @@ namespace JJJ.View.Scripts
   using JJJ.Core.Interfaces;
   using KanKikuchi.AudioManager;
   using UnityEngine;
-  
+
   /// <summary>
   /// ゲーム終了時のアニメーションを担当するプレゼンターの実装
   /// </summary>
@@ -16,6 +16,8 @@ namespace JJJ.View.Scripts
     [SerializeField]
     private CanvasGroup _gameEndCg = null!;
     [SerializeField]
+    private GameObject _raycastBlocker = null!;
+    [SerializeField]
     private double _fadeInDuration = 2.0;
     [SerializeField, SEPathSelector]
     private string _endSE = "";
@@ -23,6 +25,7 @@ namespace JJJ.View.Scripts
 
     private void Awake()
     {
+      _raycastBlocker.SetActive(false);
       _gameEndCg.gameObject.SetActive(false);
     }
 
@@ -32,6 +35,7 @@ namespace JJJ.View.Scripts
     /// <returns>アニメーション再生完了を待機するためのUniTask</returns>
     public async UniTask PlayGameEndAnimation(CancellationToken cancellationToken = default)
     {
+      _raycastBlocker.SetActive(true);
       _gameEndCg.gameObject.SetActive(true);
       BGMManager.Instance.Stop();
       if (!string.IsNullOrEmpty(_endSE)) SEManager.Instance.Play(_endSE);
