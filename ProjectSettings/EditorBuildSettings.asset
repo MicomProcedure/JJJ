@@ -6,8 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/JJJ/Scenes/Title.unity
+    guid: cb606e2eb9db8412fb6a45a0134c8fee
+  - enabled: 1
+    path: Assets/JJJ/Scenes/Game.unity
+    guid: 586e1333734f68946942cf791c1e582d
+  - enabled: 1
+    path: Assets/JJJ/Scenes/FadeTransition.unity
+    guid: 0c058f54554199f469a44a07ea50ce53
+  - enabled: 1
+    path: Assets/JJJ/Scenes/Result.unity
+    guid: c55c02c873a3dd343a930a9367eb9be0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
