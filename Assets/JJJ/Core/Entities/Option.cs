@@ -27,7 +27,7 @@ namespace JJJ.Core
     /// </summary>
     public string RankingDefaultName;
 
-    public Option(float bgmVolume = 1f, float seVolume = 1f, bool isAutoRankingSubmit = false, string rankingDefaultName = "")
+    public Option(float bgmVolume = 0.5f, float seVolume = 0.5f, bool isAutoRankingSubmit = false, string rankingDefaultName = "")
     {
       BGMVolume = Math.Clamp(bgmVolume, 0f, 1f);
       SEVolume = Math.Clamp(seVolume, 0f, 1f);
