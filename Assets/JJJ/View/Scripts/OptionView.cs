@@ -47,7 +47,7 @@ namespace JJJ.View
       SetSEVolumeText();
 
       _isAutoRankingSubmit.isOn = isAutoRankingSubmit;
-      _rankingDefaultName.text = rankingDefaultName == "名無しさん" ? string.Empty : rankingDefaultName;
+      _rankingDefaultName.text = rankingDefaultName;
     }
 
     public void Show()

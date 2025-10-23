@@ -44,11 +44,10 @@ namespace JJJ.UI
         {
           if (result.Item1)
           {
-            var data = new ProcRaData(ProcRaUtil.StoreName(_gameModeProvider.Current))
-              .Add("name", result.Item2)
-              .Add("score", _rankingRegisterPanel.Score);
-
-            data.SaveAsync(async (ProcRaException e) =>
+            ProcRaUtil.Save(_gameModeProvider.Current,
+                            result.Item2,
+                            _rankingRegisterPanel.Score,
+                            async (ProcRaException e) =>
             {
               if (e != null)
               {
@@ -82,11 +81,7 @@ namespace JJJ.UI
 
           if (_optionProvider.IsAutoRankingSubmit)
           {
-            var data = new ProcRaData(ProcRaUtil.StoreName(_gameModeProvider.Current))
-              .Add("name", _optionProvider.RankingDefaultName)
-              .Add("score", _rankingRegisterPanel.Score);
-
-            data.SaveAsync();
+            ProcRaUtil.Save(_gameModeProvider.Current, _optionProvider.RankingDefaultName, _rankingRegisterPanel.Score);
             await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }
           else
