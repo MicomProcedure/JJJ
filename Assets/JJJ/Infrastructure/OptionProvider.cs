@@ -8,14 +8,14 @@ namespace JJJ.Infrastructure
 {
   public class OptionProvider : IOptionProvider, IStartable
   {
-    private float _bgmVolume = 1f;
+    private float _bgmVolume = 0.5f;
     public float BGMVolume
     {
       get => _bgmVolume;
       private set => _bgmVolume = Mathf.Clamp01(value);
     }
 
-    private float _seVolume = 1f;
+    private float _seVolume = 0.5f;
     public float SEVolume
     {
       get => _seVolume;
@@ -36,6 +36,7 @@ namespace JJJ.Infrastructure
       {
         var option = new Option();
         SaveFileHandler.Save(option);
+        Set(option);
       }
     }
 
