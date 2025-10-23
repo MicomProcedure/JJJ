@@ -24,12 +24,7 @@ namespace JJJ.Infrastructure
 
     public bool IsAutoRankingSubmit { get; private set; } = false;
 
-    private string _rankingDefaultName = string.Empty;
-    public string RankingDefaultName
-    {
-      get => string.IsNullOrEmpty(_rankingDefaultName) ? "名無しさん" : _rankingDefaultName;
-      private set => _rankingDefaultName = value;
-    }
+    public string RankingDefaultName { get; private set; } = string.Empty;
 
     public void Start()
     {
