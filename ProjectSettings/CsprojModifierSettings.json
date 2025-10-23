@@ -1,0 +1,1 @@
+{"AdditionalImports":[{"Path":"LangVersion.props","Position":0}],"AdditionalImportsAdditionalProjects":["JJJ.Infrastructure.csproj","JJJ.UI.csproj","JJJ.UseCase.csproj","JJJ.View.csproj","JJJ.Utils.csproj","JJJ.DI.csproj","JJJ.Core.csproj"],"EnableAddAnalyzerReferences":false,"AddAnalyzerReferencesAdditionalProjects":[]}

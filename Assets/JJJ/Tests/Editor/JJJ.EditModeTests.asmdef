@@ -1,0 +1,24 @@
+{
+    "name": "JJJ.EditModeTests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:96593ce9b5faf964fbecdaba0185df9d",
+        "GUID:a727c1fce514592429165e3574f6c451",
+        "GUID:e06f539e1a9121746884b50e2c5dfbd1"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

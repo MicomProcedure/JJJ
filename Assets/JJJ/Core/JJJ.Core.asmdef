@@ -1,0 +1,18 @@
+{
+    "name": "JJJ.Core",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:19e824f9fd05b4f4a8cd9aaafc8c4550",
+        "GUID:8a0ff85ce7ae944459caf8abb9313c06"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

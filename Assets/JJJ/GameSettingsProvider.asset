@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa11f3b524f88c14dbe1009d953da450, type: 3}
+  m_Name: GameSettingsProvider
+  m_EditorClassIdentifier: JJJ.Infrastructure::JJJ.Infrastructure.GameSettingsProvider
+  <EasyGameTimeLimit>k__BackingField: 60
+  <NormalGameTimeLimit>k__BackingField: 60
+  <HardGameTimeLimit>k__BackingField: 90
+  <EasyJudgeTimeLimit>k__BackingField: 5
+  <NormalJudgeTimeLimit>k__BackingField: 10
+  <HardJudgeTimeLimit>k__BackingField: 15
+  <CyclicStrategyViolationProbability>k__BackingField: 0.1
+  <ViolationProneStrategyTimeoutProbability>k__BackingField: 0.1
+  <ViolationProneStrategyAlphaViolationProbability>k__BackingField: 0.2
+  <ViolationProneStrategyBetaViolationProbability>k__BackingField: 0.2
+  <DefaultGameMode>k__BackingField: 0

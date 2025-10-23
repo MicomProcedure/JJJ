@@ -1,0 +1,29 @@
+{
+    "name": "JJJ.DI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:96593ce9b5faf964fbecdaba0185df9d",
+        "GUID:a727c1fce514592429165e3574f6c451",
+        "GUID:e44d7a3962dee0e4d8c76438f6117ad6",
+        "GUID:9bdc01559dc8c4f1fa63abd6dbeaf3dc",
+        "GUID:8371a082173e745aaa6205dde203afb4",
+        "GUID:e06f539e1a9121746884b50e2c5dfbd1",
+        "GUID:8a0ff85ce7ae944459caf8abb9313c06",
+        "GUID:562d48ba35170a7418fc31951b7d8f16",
+        "GUID:19e824f9fd05b4f4a8cd9aaafc8c4550",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:7bce08a00b4d54cd694096abadbb897e",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:31854415af6e60a47b6fe9985a325a3f",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
