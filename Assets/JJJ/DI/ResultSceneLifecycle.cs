@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
+using JJJ.Core.Interfaces;
 using JJJ.UI;
 using JJJ.View;
 using KanKikuchi.AudioManager;
@@ -17,12 +18,18 @@ namespace JJJ.DI
 
     private ResultView _resultView;
     private RankingRegisterPanel _rankingRegisterPanel;
+    private IHighScoreProvider _highScoreProvider;
+    private IGameModeProvider _gameModeProvider;
 
     public ResultSceneLifecycle(ResultView resultView,
-                                RankingRegisterPanel rankingRegisterPanel)
+                                RankingRegisterPanel rankingRegisterPanel,
+                                IHighScoreProvider highScoreProvider,
+                                IGameModeProvider gameModeProvider)
     {
       _resultView = resultView;
       _rankingRegisterPanel = rankingRegisterPanel;
+      _highScoreProvider = highScoreProvider;
+      _gameModeProvider = gameModeProvider;
     }
 
 #if UNITY_EDITOR
@@ -48,6 +55,7 @@ namespace JJJ.DI
     {
       if (reader.TryRead<ResultSceneData>(out var sceneData))
       {
+        _highScoreProvider.Set(_gameModeProvider.Current, sceneData.Score);
         _resultView.SetResult(sceneData);
         _rankingRegisterPanel.SetScore(sceneData.Score);
       }
