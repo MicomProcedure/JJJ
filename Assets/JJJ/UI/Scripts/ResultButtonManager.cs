@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Interfaces;
 using JJJ.Utils;
 using KanKikuchi.AudioManager;
@@ -12,7 +13,7 @@ namespace JJJ.UI
 {
   public class ResultButtonManager : IStartable, IDisposable
   {
-    private RankingRegisterPanel _rankingRegisterView;
+    private RankingRegisterPanel _rankingRegisterPanel;
     private ResultButtonObservables _resultButtonObservables;
     private GameObject _clickScreenText;
     private IGameModeProvider _gameModeProvider;
@@ -27,7 +28,7 @@ namespace JJJ.UI
                                IOptionProvider optionProvider,
                                ISceneManager sceneManager)
     {
-      _rankingRegisterView = rankingRegisterView;
+      _rankingRegisterPanel = rankingRegisterView;
       _resultButtonObservables = resultButtonObservables;
       _clickScreenText = clickScreenText;
       _gameModeProvider = gameModeProvider;
@@ -37,7 +38,7 @@ namespace JJJ.UI
 
     public void Start()
     {
-      _rankingRegisterView.OnSubmit
+      _rankingRegisterPanel.OnSubmit
         .Take(1)
         .Subscribe(async result =>
         {
@@ -45,12 +46,29 @@ namespace JJJ.UI
           {
             var data = new ProcRaData(ProcRaUtil.StoreName(_gameModeProvider.Current))
               .Add("name", result.Item2)
-              .Add("score", _rankingRegisterView.Score);
+              .Add("score", _rankingRegisterPanel.Score);
 
-            data.SaveAsync();
+            data.SaveAsync(async (ProcRaException e) =>
+            {
+              if (e != null)
+              {
+                _rankingRegisterPanel.ShowFailed();
+                await UniTask.Delay(500);
+                await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
+              }
+              else
+              {
+                _rankingRegisterPanel.ShowSucceed();
+                await UniTask.Delay(500);
+                await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
+              }
+            });
+          }
+          else
+          {
+            await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }
 
-          await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
         })
         .AddTo(_disposables);
 
@@ -66,14 +84,14 @@ namespace JJJ.UI
           {
             var data = new ProcRaData(ProcRaUtil.StoreName(_gameModeProvider.Current))
               .Add("name", _optionProvider.RankingDefaultName)
-              .Add("score", _rankingRegisterView.Score);
+              .Add("score", _rankingRegisterPanel.Score);
 
             data.SaveAsync();
             await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }
           else
           {
-            _rankingRegisterView.Show();
+            _rankingRegisterPanel.Show();
           }
         })
         .AddTo(_disposables);
