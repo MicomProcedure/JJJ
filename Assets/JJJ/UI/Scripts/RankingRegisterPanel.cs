@@ -68,7 +68,7 @@ namespace JJJ.UI
 
     private void Start()
     {
-      _rankingName.text = _optionProvider.RankingDefaultName == "名無しさん" ? string.Empty : _optionProvider.RankingDefaultName;
+      _rankingName.text = _optionProvider.RankingDefaultName;
 
       Observable.Merge(
          _yesButton.OnClickAsObservable().Select(_ => true),
