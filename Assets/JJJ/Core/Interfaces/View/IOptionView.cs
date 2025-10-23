@@ -1,6 +1,6 @@
 namespace JJJ.Core.Interfaces
 {
-  public interface IOptionView
+  public interface IOptionView : IVisible
   {
     public Option Option { get; }
 
@@ -8,8 +8,5 @@ namespace JJJ.Core.Interfaces
                          float seVolume,
                          bool isAutoRankingSubmit,
                          string rankingDefaultName);
-
-    public void Show();
-    public void Hide();
   }
 }
