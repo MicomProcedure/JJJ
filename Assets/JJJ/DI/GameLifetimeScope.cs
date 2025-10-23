@@ -19,6 +19,7 @@ namespace JJJ.DI
     protected override void Configure(IContainerBuilder builder)
     {
       builder.RegisterEntryPoint<OptionProvider>(Lifetime.Singleton).As<IOptionProvider>();
+      builder.RegisterEntryPoint<HighScoreProvider>(Lifetime.Singleton).As<IHighScoreProvider>();
 
       builder.Register<IGameModeProvider, GameModeProvider>(Lifetime.Singleton);
       builder.Register(_ => SceneNavigationUtil.FadeTransitionIdentifier, Lifetime.Singleton).As<ISceneIdentifier>();
