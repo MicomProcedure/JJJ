@@ -24,11 +24,7 @@ namespace JJJ.View
 
     private void OnEnable()
     {
-      var query = new ProcRaQuery<ProcRaData>(ProcRaUtil.StoreName(_gameMode))
-        .SetLimit(5)
-        .SetDescSort("score");
-
-      query.FindAsync((List<ProcRaData> foundList, ProcRaException e) =>
+      ProcRaUtil.LoadTop5(_gameMode, (List<ProcRaData> foundList, ProcRaException e) =>
       {
         if (e != null)
         {
