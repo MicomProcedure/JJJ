@@ -30,10 +30,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ScaleRatioA: 0.9
-    - _ScaleRatioB: 0.73125
-    - _ScaleRatioC: 0.73125
-    - _UnderlayDilate: 0.631
+    - _OutlineWidth: 0
+    - _ScaleRatioA: 0.9677419
+    - _ScaleRatioB: 0.78629035
+    - _ScaleRatioC: 0.78629035
+    - _UnderlayDilate: 1
+    - _UnderlaySoftness: 0
     m_Colors:
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
