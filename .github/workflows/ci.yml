@@ -66,6 +66,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Git Credentials
+        run: |
+          git config --global url."https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
       - name: Cache Unity Library
         uses: actions/cache@v4
         with:
