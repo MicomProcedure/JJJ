@@ -32,7 +32,7 @@ namespace JJJ.View
     /// <summary>
     /// この手が右手かどうか
     /// </summary>
-    [SerializeField] private bool _isRightHand = true;
+    private bool _isRightHand;
 
     /// <summary>
     /// 手のアニメーションを制御するAnimator
