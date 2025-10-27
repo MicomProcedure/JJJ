@@ -16,6 +16,7 @@ namespace JJJ.UseCase
     private readonly GameStateProvider _gameStateProvider;
     private readonly IStrategySelector _strategySelector;
     private readonly GameTurnManager _gameTurnManager;
+    private readonly ICompositeHandAnimationPresenter _compositeHandAnimationPresenter;
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<GameSessionManager>();
 
@@ -23,13 +24,15 @@ namespace JJJ.UseCase
       IEnumerable<ICpuHandStrategy> cpuHandStrategies,
       GameStateProvider gameStateProvider,
       IStrategySelector strategySelector,
-      GameTurnManager gameTurnManager
+      GameTurnManager gameTurnManager,
+      ICompositeHandAnimationPresenter compositeHandAnimationPresenter
     )
     {
       _cpuHandStrategies = cpuHandStrategies;
       _gameStateProvider = gameStateProvider;
       _strategySelector = strategySelector;
       _gameTurnManager = gameTurnManager;
+      _compositeHandAnimationPresenter = compositeHandAnimationPresenter;
     }
 
     /// <summary>
@@ -46,6 +49,8 @@ namespace JJJ.UseCase
 
       _gameStateProvider.PlayerCpuHandStrategy = pStrategy;
       _gameStateProvider.OpponentCpuHandStrategy = oStrategy;
+
+      _compositeHandAnimationPresenter.SelectDominantHandAll();
 
       // ターン開始前の初期化
       _gameStateProvider.CurrentTurnContext = new();

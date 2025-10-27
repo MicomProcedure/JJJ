@@ -1,6 +1,7 @@
 using UnityEngine;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Infrastructure;
 using JJJ.Utils;
 using ZLogger;
 using Cysharp.Threading.Tasks;
@@ -15,8 +16,13 @@ namespace JJJ.View
   /// </summary>
   public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
+    // 右手の割合
+    private const float RightHandWeight = 0.5f;
+
     // 後出しのときに遅らせる時間(ミリ秒)
     private const int TimeoutTime = 500;
+
+    private readonly IRandomService _randomService = new RandomService();
 
     /// <summary>
     /// この手がプレイヤーのものかどうか
@@ -47,6 +53,7 @@ namespace JJJ.View
 
     private static readonly int InitHash = Animator.StringToHash("Init");
     private static readonly int ResetHash = Animator.StringToHash("Reset");
+
     private static readonly Dictionary<HandType, IEnumerable<int>> _handTypeToAnimationHashes = new Dictionary<HandType, IEnumerable<int>>()
     {
       { HandType.Rock, new List<int> { Animator.StringToHash("Rock"), Animator.StringToHash("Rock_start") } },
@@ -188,7 +195,7 @@ namespace JJJ.View
     /// <summary>
     /// 後出しの場合のみアニメーションを遅延させる
     /// </summary>
-    internal async UniTask DoTimeout(CancellationToken cancellationToken = default)
+    public async UniTask DoTimeout(CancellationToken cancellationToken = default)
     {
       if (_animator == null)
       {
@@ -204,6 +211,17 @@ namespace JJJ.View
         await UniTask.Delay(TimeoutTime, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
         _animator.speed = 1f;
       }
+    }
+
+    public void SelectDominantHand()
+    {
+      _isRightHand = _randomService.NextDouble() < RightHandWeight;
+
+      transform.localScale = new Vector3(
+        transform.localScale.x,
+        transform.localScale.y,
+        _isPlayerHand ^ _isRightHand ? Mathf.Abs(transform.localScale.z) : -Mathf.Abs(transform.localScale.z)
+      );
     }
   }
 }
