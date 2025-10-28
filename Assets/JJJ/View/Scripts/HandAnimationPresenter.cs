@@ -17,7 +17,7 @@ namespace JJJ.View
   public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
     // 右手の割合
-    private const float RightHandWeight = 0.5f;
+    private const float RightHandWeight = 0.9f;
 
     // 後出しのときに遅らせる時間(ミリ秒)
     private const int TimeoutTime = 500;
