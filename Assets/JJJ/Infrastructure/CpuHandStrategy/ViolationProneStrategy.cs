@@ -72,10 +72,10 @@ namespace JJJ.Infrastructure.CpuHandStrategy
     /// </summary>
     /// <param name="turnContext">現在のターンのコンテキスト</param>
     /// <returns>CPUの次の手</returns>
-    public Hand GetNextCpuHand(TurnContext turnContext)
+    public Hand GetNextCpuHand(TurnContext turnContext, PersonType cpuPersonType)
     {
       // 有効な手のリストを取得
-      var availableHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
+      var availableHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext, cpuPersonType).ToList();
 
       double randomValue = _randomService.NextDouble();
 
@@ -92,7 +92,7 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       {
         _logger.ZLogDebug($"ViolationProneStrategy: Alpha violation check.");
         // αの効果が発動中の場合
-        if (turnContext.AlphaRemainingTurns > 0)
+        if (turnContext.GetAlphaRemainingTurns(cpuPersonType) > 0)
         {
           _logger.ZLogDebug($"ViolationProneStrategy: Alpha is active, violating by playing Alpha.");
           // αを出す場合
@@ -103,10 +103,10 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       {
         _logger.ZLogDebug($"ViolationProneStrategy: Beta violation check.");
         // βの効果が発動中の場合
-        if (turnContext.BetaRemainingTurns > 0)
+        if (turnContext.GetBetaRemainingTurns(cpuPersonType) > 0)
         {
           // βまたは封印された手を出す場合
-          var sealedHandType = turnContext.SealedHandType;
+          var sealedHandType = turnContext.GetSealedHandType(cpuPersonType);
           if (_randomService.NextDouble() < 0.5 || !sealedHandType.HasValue)
           {
             _logger.ZLogDebug($"ViolationProneStrategy: Beta is active, violating by playing Beta.");

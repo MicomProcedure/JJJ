@@ -58,8 +58,8 @@ namespace JJJ.UseCase.Turn
       var judgeTimeLimit = _gameStateProvider.JudgeTimeLimit;
 
       // CPU hands & truth
-      var playerHand = _gameStateProvider.PlayerCpuHandStrategy.GetNextCpuHand(context);
-      var opponentHand = _gameStateProvider.OpponentCpuHandStrategy.GetNextCpuHand(context);
+      var playerHand = _gameStateProvider.PlayerCpuHandStrategy.GetNextCpuHand(context, PersonType.Player);
+      var opponentHand = _gameStateProvider.OpponentCpuHandStrategy.GetNextCpuHand(context, PersonType.Opponent);
       var truthResult = _ruleSet.Judge(playerHand, opponentHand, context);
 
       // Observables

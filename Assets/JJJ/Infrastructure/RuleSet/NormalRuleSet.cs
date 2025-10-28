@@ -19,8 +19,8 @@ namespace JJJ.Infrastructure
     public JudgeResult Judge(Hand playerHand, Hand opponentHand, TurnContext turnContext)
     {
       // 両者の手が反則かどうかをチェック
-      var playerHandValidation = ValidateHand(playerHand, turnContext);
-      var opponentHandValidation = ValidateHand(opponentHand, turnContext);
+      var playerHandValidation = ValidateHand(playerHand, turnContext, PersonType.Player);
+      var opponentHandValidation = ValidateHand(opponentHand, turnContext, PersonType.Opponent);
 
       // どちらかまたは両方が反則の場合の処理
       if (!playerHandValidation.IsValid || !opponentHandValidation.IsValid)
@@ -47,7 +47,7 @@ namespace JJJ.Infrastructure
     /// <param name="turnContext">現在のターンのコンテキスト</param>
     /// <returns>判定結果</returns>
     /// <remarks>ノーマルモードは後出しのみが反則</remarks>
-    public HandValidationResult ValidateHand(Hand hand, TurnContext turnContext)
+    public HandValidationResult ValidateHand(Hand hand, TurnContext turnContext, PersonType personType)
     {
       return hand.IsTimeout ? new(false, ViolationType.Timeout) : new(true, ViolationType.None);
     }
