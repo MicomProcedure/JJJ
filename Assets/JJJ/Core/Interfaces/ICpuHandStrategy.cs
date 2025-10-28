@@ -19,7 +19,8 @@ namespace JJJ.Core.Interfaces
     /// CPUの次の手を決定する
     /// </summary>
     /// <param name="turnContext">現在のターンのコンテキスト</param>
+    /// <param name="cpuPersonType">CPUのキャラクタータイプ</param>
     /// <returns>CPUの次の手</returns>
-    public Hand GetNextCpuHand(TurnContext turnContext);
+    public Hand GetNextCpuHand(TurnContext turnContext, PersonType cpuPersonType);
   }
 }

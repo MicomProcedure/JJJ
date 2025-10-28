@@ -62,9 +62,9 @@ namespace JJJ.Infrastructure.CpuHandStrategy
       _logger.ZLogDebug($"CyclicStrategy initialized with GameMode: {_gameMode}");
     }
 
-    public Hand GetNextCpuHand(TurnContext turnContext)
+    public Hand GetNextCpuHand(TurnContext turnContext, PersonType cpuPersonType)
     {
-      var validHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext);
+      var validHandTypes = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext, cpuPersonType);
 
       // 反則するかどうかを判定
       if (_randomService.NextDouble() < _violationProbability)

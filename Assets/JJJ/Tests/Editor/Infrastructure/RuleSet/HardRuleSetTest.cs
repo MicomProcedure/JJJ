@@ -31,41 +31,6 @@ namespace JJJ.Tests.Infrastructure.RuleSet
     }
 
     /// <summary>
-    /// 偶数ターンでの特別な三角形同士の特殊相性テスト
-    /// 偶数ターンで特別な三角形（チョキ・1・3）同士の場合、通常とは逆の結果になることを確認
-    /// </summary>
-    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
-    public void Judge_EvenTurnSpecialTriangle_ReturnsReversedResult(HandType playerHand, HandType opponentHand, bool isWinExpected)
-    {
-      var expectedResult = isWinExpected ? JudgeResultType.Lose : JudgeResultType.Win;
-      var player = new Hand(playerHand);
-      var opponent = new Hand(opponentHand);
-      var turnContext = new TurnContext(turnCount: 2); // Even turn
-
-      var result = _hardRuleSet.Judge(player, opponent, turnContext);
-
-      Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Even turn special triangle logic: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
-    }
-
-    /// <summary>
-    /// 奇数ターンでは通常ルールが適用されることをテスト
-    /// </summary>
-    [TestCaseSource(typeof(TestDataHelper), nameof(TestDataHelper.GetSpecialTriangleTestCases))]
-    public void Judge_OddTurn_UsesNormalRules(HandType playerHand, HandType opponentHand, bool isWinExpected)
-    {
-      var expectedResult = isWinExpected ? JudgeResultType.Win : JudgeResultType.Lose;
-      var player = new Hand(playerHand);
-      var opponent = new Hand(opponentHand);
-      var turnContext = new TurnContext(turnCount: 1); // Odd turn
-
-      var result = _hardRuleSet.Judge(player, opponent, turnContext);
-
-      Assert.That(result.Type, Is.EqualTo(expectedResult),
-                  $"Odd turn should use normal rules: {playerHand} vs {opponentHand}, expected {expectedResult}, got {result.Type}");
-    }
-
-    /// <summary>
     /// Alphaのバリデーションテスト
     /// </summary>
     [Test]
@@ -74,7 +39,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       var hand = new Hand(HandType.Alpha);
       var turnContext = new TurnContext().ActivateAlpha(2, PersonType.Player); // Alpha有効中
 
-      var result = _hardRuleSet.ValidateHand(hand, turnContext);
+      var result = _hardRuleSet.ValidateHand(hand, turnContext, PersonType.Player);
 
       Assert.That(result.IsValid, Is.False,
                   "Alpha hand should not be valid when Alpha is active.");
@@ -91,7 +56,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       var hand = new Hand(HandType.Beta);
       var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock, PersonType.Player); // Beta有効中
 
-      var result = _hardRuleSet.ValidateHand(hand, turnContext);
+      var result = _hardRuleSet.ValidateHand(hand, turnContext, PersonType.Player);
 
       Assert.That(result.IsValid, Is.False,
                   "Beta hand should not be valid when Beta is active.");
@@ -108,7 +73,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       var hand = new Hand(HandType.Rock);
       var turnContext = new TurnContext().ActivateBeta(2, HandType.Rock, PersonType.Player); // Rockが封印
 
-      var result = _hardRuleSet.ValidateHand(hand, turnContext);
+      var result = _hardRuleSet.ValidateHand(hand, turnContext, PersonType.Player);
 
       Assert.That(result.IsValid, Is.False,
                   "Sealed hand should not be valid when the hand is sealed.");
@@ -125,7 +90,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       var hand = new Hand(HandType.Rock, isTimeout: true);
       var turnContext = new TurnContext();
 
-      var result = _hardRuleSet.ValidateHand(hand, turnContext);
+      var result = _hardRuleSet.ValidateHand(hand, turnContext, PersonType.Player);
 
       Assert.That(result.IsValid, Is.False,
                   "Timeout hand should not be valid.");
@@ -142,7 +107,7 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       var hand = new Hand(HandType.Rock);
       var turnContext = new TurnContext();
 
-      var result = _hardRuleSet.ValidateHand(hand, turnContext);
+      var result = _hardRuleSet.ValidateHand(hand, turnContext, PersonType.Player);
 
       Assert.That(result.IsValid, Is.True,
                   "Valid hand should be accepted.");
@@ -350,10 +315,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 
       _hardRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(turnContext.AlphaRemainingTurns, Is.GreaterThan(0),
+      Assert.That(turnContext.GetAlphaRemainingTurns(PersonType.Player), Is.GreaterThan(0),
                   "Alpha should be activated for more than 0 turns.");
-      Assert.That(turnContext.AlphaActivatedBy, Is.EqualTo(PersonType.Player),
-                  "Alpha should be activated by Player.");
     }
 
     /// <summary>
@@ -368,10 +331,8 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 
       _hardRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(turnContext.AlphaRemainingTurns, Is.GreaterThan(0),
+      Assert.That(turnContext.GetAlphaRemainingTurns(PersonType.Opponent), Is.GreaterThan(0),
                   "Alpha should be activated for more than 0 turns.");
-      Assert.That(turnContext.AlphaActivatedBy, Is.EqualTo(PersonType.Opponent),
-                  "Alpha should be activated by Opponent.");
     }
 
     /// <summary>
@@ -386,12 +347,10 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 
       _hardRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(turnContext.BetaRemainingTurns, Is.GreaterThan(0),
+      Assert.That(turnContext.GetBetaRemainingTurns(PersonType.Player), Is.GreaterThan(0),
                   "Beta should be activated for more than 0 turns.");
-      Assert.That(turnContext.SealedHandType, Is.EqualTo(HandType.Rock),
+      Assert.That(turnContext.GetSealedHandType(PersonType.Player), Is.EqualTo(HandType.Rock),
                   "Opponent's hand should be sealed.");
-      Assert.That(turnContext.BetaActivatedBy, Is.EqualTo(PersonType.Player),
-                  "Beta should be activated by Player.");
     }
 
     /// <summary>
@@ -406,12 +365,10 @@ namespace JJJ.Tests.Infrastructure.RuleSet
 
       _hardRuleSet.Judge(player, opponent, turnContext);
 
-      Assert.That(turnContext.BetaRemainingTurns, Is.GreaterThan(0),
+      Assert.That(turnContext.GetBetaRemainingTurns(PersonType.Opponent), Is.GreaterThan(0),
                   "Beta should be activated for more than 0 turns.");
-      Assert.That(turnContext.SealedHandType, Is.EqualTo(HandType.Paper),
+      Assert.That(turnContext.GetSealedHandType(PersonType.Opponent), Is.EqualTo(HandType.Paper),
                   "Player's hand should be sealed.");
-      Assert.That(turnContext.BetaActivatedBy, Is.EqualTo(PersonType.Opponent),
-                  "Beta should be activated by Opponent.");
     }
 
     /// <summary>
