@@ -1,13 +1,13 @@
 using UnityEngine;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
-using JJJ.Infrastructure;
 using JJJ.Utils;
 using ZLogger;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using VContainer;
 
 namespace JJJ.View
 {
@@ -22,7 +22,7 @@ namespace JJJ.View
     // 後出しのときに遅らせる時間(ミリ秒)
     private const int TimeoutTime = 500;
 
-    private readonly IRandomService _randomService = new RandomService();
+    private IRandomService? _randomService;
 
     /// <summary>
     /// この手がプレイヤーのものかどうか
@@ -68,6 +68,12 @@ namespace JJJ.View
     };
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<HandAnimationPresenter>();
+
+    [Inject]
+    public void Construct(IRandomService randomService)
+    {
+      _randomService = randomService;
+    }
 
     private void Start()
     {
@@ -215,6 +221,11 @@ namespace JJJ.View
 
     public void SelectDominantHand()
     {
+      if (_randomService == null)
+      {
+        _logger.ZLogError($"RandomService is not injected in HandAnimationPresenter.");
+        return;
+      }
       _isRightHand = _randomService.NextDouble() < RightHandWeight;
 
       transform.localScale = new Vector3(

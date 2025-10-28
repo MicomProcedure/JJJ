@@ -3556,7 +3556,9 @@ MonoBehaviour:
   parentReference:
     TypeName: JJJ.DI.GameLifetimeScope
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 1811517108}
+  - {fileID: 1054954207}
   _judgeInput: {fileID: 1540167803}
   _compositeHandAnimationPresenter: {fileID: 410858580}
   _timerRemainsPresenter: {fileID: 2473065097559173299}
