@@ -1488,7 +1488,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.8
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1550,13 +1550,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756227669}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: 10, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!114 &756227672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2205,7 +2205,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isPlayerHand: 0
-  _isRightHand: 0
   _animator: {fileID: 1054954209}
 --- !u!95 &1054954209
 Animator:
@@ -3557,7 +3556,9 @@ MonoBehaviour:
   parentReference:
     TypeName: JJJ.DI.GameLifetimeScope
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 1811517108}
+  - {fileID: 1054954207}
   _judgeInput: {fileID: 1540167803}
   _compositeHandAnimationPresenter: {fileID: 410858580}
   _timerRemainsPresenter: {fileID: 2473065097559173299}
@@ -4056,7 +4057,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalScale.z
-      value: -1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 21eb588d1c6bd9842a5b97850513e90b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4348,7 +4349,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isPlayerHand: 1
-  _isRightHand: 1
   _animator: {fileID: 1811517110}
 --- !u!95 &1811517110
 Animator:

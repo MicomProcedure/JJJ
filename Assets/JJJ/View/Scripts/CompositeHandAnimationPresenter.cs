@@ -37,5 +37,12 @@ namespace JJJ.View
         OpponentHandAnimationPresenter?.ReturnInit(cancellationToken) ?? UniTask.CompletedTask
       );
     }
+
+    public void SelectDominantHandAll()
+    {
+      _logger.ZLogTrace($"Selecting dominant hands for both player and opponent.");
+      PlayerHandAnimationPresenter?.SelectDominantHand();
+      OpponentHandAnimationPresenter?.SelectDominantHand();
+    }
   }
 }
