@@ -66,6 +66,31 @@ namespace JJJ.UI
       _failedText.gameObject.SetActive(true);
     }
 
+    public void ShowButtons()
+    {
+      _yesButton.gameObject.SetActive(true);
+      _noButton.gameObject.SetActive(true);
+    }
+
+    public void HideButtons()
+    {
+      _yesButton.gameObject.SetActive(false);
+      _noButton.gameObject.SetActive(false);
+    }
+
+    public void ShowRanking()
+    {
+      _contentsRoot.SetActive(true);
+      _loadingText.gameObject.SetActive(false);
+      _succeedText.gameObject.SetActive(false);
+      _failedText.gameObject.SetActive(false);
+    }
+
+    public void EnableRetryMode()
+    {
+      _yesButton.GetComponentInChildren<TextMeshProUGUI>().SetText("再送信");
+    }
+
     private void Start()
     {
       _rankingName.text = _optionProvider.RankingDefaultName;

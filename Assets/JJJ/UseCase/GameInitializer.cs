@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Core.Interfaces.UI;
 using JJJ.Utils;
 using JJJ.View;
 using KanKikuchi.AudioManager;
@@ -30,6 +31,7 @@ namespace JJJ.UseCase
     private readonly IGameReadyAnimationPresenter _gameReadyAnimationPresenter;
     private readonly IGameEndAnimationPresenter _gameEndAnimationPresenter;
     private readonly IJudgeInput _judgeInput;
+    private readonly IUIInteractivityController _uiInteractivityController;
 
     private CompositeDisposable _disposables = new CompositeDisposable();
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<GameInitializer>();
@@ -46,7 +48,8 @@ namespace JJJ.UseCase
       ITimerRemainsPresenter timerRemainsPresenter,
       IGameReadyAnimationPresenter gameReadyAnimationPresenter,
       IGameEndAnimationPresenter gameEndAnimationPresenter,
-      IJudgeInput judgeInput
+      IJudgeInput judgeInput,
+      IUIInteractivityController uiInteractivityController
     )
     {
       _timerService = timerService;
@@ -61,6 +64,7 @@ namespace JJJ.UseCase
       _gameReadyAnimationPresenter = gameReadyAnimationPresenter;
       _gameEndAnimationPresenter = gameEndAnimationPresenter;
       _judgeInput = judgeInput;
+      _uiInteractivityController = uiInteractivityController;
     }
 
     /// <summary>
@@ -163,6 +167,7 @@ namespace JJJ.UseCase
     {
       // 入力を無効化する
       _gameStateProvider.IsInputEnabled.Value = false;
+      _uiInteractivityController.DisableAllInteractivity();
       // ゲーム終了アニメーション再生
       await _gameEndAnimationPresenter.PlayGameEndAnimation(cancellationToken);
       _gameStateProvider.CurrentResultSceneData.Score = _gameStateProvider.CurrentScore.Value;

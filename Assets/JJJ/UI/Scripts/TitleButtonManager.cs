@@ -1,6 +1,7 @@
 using System;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
+using JJJ.Core.Interfaces.UI;
 using JJJ.Utils;
 using R3;
 using VContainer.Unity;
@@ -15,6 +16,7 @@ namespace JJJ.UI
     private IVisible _helpsView;
     private IVisible _rankingsView;
     private TitleButtonObservables _titleButtonObservables;
+    private IUIInteractivityController _uiInteractivityController;
     private ISceneManager _sceneManager;
 
     private CompositeDisposable _disposables = new();
@@ -25,6 +27,7 @@ namespace JJJ.UI
                               IHelpsView helpsView,
                               IRankingsView rankingsView,
                               TitleButtonObservables titleButtonObservables,
+                              IUIInteractivityController uiInteractivityController,
                               ISceneManager sceneManager)
     {
       _gameModeProvider = gameModeProvider;
@@ -33,6 +36,7 @@ namespace JJJ.UI
       _helpsView = helpsView;
       _rankingsView = rankingsView;
       _titleButtonObservables = titleButtonObservables;
+      _uiInteractivityController = uiInteractivityController;
       _sceneManager = sceneManager;
     }
 
@@ -46,6 +50,7 @@ namespace JJJ.UI
       .Subscribe(async gameMode =>
       {
         _gameModeProvider.Set(gameMode);
+        _uiInteractivityController.DisableAllInteractivity();
         await _sceneManager.PushWithFade(SceneNavigationUtil.GameSceneIdentifier);
       })
       .AddTo(_disposables);

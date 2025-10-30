@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Interfaces;
+using JJJ.Core.Interfaces.UI;
 using JJJ.Utils;
 using KanKikuchi.AudioManager;
 using ProcRanking;
@@ -19,19 +20,23 @@ namespace JJJ.UI
     private IGameModeProvider _gameModeProvider;
     private IOptionProvider _optionProvider;
     private ISceneManager _sceneManager;
+    private IUIInteractivityController _uiInteractivityController;
     private CompositeDisposable _disposables = new();
+    private Subject<Unit> _rankingRetrySubject = new();
 
     public ResultButtonManager(RankingRegisterPanel rankingRegisterView,
                                ResultButtonObservables resultButtonObservables,
                                [Key("ClickScreenText")] GameObject clickScreenText,
                                IGameModeProvider gameModeProvider,
                                IOptionProvider optionProvider,
-                               ISceneManager sceneManager)
+                               ISceneManager sceneManager,
+                               IUIInteractivityController uiInteractivityController)
     {
       _rankingRegisterPanel = rankingRegisterView;
       _resultButtonObservables = resultButtonObservables;
       _clickScreenText = clickScreenText;
       _gameModeProvider = gameModeProvider;
+      _uiInteractivityController = uiInteractivityController;
       _optionProvider = optionProvider;
       _sceneManager = sceneManager;
     }
@@ -39,11 +44,12 @@ namespace JJJ.UI
     public void Start()
     {
       _rankingRegisterPanel.OnSubmit
-        .Take(1)
+        .ThrottleFirst(_rankingRetrySubject)
         .Subscribe(async result =>
         {
           if (result.Item1)
           {
+            _rankingRegisterPanel.ShowLoading();
             ProcRaUtil.Save(_gameModeProvider.Current,
                             result.Item2,
                             _rankingRegisterPanel.Score,
@@ -52,12 +58,18 @@ namespace JJJ.UI
               if (e != null)
               {
                 _rankingRegisterPanel.ShowFailed();
-                await UniTask.Delay(500);
-                await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
+                _rankingRegisterPanel.HideButtons();
+                await UniTask.Delay(1000);
+                _rankingRegisterPanel.ShowRanking();
+                _rankingRetrySubject.OnNext(Unit.Default);
+                _rankingRegisterPanel.EnableRetryMode();
+                _rankingRegisterPanel.ShowButtons();
+                // await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
               }
               else
               {
                 _rankingRegisterPanel.ShowSucceed();
+                _uiInteractivityController.DisableAllInteractivity();
                 await UniTask.Delay(500);
                 await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
               }
@@ -65,9 +77,9 @@ namespace JJJ.UI
           }
           else
           {
+            _uiInteractivityController.DisableAllInteractivity();
             await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }
-
         })
         .AddTo(_disposables);
 
@@ -81,7 +93,9 @@ namespace JJJ.UI
 
           if (_optionProvider.IsAutoRankingSubmit)
           {
+            // TODO: SDKが更新されたら送信失敗時の処理を追加する
             ProcRaUtil.Save(_gameModeProvider.Current, _optionProvider.RankingDefaultName, _rankingRegisterPanel.Score);
+            _uiInteractivityController.DisableAllInteractivity();
             await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }
           else
