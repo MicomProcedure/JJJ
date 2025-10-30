@@ -12,6 +12,7 @@ using VContainer;
 using VContainer.Unity;
 using JJJ.UI;
 using JJJ.View.Scripts;
+using JJJ.Core.Interfaces.UI;
 
 namespace JJJ.DI
 {
@@ -31,6 +32,7 @@ namespace JJJ.DI
     [SerializeField] private GameButtonObservables? _gameButtonObservables;
     [SerializeField] private GameReadyAnimationPresenter? _gameReadyAnimationPresenter;
     [SerializeField] private GameEndAnimationPresenter? _gameEndAnimationPresenter;
+    [SerializeField] private UIInteractivityController? _uiInteractivityController;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -74,6 +76,7 @@ namespace JJJ.DI
       builder.RegisterComponent(_gameButtonObservables).As<GameButtonObservables>();
       builder.RegisterComponent(_gameReadyAnimationPresenter).As<IGameReadyAnimationPresenter>();
       builder.RegisterComponent(_gameEndAnimationPresenter).As<IGameEndAnimationPresenter>();
+      builder.RegisterComponent(_uiInteractivityController).As<IUIInteractivityController>();
     }
   }
 }
