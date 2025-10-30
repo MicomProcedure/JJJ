@@ -1401,6 +1401,7 @@ MonoBehaviour:
   _rankingRegisterView: {fileID: 1104970998}
   _clickScreenText: {fileID: 336171118}
   _resultButtonObservables: {fileID: 1992083421}
+  _uiInteractivityController: {fileID: 1951953135}
 --- !u!1 &390046048
 GameObject:
   m_ObjectHideFlags: 0
@@ -2184,6 +2185,7 @@ GameObject:
   - component: {fileID: 882422145}
   - component: {fileID: 882422144}
   - component: {fileID: 882422143}
+  - component: {fileID: 882422147}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2280,6 +2282,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &882422147
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882422142}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &891210412
 GameObject:
   m_ObjectHideFlags: 0
@@ -5121,6 +5135,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1899619200}
   m_CullTransparentMesh: 1
+--- !u!1 &1951953134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1951953136}
+  - component: {fileID: 1951953135}
+  m_Layer: 0
+  m_Name: UIInteractivityController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1951953135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951953134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0eb8260665b0c042ae3d01d35052971, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.UIInteractivityController
+  _roots:
+  - {fileID: 882422147}
+--- !u!4 &1951953136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951953134}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 960, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1971773741
 GameObject:
   m_ObjectHideFlags: 0
@@ -5731,3 +5791,4 @@ SceneRoots:
   - {fileID: 1253224106}
   - {fileID: 1853952279}
   - {fileID: 1992083422}
+  - {fileID: 1951953136}
