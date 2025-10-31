@@ -29,7 +29,7 @@ namespace JJJ.Infrastructure
       {
         if (e != null)
         {
-          tcs.TrySetException(new InvalidOperationException(e.Message));
+          tcs.TrySetException(new InvalidOperationException(e.Message, e));
         }
         else
         {
@@ -39,7 +39,7 @@ namespace JJJ.Infrastructure
 
       return tcs.Task;
     }
-    
+
     public UniTask<IReadOnlyList<RankingData>> LoadTopNScores(GameMode gameMode, int n)
     {
       var query = new ProcRaQuery<ProcRaData>(StoreName(gameMode))
@@ -51,7 +51,7 @@ namespace JJJ.Infrastructure
       {
         if (e != null)
         {
-          tcs.TrySetException(new InvalidOperationException(e.Message));
+          tcs.TrySetException(new InvalidOperationException(e.Message, e));
         }
         else
         {
