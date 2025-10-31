@@ -55,28 +55,24 @@ namespace JJJ.UI
           if (result.Item1)
           {
             _rankingRegisterPanel.ShowLoading();
-            var task = _rankingUseCase.SaveScoreAsync(_gameModeProvider.Current, new RankingData(result.Item2, _rankingRegisterPanel.Score));
-            await task.ContinueWith(async () =>
+            try
             {
-              if (task.Status == UniTaskStatus.Faulted)
-              {
-                _rankingRegisterPanel.ShowFailed();
-                _rankingRegisterPanel.HideButtons();
-                await UniTask.Delay(1000);
-                _rankingRegisterPanel.ShowRanking();
-                _rankingRetrySubject.OnNext(Unit.Default);
-                _rankingRegisterPanel.EnableRetryMode();
-                _rankingRegisterPanel.ShowButtons();
-                // await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
-              }
-              else
-              {
-                _rankingRegisterPanel.ShowSucceed();
-                _uiInteractivityController.DisableAllInteractivity();
-                await UniTask.Delay(500);
-                await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
-              }
-            });
+              await _rankingUseCase.SaveScoreAsync(_gameModeProvider.Current, new RankingData(result.Item2, _rankingRegisterPanel.Score));
+              _rankingRegisterPanel.ShowSucceed();
+              _uiInteractivityController.DisableAllInteractivity();
+              await UniTask.Delay(500);
+              await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
+            }
+            catch (Exception)
+            {
+              _rankingRegisterPanel.ShowFailed();
+              _rankingRegisterPanel.HideButtons();
+              await UniTask.Delay(1000);
+              _rankingRegisterPanel.ShowRanking();
+              _rankingRetrySubject.OnNext(Unit.Default);
+              _rankingRegisterPanel.EnableRetryMode();
+              _rankingRegisterPanel.ShowButtons();
+            }
           }
           else
           {
@@ -96,8 +92,15 @@ namespace JJJ.UI
 
           if (_optionProvider.IsAutoRankingSubmit)
           {
-            // TODO: SDKが更新されたら送信失敗時の処理を追加する
-            await _rankingUseCase.SaveScoreAsync(_gameModeProvider.Current, new RankingData(_optionProvider.RankingDefaultName, _rankingRegisterPanel.Score));
+            try
+            {
+              await _rankingUseCase.SaveScoreAsync(_gameModeProvider.Current, new RankingData(_optionProvider.RankingDefaultName, _rankingRegisterPanel.Score));
+            }
+            catch (Exception)
+            {
+              // TODO: SDKが更新されたら送信失敗時の処理を追加する
+              throw;
+            }
             _uiInteractivityController.DisableAllInteractivity();
             await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }
