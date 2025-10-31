@@ -68,9 +68,9 @@ namespace JJJ.DI
       builder.RegisterComponent(_judgeInput).As<IJudgeInput>();
       builder.RegisterComponent(_compositeHandAnimationPresenter).As<ICompositeHandAnimationPresenter>();
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
-      builder.RegisterComponent(_currentScorePresenter).As<CurrentScorePresenter>();
-      builder.RegisterComponent(_currentJudgesPresenter).As<CurrentJudgesPresenter>();
-      builder.RegisterComponent(_remainJudgeTimePresenter).As<GameRemainTimePresenter>();
+      builder.RegisterComponent(_currentScorePresenter).As<ICurrentScorePresenter>();
+      builder.RegisterComponent(_currentJudgesPresenter).As<ICurrentJudgesPresenter>();
+      builder.RegisterComponent(_remainJudgeTimePresenter).As<IGameRemainTimePresenter>();
       builder.RegisterInstance(_gameSettingsProvider).As<IGameSettingsProvider>();
       builder.RegisterComponent(_rulesView).As<IRulesView>();
       builder.RegisterComponent(_gameButtonObservables).As<GameButtonObservables>();
