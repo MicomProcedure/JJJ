@@ -11,6 +11,7 @@ namespace JJJ.UI
   {
     private IGameModeProvider _gameModeProvider;
     private IOptionProvider _optionProvider;
+    private IRulesView _rulesView;
     private IOptionView _optionView;
     private IVisible _helpsView;
     private IVisible _rankingsView;
@@ -21,6 +22,7 @@ namespace JJJ.UI
 
     public TitleButtonManager(IGameModeProvider gameModeProvider,
                               IOptionProvider optionProvider,
+                              IRulesView rulesView,
                               IOptionView optionView,
                               IHelpsView helpsView,
                               IRankingsView rankingsView,
@@ -29,6 +31,7 @@ namespace JJJ.UI
     {
       _gameModeProvider = gameModeProvider;
       _optionProvider = optionProvider;
+      _rulesView = rulesView;
       _optionView = optionView;
       _helpsView = helpsView;
       _rankingsView = rankingsView;
@@ -49,6 +52,18 @@ namespace JJJ.UI
         await _sceneManager.PushWithFade(SceneNavigationUtil.GameSceneIdentifier);
       })
       .AddTo(_disposables);
+
+      Observable.Merge(
+        _titleButtonObservables.EasyRuleButtonOnClick.Select(_ => GameMode.Easy),
+        _titleButtonObservables.NormalRuleButtonOnClick.Select(_ => GameMode.Normal),
+        _titleButtonObservables.HardRuleButtonOnClick.Select(_ => GameMode.Hard)
+      )
+      .Subscribe(gameMode => _rulesView.Show(gameMode))
+      .AddTo(_disposables);
+
+      _titleButtonObservables.HideRuleButtonOnClick
+        .Subscribe(_ => _rulesView.Hide())
+        .AddTo(_disposables);
 
       _titleButtonObservables.ExitButtonOnClick
         .Subscribe(_ =>
