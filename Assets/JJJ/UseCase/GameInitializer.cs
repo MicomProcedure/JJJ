@@ -5,7 +5,6 @@ using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Core.Interfaces.UI;
 using JJJ.Utils;
-using JJJ.View;
 using KanKikuchi.AudioManager;
 using R3;
 using ZLogger;
@@ -24,9 +23,9 @@ namespace JJJ.UseCase
     private readonly IGameSettingsProvider _gameSettingsProvider;
     private readonly GameStateProvider _gameStateProvider;
 
-    private readonly CurrentScorePresenter _currentScorePresenter;
-    private readonly CurrentJudgesPresenter _currentJudgesPresenter;
-    private readonly GameRemainTimePresenter _remainGameTimePresenter;
+    private readonly ICurrentScorePresenter _currentScorePresenter;
+    private readonly ICurrentJudgesPresenter _currentJudgesPresenter;
+    private readonly IGameRemainTimePresenter _remainGameTimePresenter;
     private readonly ITimerRemainsPresenter _timerRemainsPresenter;
     private readonly IGameReadyAnimationPresenter _gameReadyAnimationPresenter;
     private readonly IGameEndAnimationPresenter _gameEndAnimationPresenter;
@@ -42,9 +41,9 @@ namespace JJJ.UseCase
       IGameModeProvider gameModeProvider,
       IGameSettingsProvider gameSettingsProvider,
       GameStateProvider gameStateProvider,
-      CurrentScorePresenter currentScorePresenter,
-      CurrentJudgesPresenter currentJudgesPresenter,
-      GameRemainTimePresenter remainGameTimePresenter,
+      ICurrentScorePresenter currentScorePresenter,
+      ICurrentJudgesPresenter currentJudgesPresenter,
+      IGameRemainTimePresenter remainGameTimePresenter,
       ITimerRemainsPresenter timerRemainsPresenter,
       IGameReadyAnimationPresenter gameReadyAnimationPresenter,
       IGameEndAnimationPresenter gameEndAnimationPresenter,

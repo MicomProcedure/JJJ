@@ -1,3 +1,4 @@
+using JJJ.Core.Interfaces;
 using UnityEngine;
 
 namespace JJJ.View
@@ -5,7 +6,7 @@ namespace JJJ.View
   /// <summary>
   /// 現在のジャッジ数を表示するコンポーネント
   /// </summary>
-  public class CurrentJudgesPresenter : MonoBehaviour
+  public class CurrentJudgesPresenter : MonoBehaviour, ICurrentJudgesPresenter
   {
     /// <summary>
     /// 現在のジャッジ数を表示するTextMeshProUGUI
