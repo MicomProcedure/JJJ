@@ -1,7 +1,9 @@
 using System;
 using Cysharp.Threading.Tasks;
+using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
 using JJJ.Core.Interfaces.UI;
+using JJJ.UseCase;
 using JJJ.Utils;
 using KanKikuchi.AudioManager;
 using R3;
@@ -20,6 +22,8 @@ namespace JJJ.UI
     private IOptionProvider _optionProvider;
     private ISceneManager _sceneManager;
     private IUIInteractivityController _uiInteractivityController;
+    private RankingUseCase _rankingUseCase;
+
     private CompositeDisposable _disposables = new();
     private Subject<Unit> _rankingRetrySubject = new();
 
@@ -29,7 +33,8 @@ namespace JJJ.UI
                                IGameModeProvider gameModeProvider,
                                IOptionProvider optionProvider,
                                ISceneManager sceneManager,
-                               IUIInteractivityController uiInteractivityController)
+                               IUIInteractivityController uiInteractivityController,
+                               RankingUseCase rankingUseCase)
     {
       _rankingRegisterPanel = rankingRegisterView;
       _resultButtonObservables = resultButtonObservables;
@@ -38,6 +43,7 @@ namespace JJJ.UI
       _uiInteractivityController = uiInteractivityController;
       _optionProvider = optionProvider;
       _sceneManager = sceneManager;
+      _rankingUseCase = rankingUseCase;
     }
 
     public void Start()
@@ -49,28 +55,28 @@ namespace JJJ.UI
           if (result.Item1)
           {
             _rankingRegisterPanel.ShowLoading();
-            var task = ProcRaUtil.SaveAsync(_gameModeProvider.Current,
-                            result.Item2,
-                            _rankingRegisterPanel.Score);
-            await task;
-            if (task.Status == UniTaskStatus.Faulted)
+            var task = _rankingUseCase.SaveScoreAsync(_gameModeProvider.Current, new RankingData(result.Item2, _rankingRegisterPanel.Score));
+            await task.ContinueWith(async () =>
             {
-              _rankingRegisterPanel.ShowFailed();
-              _rankingRegisterPanel.HideButtons();
-              await UniTask.Delay(1000);
-              _rankingRegisterPanel.ShowRanking();
-              _rankingRetrySubject.OnNext(Unit.Default);
-              _rankingRegisterPanel.EnableRetryMode();
-              _rankingRegisterPanel.ShowButtons();
-              // await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
-            }
-            else
-            {
-              _rankingRegisterPanel.ShowSucceed();
-              _uiInteractivityController.DisableAllInteractivity();
-              await UniTask.Delay(500);
-              await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
-            }
+              if (task.Status == UniTaskStatus.Faulted)
+              {
+                _rankingRegisterPanel.ShowFailed();
+                _rankingRegisterPanel.HideButtons();
+                await UniTask.Delay(1000);
+                _rankingRegisterPanel.ShowRanking();
+                _rankingRetrySubject.OnNext(Unit.Default);
+                _rankingRegisterPanel.EnableRetryMode();
+                _rankingRegisterPanel.ShowButtons();
+                // await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
+              }
+              else
+              {
+                _rankingRegisterPanel.ShowSucceed();
+                _uiInteractivityController.DisableAllInteractivity();
+                await UniTask.Delay(500);
+                await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
+              }
+            });
           }
           else
           {
@@ -91,7 +97,7 @@ namespace JJJ.UI
           if (_optionProvider.IsAutoRankingSubmit)
           {
             // TODO: SDKが更新されたら送信失敗時の処理を追加する
-            await ProcRaUtil.SaveAsync(_gameModeProvider.Current, _optionProvider.RankingDefaultName, _rankingRegisterPanel.Score);
+            await _rankingUseCase.SaveScoreAsync(_gameModeProvider.Current, new RankingData(_optionProvider.RankingDefaultName, _rankingRegisterPanel.Score));
             _uiInteractivityController.DisableAllInteractivity();
             await _sceneManager.PushWithFade(SceneNavigationUtil.TitleSceneIdentifier);
           }

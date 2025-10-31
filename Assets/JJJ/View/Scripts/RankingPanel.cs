@@ -1,10 +1,9 @@
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
-using ProcRanking;
+using JJJ.UseCase;
 using TMPro;
 using UnityEngine;
-using System;
-using JJJ.Utils;
-using Cysharp.Threading.Tasks;
+using VContainer;
 
 namespace JJJ.View
 {
@@ -17,6 +16,14 @@ namespace JJJ.View
     [SerializeField] private TextMeshProUGUI _failedText;
     [SerializeField] private RankingRow _rankingRowPrefab;
 
+    private RankingUseCase _rankingUseCase = null!;
+
+    [Inject]
+    public void Construct(RankingUseCase rankingUseCase)
+    {
+      _rankingUseCase = rankingUseCase;
+    }
+
     public void SetHighScore(int highScore)
     {
       _highScoreText.SetText(highScore < 0 ? "-" : highScore.ToString());
@@ -24,7 +31,7 @@ namespace JJJ.View
 
     private void OnEnable()
     {
-      var task = ProcRaUtil.LoadTopNAsync<ProcRaData>(_gameMode, 5);
+      var task = _rankingUseCase.GetTopNScoresAsync(_gameMode, 5);
       task.ContinueWith(list =>
       {
         if (task.Status == UniTaskStatus.Faulted)
@@ -36,8 +43,8 @@ namespace JJJ.View
         {
           for (int i = 0; i < list.Count; ++i)
           {
-            string name = Convert.ToString(list[i]["name"]);
-            int score = Convert.ToInt32(list[i]["score"]);
+            string name = list[i].PlayerName;
+            int score = list[i].Score;
             var obj = Instantiate(_rankingRowPrefab, _rankingRoot);
             obj.SetValue(i + 1, name, score);
           }
@@ -45,7 +52,6 @@ namespace JJJ.View
           _rankingRoot.gameObject.SetActive(true);
         }
       });
-
     }
 
     private void OnDisable()
