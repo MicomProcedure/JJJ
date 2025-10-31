@@ -2,9 +2,9 @@ using JJJ.Core.Entities;
 using ProcRanking;
 using TMPro;
 using UnityEngine;
-using System.Collections.Generic;
 using System;
 using JJJ.Utils;
+using Cysharp.Threading.Tasks;
 
 namespace JJJ.View
 {
@@ -24,19 +24,20 @@ namespace JJJ.View
 
     private void OnEnable()
     {
-      ProcRaUtil.LoadTop5(_gameMode, (List<ProcRaData> foundList, ProcRaException e) =>
+      var task = ProcRaUtil.LoadTopNAsync<ProcRaData>(_gameMode, 5);
+      task.ContinueWith(list =>
       {
-        if (e != null)
+        if (task.Status == UniTaskStatus.Faulted)
         {
           _loadingText.gameObject.SetActive(false);
           _failedText.gameObject.SetActive(true);
         }
         else
         {
-          for (int i = 0; i < foundList.Count; ++i)
+          for (int i = 0; i < list.Count; ++i)
           {
-            string name = Convert.ToString(foundList[i]["name"]);
-            int score = Convert.ToInt32(foundList[i]["score"]);
+            string name = Convert.ToString(list[i]["name"]);
+            int score = Convert.ToInt32(list[i]["score"]);
             var obj = Instantiate(_rankingRowPrefab, _rankingRoot);
             obj.SetValue(i + 1, name, score);
           }
