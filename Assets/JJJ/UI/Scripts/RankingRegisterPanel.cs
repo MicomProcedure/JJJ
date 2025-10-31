@@ -12,6 +12,7 @@ namespace JJJ.UI
     public int Score { get; private set; }
 
     [SerializeField] private GameObject _contentsRoot;
+    [SerializeField] private GameObject _rankingComponent;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TMP_InputField _rankingName;
     [SerializeField] private TextMeshProUGUI _loadingText;
@@ -44,7 +45,7 @@ namespace JJJ.UI
 
     public void ShowLoading()
     {
-      _contentsRoot.SetActive(false);
+      _rankingComponent.SetActive(false);
       _loadingText.gameObject.SetActive(true);
       _succeedText.gameObject.SetActive(false);
       _failedText.gameObject.SetActive(false);
@@ -52,7 +53,7 @@ namespace JJJ.UI
 
     public void ShowSucceed()
     {
-      _contentsRoot.SetActive(false);
+      _rankingComponent.SetActive(false);
       _loadingText.gameObject.SetActive(false);
       _succeedText.gameObject.SetActive(true);
       _failedText.gameObject.SetActive(false);
@@ -60,7 +61,7 @@ namespace JJJ.UI
 
     public void ShowFailed()
     {
-      _contentsRoot.SetActive(false);
+      _rankingComponent.SetActive(false);
       _loadingText.gameObject.SetActive(false);
       _succeedText.gameObject.SetActive(false);
       _failedText.gameObject.SetActive(true);
@@ -80,7 +81,7 @@ namespace JJJ.UI
 
     public void ShowRanking()
     {
-      _contentsRoot.SetActive(true);
+      _rankingComponent.SetActive(true);
       _loadingText.gameObject.SetActive(false);
       _succeedText.gameObject.SetActive(false);
       _failedText.gameObject.SetActive(false);
