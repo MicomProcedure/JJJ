@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
 using JJJ.UseCase;
 using JJJ.Utils;
