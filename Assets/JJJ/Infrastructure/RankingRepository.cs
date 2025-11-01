@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
 using JJJ.Core.Interfaces;
@@ -12,7 +13,7 @@ namespace JJJ.Infrastructure
   {
     private static string StoreName(GameMode gameMode) => $"JJJ-{gameMode.ToString().ToLower()}-store";
 
-    public UniTask SaveScore(GameMode gameMode, RankingData rankingData)
+    public UniTask SaveScore(GameMode gameMode, RankingData rankingData, CancellationToken? cancellationToken = null)
     {
       string name = rankingData.PlayerName;
       int score = rankingData.Score;
@@ -37,10 +38,10 @@ namespace JJJ.Infrastructure
         }
       });
 
-      return tcs.Task;
+      return tcs.Task.AttachExternalCancellation(cancellationToken ?? CancellationToken.None);
     }
 
-    public UniTask<IReadOnlyList<RankingData>> LoadTopNScores(GameMode gameMode, int n)
+    public UniTask<IReadOnlyList<RankingData>> LoadTopNScores(GameMode gameMode, int n, CancellationToken? cancellationToken = null)
     {
       var query = new ProcRaQuery<ProcRaData>(StoreName(gameMode))
         .SetLimit(n)
@@ -61,7 +62,7 @@ namespace JJJ.Infrastructure
       });
 
 
-      return tcs.Task;
+      return tcs.Task.AttachExternalCancellation(cancellationToken ?? CancellationToken.None);
     }
 
     private RankingData ConvertToRankingData(ProcRaData data)
