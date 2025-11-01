@@ -89,6 +89,7 @@ namespace JJJ.UI
         .Subscribe(async _ =>
         {
           SEManager.Instance.Play(SEPath.SE6);
+          _clickScreenText.SetActive(false);
 
           if (_optionProvider.IsAutoRankingSubmit)
           {
