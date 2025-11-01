@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using JJJ.Core.Entities;
 using JJJ.UseCase;
 using JJJ.Utils;
@@ -18,6 +21,7 @@ namespace JJJ.View
     [SerializeField] private RankingRow _rankingRowPrefab;
 
     private RankingUseCase _rankingUseCase = null!;
+    private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<TitleRankingPanel>();
 
@@ -36,7 +40,8 @@ namespace JJJ.View
     {
       try
       {
-        var list = await _rankingUseCase.GetTopNScoresAsync(_gameMode, 5);
+        _cancellationTokenSource = new CancellationTokenSource();
+        var list = await _rankingUseCase.GetTopNScoresAsync(_gameMode, 5, _cancellationTokenSource.Token);
         for (int i = 0; i < list.Count; ++i)
         {
           string name = list[i].PlayerName;
@@ -47,7 +52,11 @@ namespace JJJ.View
         _loadingText.gameObject.SetActive(false);
         _rankingRoot.gameObject.SetActive(true);
       }
-      catch (System.Exception e)
+      catch (OperationCanceledException)
+      {
+        _logger.ZLogWarning($"Loading ranking data was canceled.");
+      }
+      catch (Exception e)
       {
         _logger.ZLogError($"Failed to load ranking data for {_gameMode} mode.\n{e}");
         _loadingText.gameObject.SetActive(false);
@@ -64,6 +73,7 @@ namespace JJJ.View
       _rankingRoot.gameObject.SetActive(false);
       _loadingText.gameObject.SetActive(true);
       _failedText.gameObject.SetActive(false);
+      _cancellationTokenSource.Cancel();
     }
   }
 }
