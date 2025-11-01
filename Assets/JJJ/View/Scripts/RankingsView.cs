@@ -6,9 +6,9 @@ namespace JJJ.View
 {
   public class RankingsView : MonoBehaviour, IRankingsView
   {
-    [SerializeField] private RankingPanel _easyRankingPanel;
-    [SerializeField] private RankingPanel _normalRankingPanel;
-    [SerializeField] private RankingPanel _hardRankingPanel;
+    [SerializeField] private TitleRankingPanel _easyRankingPanel;
+    [SerializeField] private TitleRankingPanel _normalRankingPanel;
+    [SerializeField] private TitleRankingPanel _hardRankingPanel;
 
     private IHighScoreProvider _highScoreProvider = null!;
 

@@ -156,7 +156,15 @@ namespace JJJ.Infrastructure.Editor
 
       for (int i = 0; i < _sessions.Count; i++)
       {
-        turnContext.NextTurn();
+        if (!turnContext.IsPreviousTurnDoubleViolation)
+        {
+          turnContext.NextTurn();
+        }
+        else
+        {
+          _logs.Add($"以前のターンが両者とも反則だったため、ターンを進めません。");
+          turnContext.SetPreviousTurnDoubleViolation(false);
+        }
 
         var session = _sessions[i];
         var playerHand = new Hand(session.PlayerHand, session.PlayerTimeout);
@@ -180,6 +188,10 @@ namespace JJJ.Infrastructure.Editor
         {
           _logs.Add("勝敗が確定したため TurnContext をリセットしました。");
           turnContext = new TurnContext();
+        }
+        if (result.Type == JudgeResultType.DoubleViolation)
+        {
+          turnContext.SetPreviousTurnDoubleViolation(true);
         }
       }
     }
@@ -217,19 +229,14 @@ namespace JJJ.Infrastructure.Editor
       builder.Append("  TurnContext => ");
       builder.Append($"TurnCount: {context.TurnCount}, ");
       builder.Append($"IsEvenTurn: {context.IsEvenTurn}, ");
-      builder.Append($"AlphaRemaining: {context.AlphaRemainingTurns}");
-      if (context.AlphaActivatedBy.HasValue)
-      {
-        builder.Append($" (By {context.AlphaActivatedBy.Value})");
-      }
-      builder.Append(", BetaRemaining: ");
-      builder.Append(context.BetaRemainingTurns);
-      if (context.BetaActivatedBy.HasValue)
-      {
-        builder.Append($" (By {context.BetaActivatedBy.Value})");
-      }
-      builder.Append(", SealedHand: ");
-      builder.Append(context.SealedHandType != null ? new Hand(context.SealedHandType.Value).Name : "None");
+      builder.Append($"PlayerAlphaRemaining: {context.GetAlphaRemainingTurns(PersonType.Player)}, ");
+      builder.Append($"PlayerBetaRemaining: {context.GetBetaRemainingTurns(PersonType.Player)}, ");
+      var playerSealedHand = context.GetSealedHandType(PersonType.Player);
+      builder.Append($"PlayerSealedHand: {(playerSealedHand != null ? new Hand(playerSealedHand.Value).Name : "None")}, ");
+      builder.Append($"OpponentAlphaRemaining: {context.GetAlphaRemainingTurns(PersonType.Opponent)}, ");
+      builder.Append($"OpponentBetaRemaining: {context.GetBetaRemainingTurns(PersonType.Opponent)}, ");
+      var opponentSealedHand = context.GetSealedHandType(PersonType.Opponent);
+      builder.Append($"OpponentSealedHand: {(opponentSealedHand != null ? new Hand(opponentSealedHand.Value).Name : "None")}");
       return builder.ToString();
     }
 

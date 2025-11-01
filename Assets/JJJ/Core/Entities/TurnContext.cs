@@ -20,26 +20,33 @@ namespace JJJ.Core.Entities
     /// <summary>
     /// αの残りターン数
     /// </summary>
-    public int AlphaRemainingTurns { get; private set; }
+    private int _playerAlphaRemainingTurns;
     /// <summary>
     /// αを発動させた人
     /// </summary>
-    public PersonType? AlphaActivatedBy { get; private set; }
+    private int _opponentAlphaRemainingTurns;
     /// <summary>
     /// βの残りターン数
     /// </summary>
-    public int BetaRemainingTurns { get; private set; }
+    private int _playerBetaRemainingTurns;
     /// <summary>
     /// βを発動させた人
     /// </summary>
-    public PersonType? BetaActivatedBy { get; private set; }
+    private int _opponentBetaRemainingTurns;
     /// <summary>
-    /// βによって封印されている手の種類
+    /// プレイヤーがβで封印した手の種類
     /// </summary>
     /// <remarks>
     /// βの残りターン数が0のときは null になる
     /// </remarks>
-    public HandType? SealedHandType { get; private set; }
+    private HandType? _playerSealedHandType;
+    /// <summary>
+    /// 相手がβで封印した手の種類
+    /// </summary>
+    /// <remarks>
+    /// βの残りターン数が0のときは null になる
+    /// </remarks>
+    private HandType? _opponentSealedHandType;
     /// <summary>
     /// 以前のターンが両者とも反則だったかどうか
     /// </summary>
@@ -52,12 +59,47 @@ namespace JJJ.Core.Entities
     /// <param name="alphaRemainingTurns">αの残りターン数</param>
     /// <param name="betaRemainingTurns">βの残りターン数</param>
     /// <param name="sealedHand">βによって封印された手</param>
-    public TurnContext(int turnCount = 0, int alphaRemainingTurns = 0, int betaRemainingTurns = 0, HandType? sealedHandType = null)
+    public TurnContext(int turnCount = 0, int playerAlphaRemainingTurns = 0, int opponentAlphaRemainingTurns = 0,
+                       int playerBetaRemainingTurns = 0, int opponentBetaRemainingTurns = 0,
+                       HandType? playerSealedHandType = null, HandType? opponentSealedHandType = null)
     {
       TurnCount = turnCount;
-      AlphaRemainingTurns = alphaRemainingTurns;
-      BetaRemainingTurns = betaRemainingTurns;
-      SealedHandType = sealedHandType;
+      _playerAlphaRemainingTurns = playerAlphaRemainingTurns;
+      _opponentAlphaRemainingTurns = opponentAlphaRemainingTurns;
+      _playerBetaRemainingTurns = playerBetaRemainingTurns;
+      _opponentBetaRemainingTurns = opponentBetaRemainingTurns;
+      _playerSealedHandType = playerSealedHandType;
+      _opponentSealedHandType = opponentSealedHandType;
+    }
+
+    public int GetAlphaRemainingTurns(PersonType personType)
+    {
+      return personType switch
+      {
+        PersonType.Player => _playerAlphaRemainingTurns,
+        PersonType.Opponent => _opponentAlphaRemainingTurns,
+        _ => throw new ArgumentOutOfRangeException(nameof(personType), "Invalid PersonType value."),
+      };
+    }
+
+    public int GetBetaRemainingTurns(PersonType personType)
+    {
+      return personType switch
+      {
+        PersonType.Player => _playerBetaRemainingTurns,
+        PersonType.Opponent => _opponentBetaRemainingTurns,
+        _ => throw new ArgumentOutOfRangeException(nameof(personType), "Invalid PersonType value."),
+      };
+    }
+
+    public HandType? GetSealedHandType(PersonType personType)
+    {
+      return personType switch
+      {
+        PersonType.Player => _playerSealedHandType,
+        PersonType.Opponent => _opponentSealedHandType,
+        _ => throw new ArgumentOutOfRangeException(nameof(personType), "Invalid PersonType value."),
+      };
     }
 
     /// <summary>
@@ -67,13 +109,12 @@ namespace JJJ.Core.Entities
     public TurnContext NextTurn()
     {
       TurnCount++;
-      if (AlphaRemainingTurns > 0) AlphaRemainingTurns--;
-      if (AlphaRemainingTurns == 0) AlphaActivatedBy = null;
-      if (BetaRemainingTurns > 0) BetaRemainingTurns--;
-      if (BetaRemainingTurns == 0) {
-        SealedHandType = null;
-        BetaActivatedBy = null; 
-      }
+      if (_playerAlphaRemainingTurns > 0) _playerAlphaRemainingTurns--;
+      if (_opponentAlphaRemainingTurns > 0) _opponentAlphaRemainingTurns--;
+      if (_playerBetaRemainingTurns > 0) _playerBetaRemainingTurns--;
+      if (_opponentBetaRemainingTurns > 0) _opponentBetaRemainingTurns--;
+      if (_playerBetaRemainingTurns == 0) _playerSealedHandType = null;
+      if (_opponentBetaRemainingTurns == 0) _opponentSealedHandType = null;
       return this;
     }
 
@@ -88,8 +129,17 @@ namespace JJJ.Core.Entities
       {
         throw new ArgumentOutOfRangeException(nameof(turns), "Alpha remaining turns must be greater than 0.");
       } 
-      AlphaRemainingTurns = turns;
-      AlphaActivatedBy = activatedBy;
+      switch (activatedBy)
+      {
+        case PersonType.Player:
+          _playerAlphaRemainingTurns = turns;
+          break;
+        case PersonType.Opponent:
+          _opponentAlphaRemainingTurns = turns;
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(activatedBy), "Invalid PersonType value.");
+      }
       return this;
     }
 
@@ -105,9 +155,19 @@ namespace JJJ.Core.Entities
       {
         throw new ArgumentOutOfRangeException(nameof(turns), "Beta remaining turns must be greater than 0.");
       }
-      BetaRemainingTurns = turns;
-      SealedHandType = sealedHandType;
-      BetaActivatedBy = activatedBy;
+      switch (activatedBy)
+      {
+        case PersonType.Player:
+          _playerBetaRemainingTurns = turns;
+          _playerSealedHandType = sealedHandType;
+          break;
+        case PersonType.Opponent:
+          _opponentBetaRemainingTurns = turns;
+          _opponentSealedHandType = sealedHandType;
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(activatedBy), "Invalid PersonType value.");
+      }
       return this;
     }
 

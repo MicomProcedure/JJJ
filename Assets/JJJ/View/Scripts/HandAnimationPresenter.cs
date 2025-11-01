@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
+using VContainer;
 
 namespace JJJ.View
 {
@@ -15,8 +16,13 @@ namespace JJJ.View
   /// </summary>
   public class HandAnimationPresenter : MonoBehaviour, IHandAnimationPresenter
   {
+    // 右手の割合
+    private const float RightHandWeight = 0.9f;
+
     // 後出しのときに遅らせる時間(ミリ秒)
     private const int TimeoutTime = 500;
+
+    private IRandomService? _randomService;
 
     /// <summary>
     /// この手がプレイヤーのものかどうか
@@ -26,7 +32,7 @@ namespace JJJ.View
     /// <summary>
     /// この手が右手かどうか
     /// </summary>
-    [SerializeField] private bool _isRightHand = true;
+    private bool _isRightHand;
 
     /// <summary>
     /// 手のアニメーションを制御するAnimator
@@ -47,6 +53,7 @@ namespace JJJ.View
 
     private static readonly int InitHash = Animator.StringToHash("Init");
     private static readonly int ResetHash = Animator.StringToHash("Reset");
+
     private static readonly Dictionary<HandType, IEnumerable<int>> _handTypeToAnimationHashes = new Dictionary<HandType, IEnumerable<int>>()
     {
       { HandType.Rock, new List<int> { Animator.StringToHash("Rock"), Animator.StringToHash("Rock_start") } },
@@ -61,6 +68,12 @@ namespace JJJ.View
     };
 
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<HandAnimationPresenter>();
+
+    [Inject]
+    public void Construct(IRandomService randomService)
+    {
+      _randomService = randomService;
+    }
 
     private void Start()
     {
@@ -188,7 +201,7 @@ namespace JJJ.View
     /// <summary>
     /// 後出しの場合のみアニメーションを遅延させる
     /// </summary>
-    internal async UniTask DoTimeout(CancellationToken cancellationToken = default)
+    public async UniTask DoTimeout(CancellationToken cancellationToken = default)
     {
       if (_animator == null)
       {
@@ -204,6 +217,22 @@ namespace JJJ.View
         await UniTask.Delay(TimeoutTime, cancellationToken: CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.GetCancellationTokenOnDestroy()).Token);
         _animator.speed = 1f;
       }
+    }
+
+    public void SelectDominantHand()
+    {
+      if (_randomService == null)
+      {
+        _logger.ZLogError($"RandomService is not injected in HandAnimationPresenter.");
+        return;
+      }
+      _isRightHand = _randomService.NextDouble() < RightHandWeight;
+
+      transform.localScale = new Vector3(
+        transform.localScale.x,
+        transform.localScale.y,
+        _isPlayerHand ^ _isRightHand ? Mathf.Abs(transform.localScale.z) : -Mathf.Abs(transform.localScale.z)
+      );
     }
   }
 }

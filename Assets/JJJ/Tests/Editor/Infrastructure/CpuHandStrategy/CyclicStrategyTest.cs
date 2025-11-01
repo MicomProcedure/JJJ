@@ -65,10 +65,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var ctx = new TurnContext();
       strategy.Initialize();
 
-      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx).ToList();
+      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx, PersonType.Player).ToList();
       var expectedType = valid[0]; // 先頭（グー）
 
-      var hand = strategy.GetNextCpuHand(ctx);
+      var hand = strategy.GetNextCpuHand(ctx, PersonType.Player);
 
       Assert.IsTrue(hand.IsTimeout, $"Hand should be marked as timeout, expect: {true} but was {hand.IsTimeout}");
       Assert.AreEqual(expectedType, hand.Type, $"Hand type should be {expectedType} but was {hand.Type}");
@@ -84,10 +84,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // 無効手選択でαを選ばせるため、次の乱数を0.0に設定
       var mock = new MockRandomService(new[] { 0.0, 0.0 });
       var strategy = new CyclicStrategy(_gameModeProvider, mock, _gameSettingsProvider);
-      var ctx = new TurnContext(alphaRemainingTurns: 1);
+      var ctx = new TurnContext(playerAlphaRemainingTurns: 1);
       strategy.Initialize();
 
-      var hand = strategy.GetNextCpuHand(ctx);
+      var hand = strategy.GetNextCpuHand(ctx, PersonType.Player);
 
       Assert.IsFalse(hand.IsTimeout, $"Hand should not be marked as timeout, expect: {false} but was {hand.IsTimeout}");
       Assert.AreEqual(HandType.Alpha, hand.Type, $"Hand type should be {HandType.Alpha} but was {hand.Type}");
@@ -106,10 +106,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var ctx = new TurnContext();
       strategy.Initialize();
 
-      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx).ToList();
+      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx, PersonType.Player).ToList();
 
-      var first = strategy.GetNextCpuHand(ctx);
-      var second = strategy.GetNextCpuHand(ctx);
+      var first = strategy.GetNextCpuHand(ctx, PersonType.Player);
+      var second = strategy.GetNextCpuHand(ctx, PersonType.Player);
 
       Assert.IsFalse(first.IsTimeout, $"First hand should not be marked as timeout, expect: {false} but was {first.IsTimeout}");
       Assert.AreEqual(valid[0], first.Type, $"First hand type should be {valid[0]} but was {first.Type}");
@@ -125,7 +125,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     public void GetNextCpuHand_WhenNoViolation_WrapsAroundToFirst()
     {
       var ctx = new TurnContext();
-      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx).ToList();
+      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx, PersonType.Player).ToList();
       double pickIndex = (double)(valid.Count - 1) / valid.Count; // 初回に末尾インデックス
 
       // 反則しないので、最初の乱数を1に設定（有効手の中からランダムに選択）
@@ -134,8 +134,8 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var strategy = new CyclicStrategy(_gameModeProvider, mock, _gameSettingsProvider);
       strategy.Initialize();
 
-      var first = strategy.GetNextCpuHand(ctx);
-      var second = strategy.GetNextCpuHand(ctx);
+      var first = strategy.GetNextCpuHand(ctx, PersonType.Player);
+      var second = strategy.GetNextCpuHand(ctx, PersonType.Player);
 
       Assert.AreEqual(valid[^1], first.Type, $"First hand type should be {valid[^1]} but was {first.Type}");
       Assert.AreEqual(valid[0], second.Type, $"Second hand type should be {valid[0]} but was {second.Type}");
@@ -148,7 +148,7 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
     public void Initialize_ResetsIndexAndRandomizesAgain()
     {
       var ctx = new TurnContext();
-      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx).ToList();
+      var valid = HandUtil.GetValidHandTypesFromContext(_gameMode, ctx, PersonType.Player).ToList();
       int count = valid.Count;
       double pickIndex2 = 2.0 / valid.Count; // 初回にインデックス2
 
@@ -160,10 +160,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var strategy = new CyclicStrategy(_gameModeProvider, mock, _gameSettingsProvider);
       strategy.Initialize();
 
-      var first = strategy.GetNextCpuHand(ctx);  // idx=2
-      var second = strategy.GetNextCpuHand(ctx); // idx=3
+      var first = strategy.GetNextCpuHand(ctx, PersonType.Player);  // idx=2
+      var second = strategy.GetNextCpuHand(ctx, PersonType.Player); // idx=3
       strategy.Initialize();
-      var third = strategy.GetNextCpuHand(ctx);  // 再度ランダム idx=0
+      var third = strategy.GetNextCpuHand(ctx, PersonType.Player);  // 再度ランダム idx=0
 
       Assert.AreEqual(valid[2], first.Type, $"First hand type should be {valid[2]} but was {first.Type}");
       Assert.AreEqual(valid[3 % count], second.Type, $"Second hand type should be {valid[3 % count]} but was {second.Type}");

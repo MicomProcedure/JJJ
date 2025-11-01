@@ -27,5 +27,10 @@ namespace JJJ.Core.Interfaces
     /// 両者の手のアニメーションを初期位置に戻す
     /// </summary>
     public UniTask ReturnInitAll(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 両者の利き手を決める
+    /// </summary>
+    public void SelectDominantHandAll();
   }
 }

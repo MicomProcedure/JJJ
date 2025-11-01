@@ -21,7 +21,8 @@ namespace JJJ.Core.Interfaces
     /// </summary>
     /// <param name="hand">判定する手</param>
     /// <param name="turnContext">ターンのコンテキスト</param>
+    /// <param name="personType">手を出した人の種類</param>
     /// <returns>判定の結果</returns>
-    public HandValidationResult ValidateHand(Hand hand, TurnContext turnContext);
+    public HandValidationResult ValidateHand(Hand hand, TurnContext turnContext, PersonType personType);
   }
 }

@@ -123,7 +123,8 @@ namespace JJJ.Utils
     /// <returns>使用可能な手の種類の列挙</returns>
     public static IEnumerable<HandType> GetValidHandTypesFromContext(
         GameMode gameMode,
-        TurnContext context
+        TurnContext context,
+        PersonType personType
       )
     {
       if (gameMode == GameMode.Easy)
@@ -138,20 +139,40 @@ namespace JJJ.Utils
       {
         var availableHandTypes = AllHandTypes.ToList();
 
-        if (context.AlphaRemainingTurns > 0) // αが発動中
+        if (personType == PersonType.Player)
         {
-          availableHandTypes.Remove(HandType.Alpha);
-        }
-        if (context.BetaRemainingTurns > 0) // βが発動中
-        {
-          availableHandTypes.Remove(HandType.Beta);
-          if (context.SealedHandType.HasValue)
+          if (context.GetAlphaRemainingTurns(PersonType.Player) > 0) // αが発動中
           {
-            availableHandTypes.Remove(context.SealedHandType.Value);
+            availableHandTypes.Remove(HandType.Alpha);
           }
+          if (context.GetBetaRemainingTurns(PersonType.Player) > 0) // βが発動中
+          {
+            availableHandTypes.Remove(HandType.Beta);
+            if (context.GetSealedHandType(PersonType.Player).HasValue)
+            {
+              var sealedHand = context.GetSealedHandType(PersonType.Player);
+              if (sealedHand.HasValue) availableHandTypes.Remove(sealedHand.Value);
+            }
+          }
+          return availableHandTypes.AsEnumerable();
         }
-
-        return availableHandTypes.AsEnumerable();
+        else
+        {
+          if (context.GetAlphaRemainingTurns(PersonType.Opponent) > 0) // αが発動中
+          {
+            availableHandTypes.Remove(HandType.Alpha);
+          }
+          if (context.GetBetaRemainingTurns(PersonType.Opponent) > 0) // βが発動中
+          {
+            availableHandTypes.Remove(HandType.Beta);
+            if (context.GetSealedHandType(PersonType.Opponent).HasValue)
+            {
+              var sealedHand = context.GetSealedHandType(PersonType.Opponent);
+              if (sealedHand.HasValue) availableHandTypes.Remove(sealedHand.Value);
+            }
+          }
+          return availableHandTypes.AsEnumerable();
+        }
       }
     }
 

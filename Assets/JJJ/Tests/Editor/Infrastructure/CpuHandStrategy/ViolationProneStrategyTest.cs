@@ -72,10 +72,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var turnContext = new TurnContext();
       strategy.Initialize();
 
-      var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
+      var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext, PersonType.Player).ToList();
       var expectedHandType = validHands[0];
       var expectedHand = new Hand(expectedHandType, isTimeout: true);
-      var hand = strategy.GetNextCpuHand(turnContext);
+      var hand = strategy.GetNextCpuHand(turnContext, PersonType.Player);
 
       Assert.AreEqual(expectedHand.Type, hand.Type);
       Assert.IsTrue(hand.IsTimeout);
@@ -91,10 +91,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // 最初の乱数をTimeoutProbability + AlphaViolationProbability / 2.0に設定
       var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability / 2.0, 0 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService, _gameSettingsProvider);
-      var turnContext = new TurnContext(alphaRemainingTurns: 1);
+      var turnContext = new TurnContext(playerAlphaRemainingTurns: 1);
       strategy.Initialize();
 
-      var hand = strategy.GetNextCpuHand(turnContext);
+      var hand = strategy.GetNextCpuHand(turnContext, PersonType.Player);
 
       Assert.AreEqual(Hand.Alpha, hand);
     }
@@ -110,10 +110,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // betaまたは封印された手を出す場合にbetaを出す確率を発生させるため、次の乱数を0.0に設定
       var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0, 0 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService, _gameSettingsProvider);
-      var turnContext = new TurnContext(betaRemainingTurns: 1, sealedHandType: HandType.Rock);
+      var turnContext = new TurnContext(playerBetaRemainingTurns: 1, playerSealedHandType: HandType.Rock);
       strategy.Initialize();
 
-      var hand = strategy.GetNextCpuHand(turnContext);
+      var hand = strategy.GetNextCpuHand(turnContext, PersonType.Player);
 
       Assert.AreEqual(Hand.Beta.Type, hand.Type);
     }
@@ -129,10 +129,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       // betaまたは封印された手を出す場合に封印された手を出す確率を発生させるため、次の乱数を1.0に設定
       var mockRandomService = new MockRandomService(new[] { TimeoutProbability + AlphaViolationProbability + BetaViolationProbability / 2.0, 1 });
       var strategy = new ViolationProneStrategy(_gameModeProvider, mockRandomService, _gameSettingsProvider);
-      var turnContext = new TurnContext(betaRemainingTurns: 1, sealedHandType: HandType.Paper);
+      var turnContext = new TurnContext(playerBetaRemainingTurns: 1, playerSealedHandType: HandType.Paper);
       strategy.Initialize();
 
-      var hand = strategy.GetNextCpuHand(turnContext);
+      var hand = strategy.GetNextCpuHand(turnContext, PersonType.Player);
 
       Assert.AreEqual(Hand.Paper.Type, hand.Type);
     }
@@ -150,10 +150,10 @@ namespace JJJ.Tests.Infrastructure.CpuHandStrategy
       var turnContext = new TurnContext();
       strategy.Initialize();
 
-      var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext).ToList();
+      var validHands = HandUtil.GetValidHandTypesFromContext(_gameMode, turnContext, PersonType.Player).ToList();
       var expectedHandType = validHands[0];
       var expectedHand = new Hand(expectedHandType);
-      var hand = strategy.GetNextCpuHand(turnContext);
+      var hand = strategy.GetNextCpuHand(turnContext, PersonType.Player);
 
       Assert.AreEqual(expectedHand.Type, hand.Type);
       Assert.IsFalse(hand.IsTimeout);

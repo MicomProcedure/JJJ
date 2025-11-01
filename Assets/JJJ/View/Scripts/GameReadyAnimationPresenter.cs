@@ -2,8 +2,10 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using JJJ.Core.Interfaces;
+using JJJ.Core.Interfaces.UI;
 using KanKikuchi.AudioManager;
 using UnityEngine;
+using VContainer;
 
 namespace JJJ.View.Scripts
 {
@@ -17,16 +19,22 @@ namespace JJJ.View.Scripts
     private GameObject _ready1 = null!;
     [SerializeField]
     private GameObject _readyGo = null!;
-    [SerializeField]
-    private GameObject _raycastBlocker = null!;
+
     [SerializeField, SEPathSelector]
     private string _readySE = "";
     [SerializeField]
     private double _animationInterval = 0.5;
 
+    private IUIInteractivityController _uiInteractivityController = null!;
+
+    [Inject]
+    public void Construct(IUIInteractivityController uiInteractivityController)
+    {
+      _uiInteractivityController = uiInteractivityController;
+    }
+
     private void Awake()
     {
-      _raycastBlocker.SetActive(true);
       _ready3.SetActive(false);
       _ready2.SetActive(false);
       _ready1.SetActive(false);
@@ -55,7 +63,7 @@ namespace JJJ.View.Scripts
       await UniTask.Delay(TimeSpan.FromSeconds(_animationInterval), cancellationToken: cancellationToken);
       _readyGo.SetActive(false);
 
-      _raycastBlocker.SetActive(false);
+      _uiInteractivityController.EnableAllInteractivity();
 
       await UniTask.CompletedTask;
     }

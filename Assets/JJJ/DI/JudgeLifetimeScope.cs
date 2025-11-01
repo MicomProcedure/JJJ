@@ -12,6 +12,7 @@ using VContainer;
 using VContainer.Unity;
 using JJJ.UI;
 using JJJ.View.Scripts;
+using JJJ.Core.Interfaces.UI;
 
 namespace JJJ.DI
 {
@@ -31,6 +32,7 @@ namespace JJJ.DI
     [SerializeField] private GameButtonObservables? _gameButtonObservables;
     [SerializeField] private GameReadyAnimationPresenter? _gameReadyAnimationPresenter;
     [SerializeField] private GameEndAnimationPresenter? _gameEndAnimationPresenter;
+    [SerializeField] private UIInteractivityController? _uiInteractivityController;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -66,14 +68,15 @@ namespace JJJ.DI
       builder.RegisterComponent(_judgeInput).As<IJudgeInput>();
       builder.RegisterComponent(_compositeHandAnimationPresenter).As<ICompositeHandAnimationPresenter>();
       builder.RegisterComponent(_timerRemainsPresenter).As<ITimerRemainsPresenter>();
-      builder.RegisterComponent(_currentScorePresenter).As<CurrentScorePresenter>();
-      builder.RegisterComponent(_currentJudgesPresenter).As<CurrentJudgesPresenter>();
-      builder.RegisterComponent(_remainJudgeTimePresenter).As<GameRemainTimePresenter>();
+      builder.RegisterComponent(_currentScorePresenter).As<ICurrentScorePresenter>();
+      builder.RegisterComponent(_currentJudgesPresenter).As<ICurrentJudgesPresenter>();
+      builder.RegisterComponent(_remainJudgeTimePresenter).As<IGameRemainTimePresenter>();
       builder.RegisterInstance(_gameSettingsProvider).As<IGameSettingsProvider>();
       builder.RegisterComponent(_rulesView).As<IRulesView>();
       builder.RegisterComponent(_gameButtonObservables).As<GameButtonObservables>();
       builder.RegisterComponent(_gameReadyAnimationPresenter).As<IGameReadyAnimationPresenter>();
       builder.RegisterComponent(_gameEndAnimationPresenter).As<IGameEndAnimationPresenter>();
+      builder.RegisterComponent(_uiInteractivityController).As<IUIInteractivityController>();
     }
   }
 }

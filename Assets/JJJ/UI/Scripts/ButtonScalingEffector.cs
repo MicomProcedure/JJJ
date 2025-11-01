@@ -10,6 +10,7 @@ namespace JJJ.UI
   /// <summary>
   /// ボタンをクリックしたときにスケールアニメーションを実行するコンポーネント
   /// </summary>
+  [RequireComponent(typeof(Button))]
   public class ButtonScalingEffector : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
   {
     private Vector3 _originalScale;
@@ -17,6 +18,7 @@ namespace JJJ.UI
     private float _clickScale = 0.8f;
 
     private Tweener? _tweener = null;
+    private Button _button;
     private readonly Microsoft.Extensions.Logging.ILogger _logger = LogManager.CreateLogger<ButtonScalingEffector>();
 
     private void Awake()
@@ -28,10 +30,12 @@ namespace JJJ.UI
         _logger.ZLogError($"ButtonScalingEffector: No Button component found on {gameObject.name}");
         return;
       }
+      _button = button;
     }
 
     public void OnPointerEnter(PointerEventData _)
     {
+      if (!_button.IsInteractable()) return;
       AnimateScale(_hoverScale);
     }
 
@@ -42,6 +46,7 @@ namespace JJJ.UI
 
     public void OnPointerClick(PointerEventData _)
     {
+      if (!_button.IsInteractable()) return;
       ResetAnimation();
 
       _tweener = transform.DOPunchScale(

@@ -11,9 +11,9 @@ namespace JJJ.View
 
     public void SetValue(int rank, string name, int score)
     {
-      _rankText.SetText($"{rank} 位");
+      _rankText.SetText($"<mspace=0.8em>{rank}</mspace> 位");
       _nameText.SetText(name);
-      _scoreText.SetText(score.ToString());
+      _scoreText.SetText($"<mspace=0.8em>{score}</mspace>");
     }
   }
 }

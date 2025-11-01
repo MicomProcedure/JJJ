@@ -1,4 +1,5 @@
 using DG.Tweening;
+using JJJ.Core.Interfaces;
 using UnityEngine;
 
 namespace JJJ.View
@@ -6,7 +7,7 @@ namespace JJJ.View
   /// <summary>
   /// 現在のスコアを表示するコンポーネント
   /// </summary>
-  public class CurrentScorePresenter : MonoBehaviour
+  public class CurrentScorePresenter : MonoBehaviour, ICurrentScorePresenter
   {
     /// <summary>
     /// 現在のスコアを表示するTextMeshProUGUI
