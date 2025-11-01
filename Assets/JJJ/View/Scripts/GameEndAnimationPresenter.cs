@@ -5,8 +5,10 @@ namespace JJJ.View.Scripts
   using Cysharp.Threading.Tasks;
   using DG.Tweening;
   using JJJ.Core.Interfaces;
+  using JJJ.Core.Interfaces.UI;
   using KanKikuchi.AudioManager;
   using UnityEngine;
+  using VContainer;
 
   /// <summary>
   /// ゲーム終了時のアニメーションを担当するプレゼンターの実装
@@ -15,17 +17,22 @@ namespace JJJ.View.Scripts
   {
     [SerializeField]
     private CanvasGroup _gameEndCg = null!;
-    [SerializeField]
-    private GameObject _raycastBlocker = null!;
+
     [SerializeField]
     private double _fadeInDuration = 2.0;
     [SerializeField, SEPathSelector]
     private string _endSE = "";
 
+    private IUIInteractivityController _uiInteractivityController = null!;
+
+    [Inject]
+    public void Construct(IUIInteractivityController uiInteractivityController)
+    {
+      _uiInteractivityController = uiInteractivityController;
+    }
 
     private void Awake()
     {
-      _raycastBlocker.SetActive(false);
       _gameEndCg.gameObject.SetActive(false);
     }
 
@@ -35,7 +42,7 @@ namespace JJJ.View.Scripts
     /// <returns>アニメーション再生完了を待機するためのUniTask</returns>
     public async UniTask PlayGameEndAnimation(CancellationToken cancellationToken = default)
     {
-      _raycastBlocker.SetActive(true);
+      _uiInteractivityController.DisableAllInteractivity();
       _gameEndCg.gameObject.SetActive(true);
       BGMManager.Instance.Stop();
       if (!string.IsNullOrEmpty(_endSE)) SEManager.Instance.Play(_endSE);

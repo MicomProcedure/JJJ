@@ -1,3 +1,4 @@
+using JJJ.Core.Interfaces;
 using UnityEngine;
 
 namespace JJJ.View
@@ -5,7 +6,7 @@ namespace JJJ.View
   /// <summary>
   /// 残りのゲーム時間を表示するコンポーネント
   /// </summary>
-  public class GameRemainTimePresenter : MonoBehaviour
+  public class GameRemainTimePresenter : MonoBehaviour, IGameRemainTimePresenter
   {
     /// <summary>
     /// 残りのゲーム時間を表示するTextMeshProUGUI

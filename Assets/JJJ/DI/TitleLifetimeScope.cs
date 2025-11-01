@@ -5,6 +5,7 @@ using VContainer.Unity;
 using UnityEngine;
 using JJJ.View;
 using JJJ.Core.Interfaces;
+using JJJ.Core.Interfaces.UI;
 
 namespace JJJ.DI
 {
@@ -15,6 +16,7 @@ namespace JJJ.DI
     [SerializeField] private HelpsView _helpsView = null!;
     [SerializeField] private RankingsView _rankingsView = null!;
     [SerializeField] private TitleButtonObservables _titleButtonObservables = null!;
+    [SerializeField] private UIInteractivityController _uiInteractivityController = null!;
 
     protected override void Configure(IContainerBuilder builder)
     {
@@ -27,6 +29,7 @@ namespace JJJ.DI
       builder.RegisterComponent(_helpsView).As<IHelpsView>();
       builder.RegisterComponent(_rankingsView).As<IRankingsView>();
       builder.RegisterComponent(_titleButtonObservables);
+      builder.RegisterComponent(_uiInteractivityController).As<IUIInteractivityController>();
     }
   }
 }

@@ -796,6 +796,7 @@ GameObject:
   - component: {fileID: 200533375}
   - component: {fileID: 200533374}
   - component: {fileID: 200533373}
+  - component: {fileID: 200533377}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -895,6 +896,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &200533377
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200533372}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &215533411
 GameObject:
   m_ObjectHideFlags: 0
@@ -3168,6 +3181,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1136502029}
   m_CullTransparentMesh: 1
+--- !u!1 &1167581427
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1167581429}
+  - component: {fileID: 1167581428}
+  m_Layer: 0
+  m_Name: UIInteractivityController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1167581428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167581427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0eb8260665b0c042ae3d01d35052971, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: JJJ.UI::JJJ.UI.UIInteractivityController
+  _roots:
+  - {fileID: 200533377}
+--- !u!4 &1167581429
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167581427}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 960, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1194687383
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6750,12 +6809,14 @@ MonoBehaviour:
   parentReference:
     TypeName: JJJ.DI.GameLifetimeScope
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 1035023863}
   _rulesView: {fileID: 1309101086}
   _optionView: {fileID: 232351717}
   _helpsView: {fileID: 1707673869}
   _rankingsView: {fileID: 1035023865}
   _titleButtonObservables: {fileID: 1203571378}
+  _uiInteractivityController: {fileID: 1167581428}
 --- !u!1001 &404573435859125386
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7557,3 +7618,4 @@ SceneRoots:
   - {fileID: 1353859711}
   - {fileID: 1203571379}
   - {fileID: 1602101376}
+  - {fileID: 1167581429}
