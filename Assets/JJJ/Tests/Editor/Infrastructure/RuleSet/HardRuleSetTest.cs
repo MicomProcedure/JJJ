@@ -405,6 +405,22 @@ namespace JJJ.Tests.Infrastructure.RuleSet
       Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw),
                   "Opponent win by player violation should become draw when opponent's Alpha is active (not last turn).");
     }
+
+    /// <summary>
+    /// Alpha効果中のテスト - 相手がBeta、プレイヤーがThreeの場合、プレイヤーの勝利ではなく引き分けになることをテスト
+    /// </summary>
+    [Test]
+    public void Judge_AlphaActive_PlayerThreeVsOpponentBeta_ReturnsDraw()
+    {
+      var player = new Hand(HandType.Three);
+      var opponent = new Hand(HandType.Beta);
+      var turnContext = new TurnContext(turnCount: 1).ActivateAlpha(2, PersonType.Player);
+
+      var result = _hardRuleSet.Judge(player, opponent, turnContext);
+
+      Assert.That(result.Type, Is.EqualTo(JudgeResultType.Draw),
+                  "Player Three vs Opponent Beta should result in draw when player's Alpha is active.");
+    }
   }
 }
 #endif
