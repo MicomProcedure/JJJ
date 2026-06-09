@@ -59,15 +59,6 @@ namespace JJJ.Infrastructure
 
         if (playerHand.Type == HandType.Beta || opponentHand.Type == HandType.Beta)
         {
-          // BetaはThreeには負けるので、ActivateBetaの前に判定
-          if (playerHand.Type == HandType.Beta && opponentHand.Type == HandType.Three)
-          {
-            return new(JudgeResultType.Lose, playerHand, opponentHand);
-          }
-          else if (opponentHand.Type == HandType.Beta && playerHand.Type == HandType.Three)
-          {
-            return new(JudgeResultType.Win, playerHand, opponentHand);
-          }
           // Betaを発動させる
           // Betaを出した人がPlayerならOpponentの手を、OpponentならPlayerの手を封印する
           if (playerHand.Type == HandType.Beta)
@@ -79,6 +70,24 @@ namespace JJJ.Infrastructure
           {
             turnContext.ActivateBeta(BetaDuration, playerHand.Type, PersonType.Opponent);
             isDrawConfirmed = true;
+          }
+          // BetaはThreeには負けるので、ActivateBetaの前に判定
+          if (playerHand.Type == HandType.Beta && opponentHand.Type == HandType.Three)
+          {
+            return new(JudgeResultType.Lose, playerHand, opponentHand);
+          }
+          else if (opponentHand.Type == HandType.Beta && playerHand.Type == HandType.Three)
+          {
+            // BetaがThreeに負けるルールにより、Betaを出した方は負けになるが、Alphaの効果中は引き分けになる
+            if (turnContext.GetAlphaRemainingTurns(PersonType.Player) > 0)
+            {
+              return new(JudgeResultType.Draw, playerHand, opponentHand);
+            } 
+            else
+            {
+              // Alphaの効果中でない場合は通常通りBetaがThreeに負けるルールを適用
+              return new(JudgeResultType.Win, playerHand, opponentHand);
+            } 
           }
         }
 
